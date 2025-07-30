@@ -11,7 +11,7 @@ services:
 
   minio:  
     image: minio/minio
-    container_name: minio  
+    container_name: kaleidoskop_minio
     restart: unless-stopped  
     ports:
       - 9000:9000
@@ -30,6 +30,39 @@ services:
       timeout: 20s  
       retries: 3
   
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: kaleidoskop_rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+  
+  app:
+    build: ./kaleidoskop/
+    container_name: main_app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+  celery:
+    build: ./kaleidoskop/
+    container_name: celery_worker_kaleidoskop
+    restart: always
+    depends_on:
+      - app
+      - rabbitmq
+    command: celery -A kaleidoskop worker -l INFO
+
 volumes:
  pg_data:
  minio-storage:

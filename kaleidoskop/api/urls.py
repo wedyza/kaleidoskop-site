@@ -1,5 +1,4 @@
-from django.urls import path, include
-from django.conf.urls import url
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
@@ -16,7 +15,8 @@ router.register("me/wishlist", WishlistViewSet, basename='wishlist')
 router.register("categories", CategoryViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('receive/', include('receiver.urls'))
 ]
 
 schema_view = get_schema_view(
@@ -34,17 +34,17 @@ schema_view = get_schema_view(
 
 if settings.DEBUG:
     urlpatterns += [
-        url(
+        re_path(
             r"^swagger(?P<format>\.json|\.yaml)$",
             schema_view.without_ui(cache_timeout=0),
             name="schema-json",
         ),
-        url(
+        re_path(
             r"^swagger/$",
             schema_view.with_ui("swagger", cache_timeout=0),
             name="schema-swagger-ui",
         ),
-        url(
+        re_path(
             r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
         ),
     ]

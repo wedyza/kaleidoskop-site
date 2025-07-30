@@ -2,33 +2,55 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from enum import Enum
 from django.core.validators import MinValueValidator, MaxValueValidator
+import uuid
 
 User = get_user_model()
 
+
+class UUIDModel(models.Model):
+    id = models.UUIDField(
+            default=uuid.uuid4, unique=True, primary_key=True
+    )
+
+    class Meta:
+        abstract = True
+
 # Create your models here.
-class Category(models.Model):
-    title = models.CharField("Название", max_length=50)
+class Category(UUIDModel):
+    title = models.CharField("Название", max_length=100)
     parent = models.ForeignKey("self", null=True, default=None, verbose_name="Родительская категория", on_delete=models.SET_NULL, related_name="daughter")
+    code = models.CharField("Код", max_length=20, unique=True, null=False)
+    parent_code = models.CharField("Код родителя", max_length=20, null=True)
     #img = imagefield
 
 
-class Item(models.Model):
-    title = models.CharField("Название", max_length=50)
+class Item(UUIDModel):
+    title = models.CharField("Название", max_length=100)
     category = models.ForeignKey(
         Category,
-        null=False,
+        null=True,
         verbose_name='Категория',
         related_name='items',
         on_delete=models.DO_NOTHING
     )
     description = models.TextField('Описание', max_length=500)
-    price = models.IntegerField("Цена", null=False)
-    article = models.CharField("Артикул", max_length=10)
+    price = models.FloatField("Цена", null=False)
+    article = models.CharField("Артикул", max_length=40, unique=True, null=False) # MUST BE UNIQUE (produmat)
+    code = models.CharField("Код", max_length=20, unique=True, null=False)   # MUST BE UNIQUE (produmat)
+    volume_UOM = models.CharField("Объем Единицы Измерения", max_length=5, null=True)
+    volume_size = models.FloatField("Объем", null=True)
+    UOM = models.CharField("Единица измерения", max_length=15, null=True)
+    weight_usage = models.BooleanField("Использование Веса", null=False)
+    weight_UOM = models.CharField("Вес единица измерения", max_length=5, null=True)
+    weight_size = models.FloatField("Вес", null=True)
+    production_country = models.CharField("Страна-производитель", max_length=25, null=True)
+    parent_code = models.CharField("Код родителя", max_length=20, null=True)
+    country = models.CharField("Страна-производитель", max_length=25, null=True)
 
     #img = imagefield
 
 
-class Cart(models.Model):
+class Cart(UUIDModel):
     #user = models.Foreignkey()
     bought = models.BooleanField("Оплаченная корзина", default=False)
     current_cart = models.BooleanField("Текущая корзина", default=True)
@@ -41,7 +63,7 @@ class PaymentStatusChoices(Enum):
     ERROR = 'ERROR'
 
 
-class Order(models.Model):
+class Order(UUIDModel):
     #user = models.Foreignkey()
     total_price = models.IntegerField("Цена", null=False)
     cart = models.ForeignKey(
@@ -57,7 +79,7 @@ class Order(models.Model):
     )
 
 
-class Like(models.Model):
+class Like(UUIDModel):
     item = models.ForeignKey(
         Item,
         null=False,
@@ -68,7 +90,7 @@ class Like(models.Model):
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
 
 
-class CartItem(models.Model):
+class CartItem(UUIDModel):
     item = models.ForeignKey(
         Item,
         null=False,
@@ -88,7 +110,7 @@ class CartItem(models.Model):
 #     pass
 
 
-class Comment(models.Model):
+class Comment(UUIDModel):
     item = models.ForeignKey(
         Item,
         null=False,

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "users.apps.UsersConfig",
     "api.apps.ApiConfig",
+    "receiver.apps.ReceiverConfig",
 ]
 
 MIDDLEWARE = [
@@ -145,8 +146,13 @@ REST_FRAMEWORK = {
 
 #File Storage
 
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-AWS_STORAGE_BUCKET_NAME = "local"
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_S3_ENDPOINT_URL = "http://localhost:9000"
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# AWS_STORAGE_BUCKET_NAME = "local"
+# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+# AWS_S3_ENDPOINT_URL = "http://localhost:9000"
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://rabbitmq') #Когда создашь 
+BROKER_URL = os.getenv('BROKER_URL', 'amqp://guest:guest@rabbitmq:5672//')
+
+API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
