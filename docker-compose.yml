@@ -9,5 +9,60 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
+  minio:  
+    image: minio/minio
+    container_name: kaleidoskop_minio
+    restart: unless-stopped  
+    ports:
+      - 9000:9000
+      - 9001:9001
+    expose:
+      - "9000"
+    volumes:  
+      - minio-storage:/data  
+    environment:  
+      - MINIO_ROOT_USER=miniouser  
+      - MINIO_ROOT_PASSWORD=admin123
+    command: server /data --console-address ":9001"  
+    healthcheck:  
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]  
+      interval: 30s  
+      timeout: 20s  
+      retries: 3
+  
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: kaleidoskop_rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+  
+  app:
+    build: ./kaleidoskop/
+    container_name: main_app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+  celery:
+    build: ./kaleidoskop/
+    container_name: celery_worker_kaleidoskop
+    restart: always
+    depends_on:
+      - app
+      - rabbitmq
+    command: celery -A kaleidoskop worker -l INFO
+
 volumes:
  pg_data:
+ minio-storage:
