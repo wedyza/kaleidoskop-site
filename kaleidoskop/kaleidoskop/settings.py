@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.utils.timezone import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
     "users.apps.UsersConfig",
     "api.apps.ApiConfig",
@@ -56,6 +59,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+AUTH_USER_MODEL = "users.CustomAbstractUser"
 ROOT_URLCONF = "kaleidoskop.urls"
 
 TEMPLATES = [
@@ -137,10 +141,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }
 
@@ -156,3 +160,23 @@ CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://rabbitmq') #Когд�
 BROKER_URL = os.getenv('BROKER_URL', 'amqp://guest:guest@rabbitmq:5672//')
 
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
+
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+SIMPLE_JWT = {
+
+    'ROTATE_REFRESH_TOKENS': True,
+
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),
+
+}

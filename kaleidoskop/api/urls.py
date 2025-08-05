@@ -4,19 +4,21 @@ from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions, routers
-from .views import ItemViewSet, CommentViewSet, WishlistViewSet, CategoryViewSet
+from .views import ItemViewSet, CommentViewSet, WishlistViewSet, CategoryViewSet, UsersViewSet
 
 
 router = routers.DefaultRouter()
 
 router.register("items", ItemViewSet)
 router.register("comments", CommentViewSet, basename='comments')
-router.register("me/wishlist", WishlistViewSet, basename='wishlist')
+router.register("users/me/wishlist", WishlistViewSet, basename='wishlist')
 router.register("categories", CategoryViewSet)
+router.register("users", UsersViewSet, basename='users')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('receive/', include('receiver.urls'))
+    path('receive/', include('receiver.urls')),
+    path('auth/', include('users.urls'))
 ]
 
 schema_view = get_schema_view(

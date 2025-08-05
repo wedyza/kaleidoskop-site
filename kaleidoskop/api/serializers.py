@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Category, Item, Cart, CartItem, Like, Comment
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class CategorySerializer(serializers.ModelSerializer):
     parent = 'self'
@@ -43,3 +46,11 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
+
+class SwitchSerializer(serializers.Serializer):
+    enable = serializers.BooleanField()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'sex') #avatar

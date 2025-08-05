@@ -46,12 +46,18 @@ class Item(UUIDModel):
     production_country = models.CharField("Страна-производитель", max_length=25, null=True)
     parent_code = models.CharField("Код родителя", max_length=20, null=True)
     country = models.CharField("Страна-производитель", max_length=25, null=True)
+    public = models.BooleanField("Доступен публично", default=False, null=False)
 
     #img = imagefield
 
 
 class Cart(UUIDModel):
-    #user = models.Foreignkey()
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=False,
+        verbose_name="Пользователь"
+    )
     bought = models.BooleanField("Оплаченная корзина", default=False)
     current_cart = models.BooleanField("Текущая корзина", default=True)
 
@@ -64,7 +70,12 @@ class PaymentStatusChoices(Enum):
 
 
 class Order(UUIDModel):
-    #user = models.Foreignkey()
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=False,
+        verbose_name="Пользователь"
+    )
     total_price = models.IntegerField("Цена", null=False)
     cart = models.ForeignKey(
         Cart,
@@ -86,7 +97,12 @@ class Like(UUIDModel):
         on_delete=models.CASCADE,
         verbose_name='Товар'
     )
-    #user = models.ForeignKey()
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=False,
+        verbose_name="Пользователь"
+    )
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
 
 
@@ -123,7 +139,16 @@ class Comment(UUIDModel):
     )
     body = models.TextField("Тело отзыва", max_length=400)
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
-    #user = models.ForeignKey()
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=False,
+        verbose_name="Пользователь"
+    )
+
+
+# class SiteSettings(models.Model):
+#     pass
 
 
 # class CommentReply(models.Model):

@@ -16,16 +16,25 @@ class ItemListCreateSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         items_to_update = []
         items_to_create = []
+        unique_list = []
+        created_items = []
+
         for item in validated_data:
+            if not (item['code'] in unique_list or item['article'] in unique_list):
+                unique_list.append(item['code'])
+                unique_list.append(item['article'])
+            else:
+                created_items.extend(Item.objects.bulk_create(items_to_create))
+                items_to_create = []
             real_one, created = get_or_create_item(item)
             if created:
                 items_to_create.append(real_one)
             else:
                 items_to_update.append(real_one)
         
-        created = Item.objects.bulk_create(items_to_create)
-        Item.objects.bulk_update(items_to_update, fields=['title', 'parent_code', 'category', 'price'])
-        return created
+        created_items.extend(Item.objects.bulk_create(items_to_create))
+        Item.objects.bulk_update(items_to_update, fields=['title', 'parent_code', 'category', 'price', 'article'])
+        return created_items
 
 
 class ItemCreateSerializer(serializers.ModelSerializer):

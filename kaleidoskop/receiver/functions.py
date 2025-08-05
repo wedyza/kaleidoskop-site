@@ -8,6 +8,7 @@ def get_or_create_item(item):
     db_item.price = item['price']
     db_item.title = item['title']
     db_item.parent_code = item['parent_code']
+    db_item.article = item['article']
     db_item.category = None
     return db_item, False
 
