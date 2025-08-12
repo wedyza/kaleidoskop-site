@@ -48,7 +48,6 @@ class LoginView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(request_body=UserLoginSerializer)
-    @csrf_exempt
     def post(self, request):
         email = UserLoginSerializer(data=request.data)
         if not email.is_valid():
@@ -79,7 +78,6 @@ class ValidateOTPView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(request_body=UserLoginOTPSerializer)
-    @csrf_exempt
     def post(self, request):
         payload = UserLoginOTPSerializer(data=request.data)
 

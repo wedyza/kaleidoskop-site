@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Item, Cart, CartItem, Like, Comment
+from .models import Category, Item, Cart, CartItem, Like, Comment, Remains
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -12,10 +12,20 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ItemRemainsSerializer(serializers.ModelSerializer):
+    warehouse = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Remains
+        fields = ('warehouse', 'count')
+
+
 class ItemSerializer(serializers.ModelSerializer):
+    remains = ItemRemainsSerializer(many=True, read_only=True)
+
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = ('id', 'title', 'description', 'price', 'article', 'category', 'production_country', 'remains') # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -31,7 +41,7 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ('bought' 'current_cart', 'items')
+        fields = ('items',)
 
 
 class LikeSerializer(serializers.ModelSerializer):

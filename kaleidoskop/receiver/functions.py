@@ -1,7 +1,7 @@
-from api.models import Category, Item
+from api.models import Category, Item, Remains, Warehouse
 from django.db.models import Q
 
-def get_or_create_item(item):
+def get_or_create_item(item)->tuple[Item, bool]:
     db_item = Item.objects.filter(Q(code=item['code']) | Q(article=item['article'])).first()
     if db_item is None:
         return Item(**item), True
@@ -11,6 +11,21 @@ def get_or_create_item(item):
     db_item.article = item['article']
     db_item.category = None
     return db_item, False
+
+
+def get_or_create_remain(remain)->tuple[Remains|None, bool]:
+    if remain['order'] != "NULL":
+        return None, False
+    try:
+        need_item = Item.objects.get(code=remain['code'])
+    except Item.DoesNotExist:
+        return None, False
+    need_warehouse = Warehouse.objects.get(name=remain['warehouse'])
+    db_remain = Remains.objects.filter(Q(item=need_item) & Q(warehouse=need_warehouse)).first()
+    if db_remain is None:
+        return Remains(item=need_item, warehouse=need_warehouse, count=remain['count']), True
+    db_remain.count = remain['count']
+    return db_remain, False
 
 def fillup_categories_with_parents():
     categories = Category.objects.exclude(parent_code=None).filter(parent=None).all()

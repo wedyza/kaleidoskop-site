@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from api.models import Category, Item
+from api.models import Category, Item, Remains, Warehouse
 from rest_framework.exceptions import ValidationError
-from .functions import get_or_create_item
+from .functions import get_or_create_item, get_or_create_remain
 
 class CategoryCreateSerializer(serializers.ModelSerializer):
     parent_code = serializers.CharField(allow_null=True)
@@ -46,3 +46,58 @@ class ItemCreateSerializer(serializers.ModelSerializer):
         model = Item
         list_serializer_class = ItemListCreateSerializer
         fields = ('title', 'article', 'price', 'volume_UOM', 'volume_size', 'UOM', 'weight_usage', 'weight_UOM', 'weight_size', 'country', 'code', 'parent_code')
+
+
+class ListRemainsReceiveSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        remains_to_update = []
+        remains_to_create = []
+
+        for remain in validated_data:
+            another_remain, is_created = get_or_create_remain(remain)
+            if another_remain is None:
+                continue
+            if is_created:
+                remains_to_create.append(another_remain)
+            else:
+                remains_to_update.append(another_remain)
+
+        created_remains = Remains.objects.bulk_create(remains_to_create, ignore_conflicts=True)
+        Remains.objects.bulk_update(remains_to_update, ['count'])
+
+        return created_remains
+
+class RemainsReceiveSerializer(serializers.Serializer):
+    code = serializers.CharField()
+    warehouse = serializers.CharField()
+    order = serializers.CharField()
+    count = serializers.FloatField()
+
+    class Meta:
+        list_serializer_class = ListRemainsReceiveSerializer
+
+    def validate_count(self, value):
+        if value < 0:
+            return 0
+        return value
+    
+    def validate(self, data):
+        code = data.get('code')
+        count = data.get('count')
+        warehouse_name = data.get('warehouse')
+
+        # КОСТЫЛЬ
+        
+        # try:
+        #     item = Item.objects.get(code=code)
+        # except Item.DoesNotExist:
+        #     raise serializers.ValidationError(f"Товар с кодом {code} не найден")
+        
+        try:
+            warehouse = Warehouse.objects.get(name=warehouse_name)
+        except Warehouse.DoesNotExist:
+            raise serializers.ValidationError(f"Склад с именем {warehouse_name} не найден")
+        
+        if count < 0:
+            data['count'] = 0
+        return data

@@ -117,7 +117,8 @@ class CartItem(UUIDModel):
         Cart,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name='Корзина'
+        verbose_name='Корзина',
+        related_name='items'
     )
     amount = models.IntegerField("Количество")
 
@@ -146,6 +147,31 @@ class Comment(UUIDModel):
         verbose_name="Пользователь"
     )
 
+
+class Warehouse(UUIDModel):
+    name = models.CharField("Название", max_length=50)
+    custom_name = models.CharField("Пользовательское название", max_length=50)
+
+    def __str__(self):
+        return self.custom_name
+
+
+class Remains(UUIDModel):
+    item = models.ForeignKey(
+        Item,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name='Товар',
+        related_name='remains'
+    )
+    count = models.FloatField("Количество")
+    warehouse = models.ForeignKey(
+        Warehouse,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name="Склад",
+        related_name="remains"
+    )
 
 # class SiteSettings(models.Model):
 #     pass
