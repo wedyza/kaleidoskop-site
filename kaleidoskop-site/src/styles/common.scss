@@ -1,0 +1,24 @@
+:root {
+    --white: #fff;
+    --text-color: #000;
+    --background: #F8F8F8;
+    --accent: #ED5B07;
+    --black60: rgba(0, 0, 0, 0.6);
+    --black10: rgba(0, 0, 0, 0.1);
+    --grey: #727270;
+    --dark-grey: #161616;
+    --padding: 80px;
+    --border-radius: 5px;
+}
+
+body {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-size: 20px;
+    background-color: var(--background);
+}
+
+.page {
+    padding-bottom: 30px;
+    padding-top: var(--header-height);
+}
