@@ -4,8 +4,11 @@
   --background: #F8F8F8;
   --accent: #ED5B07;
   --black60: rgba(0, 0, 0, 0.6);
+  --black30: rgba(0, 0, 0, 0.3);
   --black20: rgba(0, 0, 0, 0.2);
   --black10: rgba(0, 0, 0, 0.1);
+  --white60: rgba(255, 255, 255, 0.6);
+  --white15: rgba(255, 255, 255, 0.15);
   --grey: #727270;
   --dark-grey: #161616;
   --padding: 80px;
@@ -27,8 +30,22 @@ body {
 
 .page-content {
   padding: var(--padding);
-  padding-bottom: 30px;
+  padding-bottom: 110px;
   padding-top: var(--header-height);
+}
+
+.inter24-700 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.inter20-700 {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 135%;
+  letter-spacing: 0%;
 }
 
 .inter18-600 {
@@ -59,8 +76,22 @@ body {
   letter-spacing: 0%;
 }
 
+.inter14-500 {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
 .inter14-400 {
   font-size: 14px;
+  letter-spacing: 0px;
+  line-height: 135%;
+}
+
+.inter14-300 {
+  font-size: 14px;
+  font-weight: 300;
   letter-spacing: 0px;
   line-height: 135%;
 }
