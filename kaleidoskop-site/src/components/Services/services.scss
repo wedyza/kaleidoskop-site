@@ -1,0 +1,72 @@
+.services {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 10px;
+}
+
+.services-item {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.service-card {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 15px 0px var(--black20);
+  padding: 30px;
+  gap: 10px;
+}
+
+.service-screwdriver {
+  position: absolute;
+  width: 130px;
+  right: -115px;
+  top: -27px;
+}
+
+.service-screw {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  right: 20px;
+}
+
+.service-screw__top {
+  top: 20px;
+}
+
+.service-screw__bottom {
+  bottom: 20px;
+}
+
+.service_link {
+  width: fit-content;
+  margin-top: auto;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+
+.services-info {
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 38px;
+  text-align: center;
+}
+
+.services-info_desc,
+.service_desc {
+  color: var(--black60);
+}
+
+.services-img {
+  align-items: center;
+  justify-content: center;
+
+  img{
+    height: 180px;
+  }
+}

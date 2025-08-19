@@ -5,6 +5,9 @@
   gap: 23px;
   background-color: var(--white);
   box-shadow: 0px 1px 100px 1px var(--black10);
+  position: fixed;
+  width: 100%;
+  z-index: 100;
 }
 
 .header-info {
