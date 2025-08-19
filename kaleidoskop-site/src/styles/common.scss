@@ -34,8 +34,22 @@ body {
   padding-top: var(--header-height);
 }
 
+.inter28-600 {
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 135%;
+  letter-spacing: 0%;
+}
+
 .inter24-700 {
   font-weight: 700;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.inter24-600 {
+  font-weight: 600;
   font-size: 24px;
   line-height: 120%;
   letter-spacing: 0%;
