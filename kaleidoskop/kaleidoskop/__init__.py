@@ -1,3 +1,3 @@
 from .celery import app as celery_app
 
-__all__ = ['kaleidoskop']
+__all__ = ["kaleidoskop"]

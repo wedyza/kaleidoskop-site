@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0008_auto_20250730_1459'),
+        ("api", "0008_auto_20250730_1459"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='item',
-            name='UOM',
-            field=models.CharField(max_length=15, null=True, verbose_name='Единица измерения'),
+            model_name="item",
+            name="UOM",
+            field=models.CharField(
+                max_length=15, null=True, verbose_name="Единица измерения"
+            ),
         ),
     ]

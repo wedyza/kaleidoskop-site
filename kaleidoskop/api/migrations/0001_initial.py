@@ -11,100 +11,291 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Cart',
+            name="Cart",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('bought', models.BooleanField(default=False, verbose_name='Оплаченная корзина')),
-                ('current_cart', models.BooleanField(default=True, verbose_name='Текущая корзина')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "bought",
+                    models.BooleanField(
+                        default=False, verbose_name="Оплаченная корзина"
+                    ),
+                ),
+                (
+                    "current_cart",
+                    models.BooleanField(default=True, verbose_name="Текущая корзина"),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('title', models.CharField(max_length=50, verbose_name='Название')),
-                ('code', models.CharField(editable=False, max_length=10, unique=True, verbose_name='Код')),
-                ('parent', models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='daughter', to='api.category', verbose_name='Родительская категория')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("title", models.CharField(max_length=50, verbose_name="Название")),
+                (
+                    "code",
+                    models.CharField(
+                        editable=False, max_length=10, unique=True, verbose_name="Код"
+                    ),
+                ),
+                (
+                    "parent",
+                    models.ForeignKey(
+                        default=None,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="daughter",
+                        to="api.category",
+                        verbose_name="Родительская категория",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Item',
+            name="Item",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('title', models.CharField(max_length=50, verbose_name='Название')),
-                ('description', models.TextField(max_length=500, verbose_name='Описание')),
-                ('price', models.IntegerField(verbose_name='Цена')),
-                ('article', models.CharField(max_length=10, unique=True, verbose_name='Артикул')),
-                ('code', models.CharField(editable=False, max_length=10, unique=True, verbose_name='Код')),
-                ('volume_UOM', models.CharField(max_length=5, null=True, verbose_name='Объем Единицы Измерения')),
-                ('volume_size', models.FloatField(null=True, verbose_name='Объем')),
-                ('weight_usage', models.BooleanField(verbose_name='Использование Веса')),
-                ('weight_UOM', models.CharField(max_length=5, null=True, verbose_name='Вес единица измерения')),
-                ('weight_size', models.FloatField(null=True, verbose_name='Вес')),
-                ('production_country', models.CharField(max_length=25, null=True, verbose_name='Страна-производитель')),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='items', to='api.category', verbose_name='Категория')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("title", models.CharField(max_length=50, verbose_name="Название")),
+                (
+                    "description",
+                    models.TextField(max_length=500, verbose_name="Описание"),
+                ),
+                ("price", models.IntegerField(verbose_name="Цена")),
+                (
+                    "article",
+                    models.CharField(
+                        max_length=10, unique=True, verbose_name="Артикул"
+                    ),
+                ),
+                (
+                    "code",
+                    models.CharField(
+                        editable=False, max_length=10, unique=True, verbose_name="Код"
+                    ),
+                ),
+                (
+                    "volume_UOM",
+                    models.CharField(
+                        max_length=5, null=True, verbose_name="Объем Единицы Измерения"
+                    ),
+                ),
+                ("volume_size", models.FloatField(null=True, verbose_name="Объем")),
+                (
+                    "weight_usage",
+                    models.BooleanField(verbose_name="Использование Веса"),
+                ),
+                (
+                    "weight_UOM",
+                    models.CharField(
+                        max_length=5, null=True, verbose_name="Вес единица измерения"
+                    ),
+                ),
+                ("weight_size", models.FloatField(null=True, verbose_name="Вес")),
+                (
+                    "production_country",
+                    models.CharField(
+                        max_length=25, null=True, verbose_name="Страна-производитель"
+                    ),
+                ),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="items",
+                        to="api.category",
+                        verbose_name="Категория",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('total_price', models.IntegerField(verbose_name='Цена')),
-                ('status', models.TextField(choices=[('PENDING', 'PENDING'), ('SUCCESS', 'SUCCESS'), ('ERROR', 'ERROR')], default=api.models.PaymentStatusChoices['PENDING'], verbose_name='Статус')),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='api.cart', verbose_name='Корзина')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("total_price", models.IntegerField(verbose_name="Цена")),
+                (
+                    "status",
+                    models.TextField(
+                        choices=[
+                            ("PENDING", "PENDING"),
+                            ("SUCCESS", "SUCCESS"),
+                            ("ERROR", "ERROR"),
+                        ],
+                        default=api.models.PaymentStatusChoices["PENDING"],
+                        verbose_name="Статус",
+                    ),
+                ),
+                (
+                    "cart",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="api.cart",
+                        verbose_name="Корзина",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Like',
+            name="Like",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.item', verbose_name='Товар')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="api.item",
+                        verbose_name="Товар",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Comment',
+            name="Comment",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('rate', models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)], verbose_name='Рейтинг')),
-                ('body', models.TextField(max_length=400, verbose_name='Тело отзыва')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='api.item', verbose_name='Товар')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "rate",
+                    models.IntegerField(
+                        default=0,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                        verbose_name="Рейтинг",
+                    ),
+                ),
+                ("body", models.TextField(max_length=400, verbose_name="Тело отзыва")),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comments",
+                        to="api.item",
+                        verbose_name="Товар",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='CartItem',
+            name="CartItem",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('amount', models.IntegerField(verbose_name='Количество')),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.cart', verbose_name='Корзина')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.item', verbose_name='Товар')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("amount", models.IntegerField(verbose_name="Количество")),
+                (
+                    "cart",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="api.cart",
+                        verbose_name="Корзина",
+                    ),
+                ),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="api.item",
+                        verbose_name="Товар",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

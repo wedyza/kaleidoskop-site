@@ -7,53 +7,67 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0002_alter_category_title'),
+        ("api", "0002_alter_category_title"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cart',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
+            model_name="cart",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+            ),
         ),
         migrations.AlterField(
-            model_name='cartitem',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
+            model_name="cartitem",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+            ),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='code',
-            field=models.CharField(max_length=10, unique=True, verbose_name='Код'),
+            model_name="category",
+            name="code",
+            field=models.CharField(max_length=10, unique=True, verbose_name="Код"),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
+            model_name="category",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+            ),
         ),
         migrations.AlterField(
-            model_name='comment',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
+            model_name="comment",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+            ),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='code',
-            field=models.CharField(max_length=10, unique=True, verbose_name='Код'),
+            model_name="item",
+            name="code",
+            field=models.CharField(max_length=10, unique=True, verbose_name="Код"),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
+            model_name="item",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+            ),
         ),
         migrations.AlterField(
-            model_name='like',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
+            model_name="like",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+            ),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
+            model_name="order",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+            ),
         ),
     ]

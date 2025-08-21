@@ -20,6 +20,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
+
 class RegisterView(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -36,7 +37,7 @@ class RegisterView(APIView):
         user.save()
         # send_otp_email.delay(new_user.data["email"], otp)
 
-        return Response( #pragma: no cover
+        return Response(  # pragma: no cover
             {
                 "message": "Письмо с одноразовым кодом отправлено вам на почту. Он действителен в течении 15 минут"
             },
@@ -94,7 +95,7 @@ class ValidateOTPView(APIView):
         otp = payload.data["otp"]
         if user.otp == otp:
             if timezone.now() > user.otp_expires:
-                return Response(#pragma: no cover
+                return Response(  # pragma: no cover
                     {"error": "Срок действия пароля истек"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -105,15 +106,12 @@ class ValidateOTPView(APIView):
 
             refresh = RefreshToken.for_user(user)
 
-            refresh.payload.update({
-                'user_id': user.pk,
-                'email': user.email
-            })
+            refresh.payload.update({"user_id": user.pk, "email": user.email})
 
-            return Response({
-                "refresh": str(refresh),
-                "access": str(refresh.access_token)
-            }, status=status.HTTP_200_OK)
+            return Response(
+                {"refresh": str(refresh), "access": str(refresh.access_token)},
+                status=status.HTTP_200_OK,
+            )
         else:
             return Response(
                 {"error": "Неправильный код."}, status=status.HTTP_400_BAD_REQUEST

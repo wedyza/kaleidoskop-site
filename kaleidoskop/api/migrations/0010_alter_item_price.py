@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0009_alter_item_uom'),
+        ("api", "0009_alter_item_uom"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='item',
-            name='price',
-            field=models.FloatField(verbose_name='Цена'),
+            model_name="item",
+            name="price",
+            field=models.FloatField(verbose_name="Цена"),
         ),
     ]

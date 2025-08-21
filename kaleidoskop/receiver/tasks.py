@@ -5,7 +5,7 @@ from .serializers import CategoryCreateSerializer
 
 
 @shared_task
-def parse_categories(json:dict):
+def parse_categories(json: dict):
     categories = CategoryCreateSerializer(data=json)
     if categories.is_valid():
         categories.save()

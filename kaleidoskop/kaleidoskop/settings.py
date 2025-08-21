@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -28,7 +29,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -148,7 +149,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-#File Storage
+# File Storage
 
 # DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 # AWS_STORAGE_BUCKET_NAME = "local"
@@ -156,8 +157,8 @@ REST_FRAMEWORK = {
 # AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 # AWS_S3_ENDPOINT_URL = "http://localhost:9000"
 
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://rabbitmq') #Когда создашь 
-BROKER_URL = os.getenv('BROKER_URL', 'amqp://guest:guest@rabbitmq:5672//')
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://rabbitmq")  # Когда создашь
+BROKER_URL = os.getenv("BROKER_URL", "amqp://guest:guest@rabbitmq:5672//")
 
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
 
@@ -170,13 +171,8 @@ EMAIL_USE_TLS = True
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 SIMPLE_JWT = {
-
-    'ROTATE_REFRESH_TOKENS': True,
-
-    'BLACKLIST_AFTER_ROTATION': True,
-
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
-
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),
-
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=60),
 }

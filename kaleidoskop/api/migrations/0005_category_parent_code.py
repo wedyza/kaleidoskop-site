@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0004_auto_20250724_1338'),
+        ("api", "0004_auto_20250724_1338"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='category',
-            name='parent_code',
-            field=models.CharField(max_length=20, null=True, verbose_name='Код родителя'),
+            model_name="category",
+            name="parent_code",
+            field=models.CharField(
+                max_length=20, null=True, verbose_name="Код родителя"
+            ),
         ),
     ]

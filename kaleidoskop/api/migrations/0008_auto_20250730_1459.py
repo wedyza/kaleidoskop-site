@@ -7,18 +7,24 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0007_item_country'),
+        ("api", "0007_item_country"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='item',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='items', to='api.category', verbose_name='Категория'),
+            model_name="item",
+            name="category",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                related_name="items",
+                to="api.category",
+                verbose_name="Категория",
+            ),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='title',
-            field=models.CharField(max_length=100, verbose_name='Название'),
+            model_name="item",
+            name="title",
+            field=models.CharField(max_length=100, verbose_name="Название"),
         ),
     ]

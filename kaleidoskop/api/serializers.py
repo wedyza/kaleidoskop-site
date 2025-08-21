@@ -4,12 +4,13 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class CategorySerializer(serializers.ModelSerializer):
-    parent = 'self'
-    
+    parent = "self"
+
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):
@@ -17,7 +18,7 @@ class ItemRemainsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Remains
-        fields = ('warehouse', 'count')
+        fields = ("warehouse", "count")
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -25,7 +26,16 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ('id', 'title', 'description', 'price', 'article', 'category', 'production_country', 'remains') # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
+        fields = (
+            "id",
+            "title",
+            "description",
+            "price",
+            "article",
+            "category",
+            "production_country",
+            "remains",
+        )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -33,7 +43,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ('item', 'amount')
+        fields = ("item", "amount")
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -41,7 +51,7 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ('items',)
+        fields = ("items",)
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -49,18 +59,20 @@ class LikeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Like
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = "__all__"
+
 
 class SwitchSerializer(serializers.Serializer):
     enable = serializers.BooleanField()
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'sex') #avatar
+        fields = ("id", "first_name", "last_name", "email", "sex")  # avatar

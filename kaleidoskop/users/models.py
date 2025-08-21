@@ -5,7 +5,7 @@ from django.utils import timezone
 from enum import Enum
 
 
-class UserManager(BaseUserManager): #pragma: no cover
+class UserManager(BaseUserManager):  # pragma: no cover
     """Define a model manager for User model with no username field."""
 
     use_in_migrations = True
@@ -28,6 +28,7 @@ class UserManager(BaseUserManager): #pragma: no cover
 
     def create_superuser(self, email, **extra_fields):
         return self._create_user(email, True, **extra_fields)
+
 
 class CustomAbstractUser(AbstractUser):
     class UserType(Enum):
@@ -63,6 +64,6 @@ class CustomAbstractUser(AbstractUser):
     date_joined = None
     first_name = models.CharField("Имя", max_length=30, null=True)
     last_name = models.CharField("Фамилия", max_length=30, null=True)
+
     def __str__(self):
         return self.email
-    

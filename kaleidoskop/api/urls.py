@@ -4,22 +4,28 @@ from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions, routers
-from .views import ItemViewSet, CommentViewSet, WishlistViewSet, CategoryViewSet, UsersViewSet
+from .views import (
+    ItemViewSet,
+    CommentViewSet,
+    WishlistViewSet,
+    CategoryViewSet,
+    UsersViewSet,
+)
 
 
 router = routers.DefaultRouter()
 
 router.register("items", ItemViewSet)
-router.register("comments", CommentViewSet, basename='comments')
-router.register("users/me/wishlist", WishlistViewSet, basename='wishlist')
+router.register("comments", CommentViewSet, basename="comments")
+router.register("users/me/wishlist", WishlistViewSet, basename="wishlist")
 router.register("categories", CategoryViewSet)
-router.register("users", UsersViewSet, basename='users')
+router.register("users", UsersViewSet, basename="users")
 # router.register("users/me/cart", CartViewSet, basename='cart')
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('receive/', include('receiver.urls')),
-    path('auth/', include('users.urls'))
+    path("", include(router.urls)),
+    path("receive/", include("receiver.urls")),
+    path("auth/", include("users.urls")),
 ]
 
 schema_view = get_schema_view(
@@ -48,9 +54,13 @@ if settings.DEBUG:
             name="schema-swagger-ui",
         ),
         re_path(
-            r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+            r"^redoc/$",
+            schema_view.with_ui("redoc", cache_timeout=0),
+            name="schema-redoc",
         ),
     ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) #pragma: no cover
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )  # pragma: no cover

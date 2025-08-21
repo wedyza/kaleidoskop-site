@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0005_category_parent_code'),
+        ("api", "0005_category_parent_code"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='UOM',
-            field=models.CharField(max_length=5, null=True, verbose_name='Единица измерения'),
+            model_name="item",
+            name="UOM",
+            field=models.CharField(
+                max_length=5, null=True, verbose_name="Единица измерения"
+            ),
         ),
         migrations.AddField(
-            model_name='item',
-            name='parent_code',
-            field=models.CharField(max_length=20, null=True, verbose_name='Код родителя'),
+            model_name="item",
+            name="parent_code",
+            field=models.CharField(
+                max_length=20, null=True, verbose_name="Код родителя"
+            ),
         ),
     ]
