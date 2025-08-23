@@ -10,6 +10,15 @@
 
 .news_title {
   color: var(--black);
+  position: relative;
+}
+
+.news_title-icon {
+  position: absolute;
+  z-index: 2;
+  top: -55px;
+  right: -110px;
+  width: 180px;
 }
 
 .news_title__grey {

@@ -1,5 +1,6 @@
 import './news.scss'
 import news from '../../img/news.jpg'
+import saw from '../../img/saw.png'
 
 function News () {
   return (
@@ -7,6 +8,9 @@ function News () {
       <div className="news-head">
         <h2 className='news_title inter28-600'>
           <span className='news_title__grey'>Пока другие пилят смету — </span>мы пилим новости
+          <div className="news_title-icon">
+            <img src={saw} alt="" />
+          </div>
         </h2>
         <div className="news_open inter14-400 accent-border">Все новости</div>
       </div>
