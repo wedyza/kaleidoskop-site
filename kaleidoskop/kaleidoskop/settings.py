@@ -14,6 +14,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from django.utils.timezone import timedelta
+import django
+from django.utils.encoding import force_str
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+django.utils.encoding.force_text = force_str
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django_elasticsearch_dsl',
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -48,6 +55,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "api.apps.ApiConfig",
     "receiver.apps.ReceiverConfig",
+    "search.apps.SearchConfig"
 ]
 
 MIDDLEWARE = [
@@ -175,4 +183,13 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=60),
+}
+
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": "https://localhost:9200",
+        "http_auth": ("elastic", "MyPassword"),
+        'verify_certs': False,
+        'ca_certs' : None,
+    }
 }

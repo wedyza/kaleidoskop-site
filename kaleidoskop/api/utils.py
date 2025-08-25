@@ -7,4 +7,4 @@ alphabet = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', '�
             'я': 'ya'}
 
 def slugify(s):
-    return django_slugify(''.join(alphabet.get(w, w) for w in s.lower()))
+    return django_slugify('-'.join(alphabet.get(w, w) for w in s.lower()))

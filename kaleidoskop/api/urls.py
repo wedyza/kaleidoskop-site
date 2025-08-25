@@ -9,8 +9,9 @@ from .views import (
     CommentViewSet,
     WishlistViewSet,
     CategoryViewSet,
-    UsersViewSet,
+    UsersViewSet
 )
+
 
 
 router = routers.DefaultRouter()
@@ -26,6 +27,7 @@ urlpatterns = [
     path("", include(router.urls)),
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
+    # path("search/", include("search.urls"))
 ]
 
 schema_view = get_schema_view(

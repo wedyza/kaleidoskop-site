@@ -33,7 +33,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "price",
             "article",
             "category",
-            "production_country",
+            "country",
             "remains",
         )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
 
