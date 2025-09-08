@@ -4,6 +4,7 @@ from enum import Enum
 from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
 from .utils import slugify
+
 User = get_user_model()
 
 
@@ -31,7 +32,7 @@ class Category(UUIDModel):
 
     @property
     def slug(self):
-        return slugify(self.title) + '-' + slugify(self.code)
+        return slugify(self.title) + "-" + slugify(self.code)
 
 
 class Item(UUIDModel):
@@ -63,7 +64,8 @@ class Item(UUIDModel):
 
     @property
     def slug(self):
-        return slugify(self.title) + '-' + slugify(self.article)
+        return slugify(self.title) + "-" + slugify(self.article)
+
 
 class Cart(UUIDModel):
     user = models.ForeignKey(
@@ -72,10 +74,12 @@ class Cart(UUIDModel):
     bought = models.BooleanField("Оплаченная корзина", default=False)
     current_cart = models.BooleanField("Текущая корзина", default=True)
 
+
 class PaymentStatusChoices(Enum):
     PENDING = "PENDING"
     SUCCESS = "SUCCESS"
     ERROR = "ERROR"
+
 
 class Order(UUIDModel):
     user = models.ForeignKey(
@@ -91,6 +95,7 @@ class Order(UUIDModel):
         default=PaymentStatusChoices.PENDING,
     )
 
+
 class Like(UUIDModel):
     item = models.ForeignKey(
         Item, null=False, on_delete=models.CASCADE, verbose_name="Товар"
@@ -99,6 +104,7 @@ class Like(UUIDModel):
         User, on_delete=models.CASCADE, null=False, verbose_name="Пользователь"
     )
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
+
 
 class CartItem(UUIDModel):
     item = models.ForeignKey(
@@ -179,4 +185,4 @@ class Remains(UUIDModel):
 
 
 # class Media(models.Model):
-    # pass
+# pass

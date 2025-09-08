@@ -63,6 +63,14 @@ services:
       - rabbitmq
     command: celery -A kaleidoskop worker -l INFO
 
+  elasticsearch:
+    image: elasticsearch:8.17.10
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=MyPassword
 volumes:
  pg_data:
  minio-storage:

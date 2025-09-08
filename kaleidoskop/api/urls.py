@@ -9,9 +9,8 @@ from .views import (
     CommentViewSet,
     WishlistViewSet,
     CategoryViewSet,
-    UsersViewSet
+    UsersViewSet,
 )
-
 
 
 router = routers.DefaultRouter()

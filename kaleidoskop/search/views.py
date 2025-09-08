@@ -9,10 +9,11 @@ from django_elasticsearch_dsl import Document
 from api.serializers import ItemSerializer
 from .documents import ItemDocument
 
-class PaginatedElasticSearchAPIView(): #Общий клаасс для поиска
+
+class PaginatedElasticSearchAPIView:  # Общий клаасс для поиска
     serializer_class = Document
     document_class = Document
-    
+
     @abc.abstractmethod
     def generate_q_expression(self, query):
         """This method should be overridden
@@ -20,7 +21,6 @@ class PaginatedElasticSearchAPIView(): #Общий клаасс для поис�
 
     def get_queryset(self):
         return super().get_queryset()
-    
 
     def get(self, request, query):
         # try:
@@ -37,7 +37,7 @@ class PaginatedElasticSearchAPIView(): #Общий клаасс для поис�
         return Response(serializer.data)
         # except Exception as e:
         #     return HttpResponse(e, status=500)
-        
+
 
 class ItemSearchView(PaginatedElasticSearchAPIView):
     serializer_class = ItemSerializer
@@ -45,11 +45,5 @@ class ItemSearchView(PaginatedElasticSearchAPIView):
 
     def generate_q_expression(self, query):
         return Q(
-            'multi_match',
-            query=query,
-            fields = [
-                'title',
-                'category'
-            ],
-            fuzziness = 'auto'
+            "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
         )

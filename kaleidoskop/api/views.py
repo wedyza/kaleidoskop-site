@@ -1,7 +1,6 @@
 from rest_framework import views, viewsets, permissions, status, mixins, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from .paginators import CustomPagination
 from .serializers import (
@@ -14,7 +13,6 @@ from .serializers import (
     UserSerializer,
 )
 from .models import Cart, Category, Item, Like, Comment, CartItem
-from django_filters.rest_framework import DjangoFilterBackend
 from search.views import PaginatedElasticSearchAPIView
 from search.documents import ItemDocument
 from elasticsearch_dsl import Q
@@ -32,10 +30,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ("title",)
 
-    @swagger_auto_schema(manual_parameters=[
-        openapi.Parameter('page_size', openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
-        openapi.Parameter('page', openapi.IN_QUERY, type=openapi.TYPE_NUMBER)
-    ])
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
+            openapi.Parameter("page", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
+        ]
+    )
     @action(
         methods=["GET"],
         detail=True,
@@ -72,16 +72,10 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
 
     def generate_q_expression(self, query):
         return Q(
-            'multi_match',
-            query=query,
-            fields = [
-                'title',
-                'category'
-            ],
-            fuzziness = 'auto'
+            "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
         )
 
-    @action(detail=False, methods=["GET"], url_path='search/(?P<queryset>.*)')
+    @action(detail=False, methods=["GET"], url_path="search/(?P<queryset>.*)")
     def search(self, request, queryset=None):
         try:
             query = self.generate_q_expression(queryset)
@@ -93,7 +87,6 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             return self.get_paginated_response(serializer.data)
         except Exception as e:
             return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
     @action(
         detail=True,
@@ -122,7 +115,7 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
         permission_classes=(permissions.IsAuthenticated,),
         serializer_class=SwitchSerializer,
     )
-    def add_to_card(self, request, pk):
+    def add_to_cart(self, request, pk):
         data = self.get_serializer(data=request.data)
 
         if not data.is_valid():

@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'django_elasticsearch_dsl',
+    "django_elasticsearch_dsl",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "api.apps.ApiConfig",
     "receiver.apps.ReceiverConfig",
-    "search.apps.SearchConfig"
+    "search.apps.SearchConfig",
 ]
 
 MIDDLEWARE = [
@@ -189,7 +189,7 @@ ELASTICSEARCH_DSL = {
     "default": {
         "hosts": "https://localhost:9200",
         "http_auth": ("elastic", "MyPassword"),
-        'verify_certs': False,
-        'ca_certs' : None,
+        "verify_certs": False,
+        "ca_certs": None,
     }
 }
