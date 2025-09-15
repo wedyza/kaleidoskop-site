@@ -1,14 +1,14 @@
 from rest_framework import serializers
-from api.models import Category, Item, Remains, Warehouse
+from api.models import Category, Item, Nomenclature, Remains, Warehouse
 from rest_framework.exceptions import ValidationError
 from .functions import get_or_create_item, get_or_create_remain
 
 
-class CategoryCreateSerializer(serializers.ModelSerializer):
+class NomenclatureCreateSerializer(serializers.ModelSerializer):
     parent_code = serializers.CharField(allow_null=True)
 
     class Meta:
-        model = Category
+        model = Nomenclature
         fields = ("title", "code", "parent", "parent_code")
         read_only_fields = ("parent",)
 
@@ -36,7 +36,7 @@ class ItemListCreateSerializer(serializers.ListSerializer):
         created_items.extend(Item.objects.bulk_create(items_to_create))
         Item.objects.bulk_update(
             items_to_update,
-            fields=["title", "parent_code", "category", "price", "article"],
+            fields=["title", "parent_code", "nomenclature", "price", "article"],
         )
         return created_items
 

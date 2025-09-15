@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Item, Cart, CartItem, Like, Comment, Remains
+from .models import Category, Item, Cart, CartItem, Like, Comment, NomenclatureCategory, Remains, Nomenclature
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -10,7 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = "__all__"
+        exclude = ('nomenclatures', )
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):
@@ -32,7 +32,6 @@ class ItemSerializer(serializers.ModelSerializer):
             "description",
             "price",
             "article",
-            "category",
             "country",
             "remains",
         )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
@@ -76,3 +75,21 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "first_name", "last_name", "email", "sex")  # avatar
+
+
+class NomenclatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nomenclature
+        fields = '__all__'
+
+
+# class NomenclatureIDSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Nomenclature
+#         fields = ('id',)
+
+
+class NomenclatureCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NomenclatureCategory
+        exclude = ('id',)

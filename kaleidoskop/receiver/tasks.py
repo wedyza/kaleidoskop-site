@@ -1,14 +1,14 @@
 import time
 from celery import shared_task
 from api.models import Category
-from .serializers import CategoryCreateSerializer
+from .serializers import NomenclatureCreateSerializer
 
 
 @shared_task
-def parse_categories(json: dict):
-    categories = CategoryCreateSerializer(data=json)
-    if categories.is_valid():
-        categories.save()
+def parse_nomenclatures(json: dict):
+    nomenclatures = NomenclatureCreateSerializer(data=json)
+    if nomenclatures.is_valid():
+        nomenclatures.save()
         return True
-    print(categories.errors)
+    print(nomenclatures.errors)
     return False

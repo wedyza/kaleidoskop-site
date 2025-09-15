@@ -3,20 +3,23 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import permissions
-from .tasks import parse_categories
+from .tasks import parse_nomenclatures
 from django.conf import settings
 import json
 from .serializers import (
-    CategoryCreateSerializer,
+    NomenclatureCreateSerializer,
     ItemCreateSerializer,
     RemainsReceiveSerializer,
 )
-from .functions import fillup_categories_with_parents, fillup_items_with_parents
+from .functions import fillup_nomenclatures_with_parents, fillup_items_with_parents
+from django_elasticsearch_dsl.registries import registry
+from search.documents import ItemDocument
+from api.models import Item
 
 # Create your views here.
 
 
-class ReceiveCategoriesView(APIView):
+class ReceiveNomenclaturesView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
@@ -27,18 +30,24 @@ class ReceiveCategoriesView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
         # print(request.data)
-        categories = CategoryCreateSerializer(data=request.data, many=True)
-        if categories.is_valid():
-            categories.save()
-            fillup_categories_with_parents()
+        # print(json.dumps(request.data, ensure_ascii=False, indent=4))
+        nomenclatures = NomenclatureCreateSerializer(data=request.data, many=True)
+        if nomenclatures.is_valid():
+            nomenclatures.save()
+            fillup_nomenclatures_with_parents()
         else:
-            print(categories.errors)
-        # parse_categories.delay(request.data)
+            print(nomenclatures.errors)
+        parse_nomenclatures(request.data)
         return Response({"message": "hi"})
 
 
 class ReceiveItemsView(APIView):
     permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        ItemDocument().update(Item.objects.all())
+        return Response("hi")
+
 
     def post(self, request):
         api_key = request.headers.get("x-api-key")
@@ -51,6 +60,7 @@ class ReceiveItemsView(APIView):
         if items.is_valid():
             items.save()
             fillup_items_with_parents()
+            ItemDocument().update(Item.objects.all())
         else:
             print(items.errors)
         # print(json.dumps(request.data, ensure_ascii=False, indent=4))

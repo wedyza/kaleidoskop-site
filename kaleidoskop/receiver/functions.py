@@ -1,6 +1,5 @@
-from api.models import Category, Item, Remains, Warehouse
+from api.models import Category, Item, Nomenclature, Remains, Warehouse
 from django.db.models import Q
-
 
 def get_or_create_item(item) -> tuple[Item, bool]:
     db_item = Item.objects.filter(
@@ -12,7 +11,7 @@ def get_or_create_item(item) -> tuple[Item, bool]:
     db_item.title = item["title"]
     db_item.parent_code = item["parent_code"]
     db_item.article = item["article"]
-    db_item.category = None
+    db_item.nomenclature = None
     return db_item, False
 
 
@@ -36,21 +35,24 @@ def get_or_create_remain(remain) -> tuple[Remains | None, bool]:
     return db_remain, False
 
 
-def fillup_categories_with_parents():
-    categories = Category.objects.exclude(parent_code=None).filter(parent=None).all()
-    for category in categories:
+def fillup_nomenclatures_with_parents():
+    nomenclatures = Nomenclature.objects.exclude(parent_code=None).filter(parent=None).all()
+    for nomenclature in nomenclatures:
         try:
-            category.parent = Category.objects.get(code=category.parent_code)
+            nomenclature.parent = Nomenclature.objects.get(code=nomenclature.parent_code)
         except:
             pass
-    Category.objects.bulk_update(categories, fields=["parent"])
+    Nomenclature.objects.bulk_update(nomenclatures, fields=["parent"])
 
 
 def fillup_items_with_parents():
-    items = Item.objects.exclude(parent_code=None).filter(category=None).all()
+    items = Item.objects.exclude(parent_code=None).filter(nomenclature=None).all()
+    c = 0
     for item in items:
+        c += 1
         try:
-            item.category = Category.objects.get(code=item.parent_code)
+            item.nomenclature = Nomenclature.objects.get(code=item.parent_code)
         except:
-            pass
-    Item.objects.bulk_update(items, fields=["category"])
+            continue
+    print('начинается булка')
+    Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)

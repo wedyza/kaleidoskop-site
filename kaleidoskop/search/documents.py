@@ -7,9 +7,9 @@ from api.models import Category, Item
 
 @registry.register_document
 class ItemDocument(Document):
-    category = fields.ObjectField(
-        properties={"code": fields.TextField(), "title": fields.TextField()}
-    )
+    # category = fields.ObjectField(
+    #     properties={"title": fields.TextField()}
+    # )
 
     class Index:
         name = "items"
@@ -18,19 +18,18 @@ class ItemDocument(Document):
     class Django:
         model = Item
         fields = ["code", "article", "title", "country"]
-        related_models = [Category]
 
 
-@registry.register_document
-class CategoryDocument(Document):
-    parent = fields.ObjectField(
-        properties={"code": fields.TextField(), "title": fields.TextField()}
-    )
+# @registry.register_document
+# class CategoryDocument(Document):
+#     parent = fields.ObjectField(
+#         properties={"code": fields.TextField(), "title": fields.TextField()}
+#     )
 
-    class Index:
-        name = "categories"
-        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+#     class Index:
+#         name = "categories"
+#         settings = {"number_of_shards": 1, "number_of_replicas": 0}
 
-    class Django:
-        model = Category
-        fields = ["title", "code"]
+#     class Django:
+#         model = Category
+#         fields = ["title", "code"]

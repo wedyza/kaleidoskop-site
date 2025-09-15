@@ -10,6 +10,7 @@ from .views import (
     WishlistViewSet,
     CategoryViewSet,
     UsersViewSet,
+    AdminNomenclaturesViewSet
 )
 
 
@@ -20,12 +21,14 @@ router.register("comments", CommentViewSet, basename="comments")
 router.register("users/me/wishlist", WishlistViewSet, basename="wishlist")
 router.register("categories", CategoryViewSet)
 router.register("users", UsersViewSet, basename="users")
+router.register("admin/nomenclatures", AdminNomenclaturesViewSet, basename='nomenclantures')
 # router.register("users/me/cart", CartViewSet, basename='cart')
 
 urlpatterns = [
     path("", include(router.urls)),
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
+    # path("admin/nomenclatures", AdminNomenclaturesView)
     # path("search/", include("search.urls"))
 ]
 

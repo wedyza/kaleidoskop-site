@@ -15,6 +15,26 @@ class UUIDModel(models.Model):
         abstract = True
 
 
+class Nomenclature(UUIDModel):
+    title = models.CharField("Название", max_length=100)
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        default=None,
+        verbose_name="Родительская номенклатура",
+        on_delete=models.SET_NULL,
+        related_name="daughter",
+    )
+    code = models.CharField("Код", max_length=20, unique=True, null=False)
+    parent_code = models.CharField("Код родителя", max_length=20, null=True)
+    categories = models.ManyToManyField(
+        'Category',
+        through='NomenclatureCategory',
+        related_name='categories'
+    )
+
+
+
 # Create your models here.
 class Category(UUIDModel):
     title = models.CharField("Название", max_length=100)
@@ -26,8 +46,13 @@ class Category(UUIDModel):
         on_delete=models.SET_NULL,
         related_name="daughter",
     )
-    code = models.CharField("Код", max_length=20, unique=True, null=False)
-    parent_code = models.CharField("Код родителя", max_length=20, null=True)
+    nomenclatures = models.ManyToManyField(
+        Nomenclature,
+        through='NomenclatureCategory',
+        related_name='nomenclatures'
+    )
+    # code = models.CharField("Код", max_length=20, unique=True, null=False)
+    # parent_code = models.CharField("Код родителя", max_length=20, null=True)
     # img = imagefield
 
     @property
@@ -35,12 +60,25 @@ class Category(UUIDModel):
         return slugify(self.title) + "-" + slugify(self.code)
 
 
-class Item(UUIDModel):
-    title = models.CharField("Название", max_length=100)
+class NomenclatureCategory(UUIDModel):
     category = models.ForeignKey(
         Category,
+        verbose_name='Категория',
+        on_delete=models.CASCADE
+    )
+    nomenclature = models.ForeignKey(
+        Nomenclature,
+        verbose_name='Номенклатура',
+        on_delete=models.CASCADE
+    )
+
+
+class Item(UUIDModel):
+    title = models.CharField("Название", max_length=100)
+    nomenclature = models.ForeignKey(
+        Nomenclature,
         null=True,
-        verbose_name="Категория",
+        verbose_name="Номенклатура",
         related_name="items",
         on_delete=models.DO_NOTHING,
     )
