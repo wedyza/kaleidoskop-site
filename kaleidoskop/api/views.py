@@ -22,6 +22,7 @@ from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .functions import get_nomenclatures
+import httpx
 
 User = get_user_model()
 
@@ -239,3 +240,28 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TestView(views.APIView):
+    @swagger_auto_schema(manual_parameters=[
+            openapi.Parameter('product_id', openapi.IN_QUERY, description='UUID продукта', type=openapi.TYPE_STRING),
+            openapi.Parameter('n', openapi.IN_QUERY, description='Количество рекомендаций (default n = 10)', type=openapi.TYPE_INTEGER),
+        ])
+    def get(self, request):
+        """
+        Тестовая функция для отладки модели
+        """
+        if 'product_id' not in request.GET:
+            return Response({"detail": "product_id must be in query!"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        product_id = request.GET['product_id']
+        n = 10 if 'n' not in request.GET else request.get['n']
+        try:
+            item = Item.objects.get(pk=product_id)
+        except:
+            return Response({"detail": "No item with that id!"}, status=status.HTTP_404_NOT_FOUND)
+        
+        response = httpx.post(
+            url="http://localhost:8081/recommendations", json={"product_id": product_id, "n": n}
+        )
+        return Response(response.json())

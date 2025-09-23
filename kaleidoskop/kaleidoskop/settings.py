@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "receiver.apps.ReceiverConfig",
     "search.apps.SearchConfig",
+    "recomendation_system.apps.RecomendationSystemConfig"
 ]
 
 MIDDLEWARE = [

@@ -10,7 +10,8 @@ from .views import (
     WishlistViewSet,
     CategoryViewSet,
     UsersViewSet,
-    AdminNomenclaturesViewSet
+    AdminNomenclaturesViewSet,
+    TestView
 )
 
 
@@ -28,15 +29,16 @@ urlpatterns = [
     path("", include(router.urls)),
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
+    path("test", TestView.as_view())
     # path("admin/nomenclatures", AdminNomenclaturesView)
     # path("search/", include("search.urls"))
 ]
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="site construct API",
+        title="kaleidoskop API",
         default_version="v1",
-        description="Документация для приложения site construct",
+        description="Документация для приложения kaleidoskop",
         # terms_of_service="URL страницы с пользовательским соглашением",
         contact=openapi.Contact(email="wedyza@mail.ru"),
         license=openapi.License(name="BSD License"),

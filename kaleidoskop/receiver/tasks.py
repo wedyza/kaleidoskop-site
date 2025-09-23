@@ -1,7 +1,8 @@
 import time
 from celery import shared_task
-from api.models import Category
+from api.models import Category, Item
 from .serializers import NomenclatureCreateSerializer
+import httpx
 
 
 @shared_task
