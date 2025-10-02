@@ -194,3 +194,4 @@ ELASTICSEARCH_DSL = {
         "ca_certs": None,
     }
 }
+

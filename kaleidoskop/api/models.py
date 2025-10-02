@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from enum import Enum
 from django.core.validators import MinValueValidator, MaxValueValidator
+from enum import Enum
 import uuid
 from .utils import slugify
 
@@ -120,18 +120,49 @@ class PaymentStatusChoices(Enum):
 
 
 class Order(UUIDModel):
+    class OrderStatus(models.TextChoices):
+        ON_APPROVE = "На согласовании"
+        APPROVED = 'Согласован'
+        ON_REALISATION = 'На реализации'
+        REALISED = 'Реализован'
+
+    class DeliveryMethods(models.TextChoices):
+        SELF_PICKUP = 'Самовывоз'
+        DELIVERY = 'Доставка'
+
+    class PaymentMethods(models.TextChoices):
+        CASH = 'Наличными'
+        CREDIT_CARD = 'Картой'
+        ONLINE = 'Онлайн' # СБП / Онлайн банкинг
+
+    address = models.CharField("Адрес", null=False, max_length=100)
+    address_longtitude = models.DecimalField(
+        "Долгота", max_digits=9, decimal_places=6, null=True
+    )
+    address_latitude = models.DecimalField("Широта", max_digits=9, decimal_places=6, null=True)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=False, verbose_name="Пользователь"
     )
     total_price = models.IntegerField("Цена", null=False)
-    cart = models.ForeignKey(
-        Cart, null=False, on_delete=models.DO_NOTHING, verbose_name="Корзина"
+    cart = models.OneToOneField(
+        Cart, null=False, on_delete=models.DO_NOTHING, verbose_name="Корзина", 
     )
     status = models.TextField(
         "Статус",
-        choices=[(status.name, status.value) for status in PaymentStatusChoices],
-        default=PaymentStatusChoices.PENDING,
+        choices=OrderStatus.choices,
+        default=OrderStatus.ON_APPROVE,
     )
+    delivery_method = models.TextField(
+        'Способ доставки',
+        choices=DeliveryMethods.choices,
+        default=DeliveryMethods.SELF_PICKUP
+    )
+    payment_method = models.TextField(
+        'Способ оплаты',
+        choices=PaymentMethods.choices,
+        default=PaymentMethods.ONLINE
+    )
+    code = models.CharField('Код', null=True, unique=True, max_length=20) # Для 1С
 
 
 class Like(UUIDModel):
@@ -156,6 +187,7 @@ class CartItem(UUIDModel):
         related_name="items",
     )
     amount = models.IntegerField("Количество")
+    marked_for_order = models.BooleanField("Помечено для заказа", default=False)
 
 
 # class Banner(models.Model):

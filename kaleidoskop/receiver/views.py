@@ -15,11 +15,13 @@ from .functions import fillup_nomenclatures_with_parents, fillup_items_with_pare
 from django_elasticsearch_dsl.registries import registry
 from search.documents import ItemDocument
 from api.models import Item
+from drf_yasg.utils import swagger_auto_schema
 
 # Create your views here.
 
 
 class ReceiveNomenclaturesView(APIView):
+    swagger_schema = None
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
@@ -42,12 +44,12 @@ class ReceiveNomenclaturesView(APIView):
 
 
 class ReceiveItemsView(APIView):
+    swagger_schema = None
     permission_classes = (permissions.AllowAny,)
-
+    
     def get(self, request):
         ItemDocument().update(Item.objects.all())
         return Response("hi")
-
 
     def post(self, request):
         api_key = request.headers.get("x-api-key")
@@ -68,6 +70,7 @@ class ReceiveItemsView(APIView):
 
 
 class ReceiveRemainsView(APIView):
+    swagger_schema = None
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):

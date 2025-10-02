@@ -4,18 +4,21 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from .paginators import CustomPagination
 from typing import List
+from django.core.exceptions import ValidationError
 from .serializers import (
     CartSerializer,
     CategorySerializer,
     ItemSerializer,
     LikeSerializer,
     CommentSerializer,
+    ListCartItemSerializer,
     NomenclatureCategorySerializer,
     NomenclatureSerializer,
+    OrderSerializer,
     SwitchSerializer,
     UserSerializer,
 )
-from .models import Cart, Category, Item, Like, Comment, CartItem, Nomenclature, NomenclatureCategory
+from .models import Cart, Category, Item, Like, Comment, CartItem, Nomenclature, NomenclatureCategory, Order
 from search.views import PaginatedElasticSearchAPIView
 from search.documents import ItemDocument
 from elasticsearch_dsl import Q
@@ -23,9 +26,11 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .functions import get_nomenclatures
 import httpx
+from django.db.models import F, Sum
 
 User = get_user_model()
 
+#todo list - подумать над админкой, форматом хранения файлов, интеграцией кэша, тестами, заняться заказами в 1С (попробовать сделать работающий HTTP сервис)
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -194,7 +199,7 @@ class UsersViewSet(
         url_path="me/cart",
         serializer_class=CartSerializer,
     )
-    def my_cart(self, request):
+    def my_cart(self, request): #Убрать количество наверное
         current_cart = (
             Cart.objects.filter(bought=False)
             .filter(current_cart=True)
@@ -246,7 +251,7 @@ class TestView(views.APIView):
     @swagger_auto_schema(manual_parameters=[
             openapi.Parameter('product_id', openapi.IN_QUERY, description='UUID продукта', type=openapi.TYPE_STRING),
             openapi.Parameter('n', openapi.IN_QUERY, description='Количество рекомендаций (default n = 10)', type=openapi.TYPE_INTEGER),
-        ])
+        ], operation_summary="Тестовый роут")
     def get(self, request):
         """
         Тестовая функция для отладки модели
@@ -265,3 +270,76 @@ class TestView(views.APIView):
             url="http://localhost:8081/recommendations", json={"product_id": product_id, "n": n}
         )
         return Response(response.json())
+
+
+
+class CartItemView(views.APIView):
+    def validate(self, data):
+        if 'ids' not in data.keys() or 'enable' not in data.keys():
+            raise ValidationError("Missing ids or enable statement")
+        if len(data['ids']) != len(set(data['ids'])):
+            raise ValidationError("Multiple updates to a single element found")
+        return data['ids'], data['enable']
+    
+    @swagger_auto_schema(request_body=ListCartItemSerializer, operation_summary="Сюда просто [uuid1, uuid2, uuid3...]")
+    def post(self, request):
+        """
+        То есть в целом формат будет такой:
+        {
+            \t"ids": [uuid1, uuid2, uuid3...],
+            \t"enable": True/False
+        }
+        """
+        ids, enable = self.validate(request.data)
+        queryset = CartItem.objects.filter(id__in=ids).update(marked_for_order=enable)
+        return Response({"detail": f"Successfully marked {len(ids)} items as {enable==1}"}, status=status.HTTP_200_OK)
+        
+
+class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+    serializer_class = OrderSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).all()
+    
+    @swagger_auto_schema(manual_parameters=[
+            openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
+            openapi.Parameter("page", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
+        ])
+    def list(self, request, *args, **kwargs):
+        orders = self.get_queryset()
+        page = self.paginate_queryset(orders)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)
+
+
+    def create(self, request, *args, **kwargs): #  закончить и подумать насчет системы с корзинами
+        order = self.get_serializer(data=request.data)
+        if not order.is_valid():
+            return Response(order.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        cart = Cart.objects.filter(bought=False).filter(current_cart=True).filter(user=self.request.user).first()
+        if cart is None:
+            raise ValidationError("Невозможно создать заказ с пустой корзиной!")
+            # return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        total_sum = cart.items.filter(marked_for_order=True).aggregate(total=Sum(F("item__price") * F("amount")))["total"]
+        if total_sum == 0:
+            raise ValidationError("Невозможно создать заказ с пустой корзиной!")
+            # return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        aviable_to_create = cart.items.filter(marked_for_order=True).filter(amount__lt=Sum("item__remains__count")).count() == cart.items.count()
+        if not aviable_to_create:
+            raise ValidationError("Невозможно создать заказ. Не хватает товаров на складе")
+            # return Response({"detail": "Невозможно создать заказ. Не хватает товаров на складе"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Это после отправки в 1С и получении кода товара
+        # instance = order.save(user=self.request.user, code=code)
+
+        return Response({"detail": "All tests passed"}, status=status.HTTP_200_OK)

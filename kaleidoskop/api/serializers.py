@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Item, Cart, CartItem, Like, Comment, NomenclatureCategory, Remains, Nomenclature
+from .models import Category, Item, Cart, CartItem, Like, Comment, NomenclatureCategory, Order, Remains, Nomenclature
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -42,7 +42,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ("item", "amount")
+        fields = ("item", "amount", 'id')
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -93,3 +93,17 @@ class NomenclatureCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = NomenclatureCategory
         exclude = ('id',)
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        exclude = ("total_price",)
+        read_only_fields = ("user", "cart", "id")
+
+
+class ListCartItemSerializer(serializers.Serializer):
+    ids = serializers.ListField(
+        child=serializers.UUIDField()
+    )
+    enable = serializers.BooleanField()

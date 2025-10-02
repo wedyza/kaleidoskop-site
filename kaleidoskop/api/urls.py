@@ -7,11 +7,13 @@ from rest_framework import permissions, routers
 from .views import (
     ItemViewSet,
     CommentViewSet,
+    OrderViewSet,
     WishlistViewSet,
     CategoryViewSet,
     UsersViewSet,
     AdminNomenclaturesViewSet,
-    TestView
+    TestView, 
+    CartItemView
 )
 
 
@@ -23,13 +25,15 @@ router.register("users/me/wishlist", WishlistViewSet, basename="wishlist")
 router.register("categories", CategoryViewSet)
 router.register("users", UsersViewSet, basename="users")
 router.register("admin/nomenclatures", AdminNomenclaturesViewSet, basename='nomenclantures')
+router.register("orders", OrderViewSet, basename='orders')
 # router.register("users/me/cart", CartViewSet, basename='cart')
 
 urlpatterns = [
     path("", include(router.urls)),
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
-    path("test", TestView.as_view())
+    path("test", TestView.as_view()),
+    path("cart_items/switch_to_order/", CartItemView.as_view())
     # path("admin/nomenclatures", AdminNomenclaturesView)
     # path("search/", include("search.urls"))
 ]
