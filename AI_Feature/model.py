@@ -187,7 +187,7 @@ class ProductRecommendationSystem:
 
         return recommendations
 
-    def get_recommendations(self, product_id: int, n_recommendations: int = 10) -> List[Dict]:
+    def get_recommendations(self, product_id: int, n_recommendations: int = 10) -> List[Dict] | None:
         """
         Универсальный метод получения рекомендаций
         """
@@ -195,6 +195,7 @@ class ProductRecommendationSystem:
             return self.get_recommendations_tfidf(product_id, n_recommendations)
         elif self.model_type == 'sentence_bert':
             return self.get_recommendations_sentence_bert(product_id, n_recommendations)
+        return None
 
     def save_model(self, filepath: str):
         """
@@ -228,39 +229,3 @@ class ProductRecommendationSystem:
         if self.model_type == 'sentence_bert':
             faiss_path = filepath.replace('.pkl', '_faiss.index')
             self.faiss_index = faiss.read_index(faiss_path)
-
-
-# Пример использования системы
-def example_usage():
-    """
-    Пример использования рекомендательной системы
-    """
-
-    # Создание тестовых данных (в реальности загружается из БД)
-    products_data = {
-        'id': list(range(1, 1001)),  # 1000 товаров для примера
-        'name': [f'Товар {i}' for i in range(1, 1001)],
-        'characteristics': [f'Характеристики товара {i}' for i in range(1, 1001)]
-    }
-    products_df = pd.DataFrame(products_data)
-
-    # Инициализация системы
-    recommender = ProductRecommendationSystem(model_type='sentence_bert')
-
-    # Обучение модели
-    recommender.fit(products_df)
-
-    # Получение рекомендаций для товара с ID=1
-    recommendations = recommender.get_recommendations(product_id=1, n_recommendations=5)
-
-    print("Рекомендации для товара ID=1:")
-    for rec in recommendations:
-        print(f"Ранг {rec['rank']}: {rec['name']} (схожесть: {rec['similarity_score']:.3f})")
-
-    # Сохранение модели
-    recommender.save_model('recommendation_model.pkl')
-
-    return recommender
-
-if __name__ == "__main__":
-    recommender = example_usage()

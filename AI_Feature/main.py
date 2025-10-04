@@ -5,8 +5,16 @@ from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel
 import pandas as pd
+import json
+import redis
+
 
 app = FastAPI()
+r = redis.StrictRedis(
+    host='localhost',
+    port=6379,
+    decode_responses=True
+)
 
 
 app.add_middleware(
@@ -76,6 +84,10 @@ async def get_recommendations(request: RecommendationRequest):
     global recommender
     if recommender is None:
         raise HTTPException(status_code=503, detail="Модель не загружена")
+
+    #проверка на кэш
+    try:
+        cache = r.get
 
     try:
         recommendations = recommender.get_recommendations(
