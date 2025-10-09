@@ -85,10 +85,6 @@ async def get_recommendations(request: RecommendationRequest):
     if recommender is None:
         raise HTTPException(status_code=503, detail="Модель не загружена")
 
-    #проверка на кэш
-    try:
-        cache = r.get
-
     try:
         recommendations = recommender.get_recommendations(
             product_id=request.product_id,

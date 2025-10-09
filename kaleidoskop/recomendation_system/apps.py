@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from .tasks import train_model
+from .tasks import train_content_based_model
 
 class RecomendationSystemConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"

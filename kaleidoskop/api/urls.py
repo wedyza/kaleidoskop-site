@@ -12,9 +12,9 @@ from .views import (
     CategoryViewSet,
     UsersViewSet,
     AdminNomenclaturesViewSet,
-    TestView, 
     CartItemView
 )
+from recomendation_system.views import TestView
 
 
 router = routers.DefaultRouter()
