@@ -8,7 +8,7 @@ from .Serializers import (
 )
 from django.contrib.auth import get_user_model
 from .utils import generate_otp
-from .tasks import send_otp_email
+from .tasks import send_otp_email, link_with_1c
 from rest_framework.authtoken.models import Token
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
@@ -21,7 +21,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 User = get_user_model()
 
 
-class RegisterView(APIView):
+class RegisterView(APIView): # Пока что разделим эту логику, но скорее всего позже совместим, чтобы сделать единой с логином. Просто добавим обработку в except
     permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(request_body=UserCreateSerializer)
@@ -35,7 +35,9 @@ class RegisterView(APIView):
         user.otp = otp
         user.otp_expires = timezone.now() + timezone.timedelta(minutes=15)
         user.save()
-        # send_otp_email.delay(new_user.data["email"], otp)
+        
+        link_with_1c(user)
+        send_otp_email(user.email, otp)
 
         return Response(  # pragma: no cover
             {

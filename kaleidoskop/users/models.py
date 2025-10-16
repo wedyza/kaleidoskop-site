@@ -20,6 +20,11 @@ class UserManager(BaseUserManager):  # pragma: no cover
         if admin:
             user.user_type = "Администратор"
             user.is_active = True
+            user.is_staff = True
+            user.is_superuser = True
+            user.set_password("admin")
+        else:
+            user.set_unusable_password()
         user.save()
         return user
 
@@ -31,9 +36,9 @@ class UserManager(BaseUserManager):  # pragma: no cover
 
 
 class CustomAbstractUser(AbstractUser):
-    class UserType(Enum):
-        BUYER = "Покупатель"
-        ADMIN = "Администратор"
+    # class UserType(Enum):
+    #     BUYER = "Покупатель"
+    #     ADMIN = "Администратор"
 
     class SexType(Enum):
         MALE = "Мужчина"
@@ -42,13 +47,12 @@ class CustomAbstractUser(AbstractUser):
     username = None
     USERNAME_FIELD = "email"
     objects = UserManager()
-    user_type = models.TextField(
-        "Тип пользователя",
-        choices=[(utype.name, utype.value) for utype in UserType],
-        default="Покупатель",
-    )
+    # user_type = models.TextField(
+    #     "Тип пользователя",
+    #     choices=[(utype.name, utype.value) for utype in UserType],
+    #     default="Покупатель",
+    # )
     email = models.EmailField(unique=True)
-    password = None
     last_login = None
     otp = models.CharField(max_length=6, null=True, blank=True)
     sex = models.TextField(
@@ -56,14 +60,33 @@ class CustomAbstractUser(AbstractUser):
         choices=[(sex.name, sex.value) for sex in SexType],
         null=True,
     )
+    phone_regex = RegexValidator(
+        regex=r'^\+7\d{10}$',
+        message='Номер телефона должен быть введен в формате +7XXXXXXXXXX.'
+    )
+    phone_number = models.CharField(
+        'Номер телефона',
+        validators=[phone_regex],
+        null=True,
+        max_length=12,
+        unique=True
+    )
     avatar = models.ImageField("Аватар", upload_to="avatars", null=True)
     REQUIRED_FIELDS = []
     otp_expires = models.DateTimeField("Время жизни otp", null=True, blank=True)
-    is_superuser = None
-    is_staff = None
+    # is_superuser = None
+    # is_staff = None
     date_joined = None
     first_name = models.CharField("Имя", max_length=30, null=True)
     last_name = models.CharField("Фамилия", max_length=30, null=True)
+    middle_name = models.CharField("Отчество", max_length=30, null=True)
+    code = models.CharField("Код", max_length=15, null=True)
 
     def __str__(self):
         return self.email
+    
+
+# from django.contrib.auth.admin import UserAdmin
+# class CustomAbstractAdminUser(UserAdmin):
+#     ordering = ['email']
+#     list_display = ['email']

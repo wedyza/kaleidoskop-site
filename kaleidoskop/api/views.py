@@ -25,8 +25,8 @@ from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .functions import get_nomenclatures
-import httpx
 from django.db.models import F, Sum
+from users.tasks import update_user_1c
 
 User = get_user_model()
 
@@ -189,6 +189,7 @@ class UsersViewSet(
         )
         if serializer.is_valid():
             serializer.save()
+            update_user_1c(request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors)
 
@@ -313,6 +314,8 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
             raise ValidationError("Невозможно создать заказ. Не хватает товаров на складе")
             # return Response({"detail": "Невозможно создать заказ. Не хватает товаров на складе"}, status=status.HTTP_400_BAD_REQUEST)
         
+        #Также надо будет создать проверку на место, куда будет доставляться заказ, не выходит ли за пределы калейдоскопа + сделать генерацию адресов, может быть стоит создат новую модель address, в которой будет храниться отдельно все значения для генерации адреса в Яндекс Картах, а также экспорта в 1С.    
+
         # Это после отправки в 1С и получении кода товара
         # instance = order.save(user=self.request.user, code=code)
 

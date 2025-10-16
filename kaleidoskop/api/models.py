@@ -32,6 +32,13 @@ class Nomenclature(UUIDModel):
         through='NomenclatureCategory',
         related_name='categories'
     )
+    class Meta:
+        verbose_name = 'Номенклатура'
+        verbose_name_plural = "Номенклатуры"
+
+    def __str__(self):
+        return self.title
+    
 
 
 
@@ -55,9 +62,18 @@ class Category(UUIDModel):
     # parent_code = models.CharField("Код родителя", max_length=20, null=True)
     # img = imagefield
 
+    
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = "Категории"
+
     @property
     def slug(self):
         return slugify(self.title) + "-" + slugify(self.code)
+    
+
+    def __str__(self):
+        return self.title
 
 
 class NomenclatureCategory(UUIDModel):
@@ -71,6 +87,11 @@ class NomenclatureCategory(UUIDModel):
         verbose_name='Номенклатура',
         on_delete=models.CASCADE
     )
+
+    
+    class Meta:
+        verbose_name = 'Номенклатура<->Категория'
+        verbose_name_plural = "Номенклатуры<->Категории"
 
 
 class Item(UUIDModel):
@@ -99,10 +120,19 @@ class Item(UUIDModel):
     parent_code = models.CharField("Код родителя", max_length=20, null=True)
     country = models.CharField("Страна-производитель", max_length=25, null=True)
     public = models.BooleanField("Доступен публично", default=False, null=False)
+    
+    class Meta:
+        verbose_name = 'Товар'
+        verbose_name_plural = "Товары"
 
+        
     @property
     def slug(self):
         return slugify(self.title) + "-" + slugify(self.article)
+    
+    
+    def __str__(self):
+        return self.title
 
 
 class Cart(UUIDModel):
@@ -111,6 +141,11 @@ class Cart(UUIDModel):
     )
     bought = models.BooleanField("Оплаченная корзина", default=False)
     current_cart = models.BooleanField("Текущая корзина", default=True)
+
+    
+    class Meta:
+        verbose_name = 'Корзина'
+        verbose_name_plural = "Корзины"
 
 
 class PaymentStatusChoices(Enum):
@@ -164,6 +199,11 @@ class Order(UUIDModel):
     )
     code = models.CharField('Код', null=True, unique=True, max_length=20) # Для 1С
 
+    
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = "Заказы"
+
 
 class Like(UUIDModel):
     item = models.ForeignKey(
@@ -173,6 +213,11 @@ class Like(UUIDModel):
         User, on_delete=models.CASCADE, null=False, verbose_name="Пользователь"
     )
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
+
+    
+    class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = "Избранное"
 
 
 class CartItem(UUIDModel):
@@ -188,6 +233,11 @@ class CartItem(UUIDModel):
     )
     amount = models.IntegerField("Количество")
     marked_for_order = models.BooleanField("Помечено для заказа", default=False)
+
+    
+    class Meta:
+        verbose_name = 'Товар в корзине'
+        verbose_name_plural = "Товары в корзинах"
 
 
 # class Banner(models.Model):
@@ -211,14 +261,24 @@ class Comment(UUIDModel):
         User, on_delete=models.CASCADE, null=False, verbose_name="Пользователь"
     )
 
+    
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = "Отзывы"
+
 
 class Warehouse(UUIDModel):
     name = models.CharField("Название", max_length=50)
     custom_name = models.CharField("Пользовательское название", max_length=50)
 
+    class Meta:
+        verbose_name = 'Склад'
+        verbose_name_plural = "Склады"
+
+
     def __str__(self):
         return self.custom_name
-
+    
 
 class Remains(UUIDModel):
     item = models.ForeignKey(
@@ -236,6 +296,15 @@ class Remains(UUIDModel):
         verbose_name="Склад",
         related_name="remains",
     )
+
+    
+    class Meta:
+        verbose_name = 'Остаток'
+        verbose_name_plural = "Остатки"
+
+    
+    def __str__(self):
+        return f"{self.item.title} - {self.warehouse.name}"
 
 
 # class SiteSettings(models.Model):

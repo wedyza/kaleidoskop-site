@@ -37,6 +37,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
+CONTAINER_LAUNCHER = False
 
 # Application definition
 
@@ -166,11 +167,14 @@ REST_FRAMEWORK = {
 # AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 # AWS_S3_ENDPOINT_URL = "http://localhost:9000"
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://rabbitmq")  # Когда создашь
-BROKER_URL = os.getenv("BROKER_URL", "amqp://guest:guest@rabbitmq:5672//")
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//")  # Когда пакуешь в контейнер поменять localhost->rabbitmq
+BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") # Когда пакуешь в контейнер поменять localhost->rabbitmq
+# CELERY_BACKEND_URL = os.getenv("CELERY_BACKEND_URL", "redis://localhost")
 
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
-
+USER_1C = os.getenv("USER_1C")
+PASSWORD_1C = os.getenv("PASSWORD_1C")
+SERVER_1C = "http://localhost/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else "http://188.68.80.72/demohttp/hs/apiv1"
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -195,3 +199,12 @@ ELASTICSEARCH_DSL = {
     }
 }
 
+# AUTHENTICATION_BACKENDS = [
+#    'django.contrib.auth.backends.ModelBackend',
+# ]
+
+# ESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_DOMAIN = None
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+LANGUAGE_CODE = 'ru-RU'

@@ -11,5 +11,5 @@ urlpatterns = [
         ValidateOTPView.as_view(),
         name="email-otp-validate",
     ),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh")
 ]
