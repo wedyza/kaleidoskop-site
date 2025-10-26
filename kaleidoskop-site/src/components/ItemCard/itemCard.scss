@@ -29,8 +29,8 @@
   bottom: 5px;
   right: 5px;
   color: var(--white);
-  padding: 4.5px 5px;
-  background-color: var(--accent);
+  padding: 6px;
+  background-color: var(--orange500);
   border-radius: var(--big-radius);
 }
 
@@ -42,7 +42,7 @@
 
 .item-card_original-price {
   text-decoration: line-through;
-  color: var(--black40);
+  color: var(--grey500);
 }
 
 .item-card_name-container {

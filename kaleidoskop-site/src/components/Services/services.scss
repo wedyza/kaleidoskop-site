@@ -1,5 +1,5 @@
 .services {
-  margin-top: 50px;
+  margin-top: 100px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 1fr;
@@ -45,8 +45,8 @@
 .service_link {
   width: fit-content;
   margin-top: auto;
-  color: var(--accent);
-  border-bottom: 1px solid var(--accent);
+  color: var(--orange500);
+  border-bottom: 1px solid var(--orange500);
 }
 
 .services-info {
@@ -57,9 +57,12 @@
   text-align: center;
 }
 
-.services-info_desc,
 .service_desc {
-  color: var(--black60);
+  color: var(--grey300);
+}
+
+.services-info_desc {
+  color: var(--grey400);
 }
 
 .services-img {

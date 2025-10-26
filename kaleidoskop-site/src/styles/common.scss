@@ -1,30 +1,61 @@
 :root {
   --white: #fff;
-  --text-color: #000;
-  --background: #F8F8F8;
-  --accent: #ED5B07;
-  --black60: rgba(0, 0, 0, 0.6);
-  --black40: rgba(0, 0, 0, 0.4);
-  --black30: rgba(0, 0, 0, 0.3);
-  --black20: rgba(0, 0, 0, 0.2);
-  //--black15: rgba(0, 0, 0, 0.15);
+  --black-r: #000;
+  --black-g: #161616;
   --black10: rgba(0, 0, 0, 0.1);
-  --white60: rgba(255, 255, 255, 0.6);
-  --white15: rgba(255, 255, 255, 0.15);
-  --grey: #727270;
-  --dark-grey: #161616;
+  --black30: rgba(0, 0, 0, 0.3);
+
+  --grey950: #262626;
+  --grey900: #3d3d3c;
+  --grey800: #454545;
+  --grey700: #4f4f4f;
+  --grey600: #5d5d5d;
+  --grey500: #727271;
+  --grey400: #888888;
+  --grey300: #b0b0b0;
+  --grey200: #d1d1d0;
+  --grey100: #e7e7e6;
+  --grey50: #F6F6F5;
+
+  --orange950: #3f100b;
+  --orange900: #752519;
+  --orange800: #912a1b;
+  --orange700: #b63318;
+  --orange600: #dc451a;
+  --orange500: #ea5b21;
+  --orange400: #ef7f48;
+  --orange300: #f4ac7d;
+  --orange200: #f9ceaf;
+  --orange100: #fce9d8;
+  --orange50: #fef5ee;
+
+  --red: #F9A8B9;
+  --yellow: #FEDAAA;
+  --green: #A2D3A7;
+  
+  // --accent: #ED5B07;
+  // --black60: rgba(0, 0, 0, 0.6);
+  // --black40: rgba(0, 0, 0, 0.4);
+  // --black20: rgba(0, 0, 0, 0.2);
+  // --black10: rgba(0, 0, 0, 0.1);
+  // --white60: rgba(255, 255, 255, 0.6);
+  // --white15: rgba(255, 255, 255, 0.15);
+  // --grey: #727270;
+  // --dark-grey: #161616;
+
   --padding: 80px;
   --border-radius: 5px;
   --big-radius: 10px;
   --header-height: 146.6px;
-  --box-shadow: 0 0 15px 0px var(--black20);
+  --box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.03);
 }
 
 body {
   font-family: 'Inter';
   font-weight: 400;
   font-size: 20px;
-  background-color: var(--background);
+  background-color: var(--grey50);
+  color: var(--black-r);
 }
 
 // .page {
@@ -140,6 +171,17 @@ body {
   letter-spacing: -1px;
 }
 
+.inter13-400__ls {
+  font-size: 13px;
+  line-height: 135%;
+  letter-spacing: 0%;
+}
+
+.inter13-300 {
+  font-size: 13px;
+  font-weight: 300;
+}
+
 .inter12-400 {
   font-size: 12px;
   line-height: 120%;
@@ -148,11 +190,16 @@ body {
 
 
 .accent-border {
-  border: 2px solid var(--accent);
+  border: 2px solid var(--orange500);
   border-radius: var(--border-radius);
 }
 
 .accent-btn {
-  background-color: var(--accent);
+  background-color: var(--orange500);
+  border-radius: var(--border-radius);
+}
+
+.second-btn {
+  background-color: var(--orange200);
   border-radius: var(--border-radius);
 }

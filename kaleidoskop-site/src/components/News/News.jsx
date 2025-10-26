@@ -12,7 +12,7 @@ function News () {
             <img src={saw} alt="" />
           </div>
         </h2>
-        <div className="news_open inter14-400 accent-border">Все новости</div>
+        <div className="news_open inter14-600 second-btn">Все новости</div>
       </div>
       <div className="news-list">
         {Array.from({ length: 5 }).map((_, index) => (
