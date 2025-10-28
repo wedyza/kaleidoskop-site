@@ -1,9 +1,9 @@
 import './footer.scss'
-import logo from './../../img/logo.svg'
-import vk from './../../img/vk.svg'
-import ok from './../../img/ok.svg'
+import logo from './../../assets/logo.svg'
+import vk from './../../assets/vk.svg'
+import ok from './../../assets/ok.svg'
 
-function Footer () {
+const Footer: React.FC = () => {
   return (
     <footer className='footer'>
       <div className="footer-img">

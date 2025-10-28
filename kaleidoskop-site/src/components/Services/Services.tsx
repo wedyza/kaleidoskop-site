@@ -1,9 +1,9 @@
 import './services.scss'
-import servicesImg from '../../img/services.png'
-import screwdriver from '../../img/screwdriver.png'
-import screw from '../../img/screw.png'
+import servicesImg from '../../assets/services.png'
+import screwdriver from '../../assets/screwdriver.png'
+import screw from '../../assets/screw.png'
 
-function Services () {
+const Services: React.FC = () => {
   return (
     <div className='services'>
       <div className="service-card services-item">

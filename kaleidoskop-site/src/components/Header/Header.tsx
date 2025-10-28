@@ -1,7 +1,7 @@
 import './header.scss'
-import logo from './../../img/logo.svg'
+import logo from './../../assets/logo.svg'
 
-function Header () {
+const Header: React.FC = () => {
   return (
     <header className='header'>
       <div className='header-info'>

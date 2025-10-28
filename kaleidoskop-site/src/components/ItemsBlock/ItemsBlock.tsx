@@ -2,21 +2,27 @@ import { useRef } from 'react';
 import ItemCard from '../ItemCard/ItemCard';
 import './itemsBlock.scss'
 
-function ItemsBlock ({
+interface ItemsBlockProps {
+  title: string;
+  icon?: boolean;
+  dates?: string; // или любой другой тип, который подходит для dates
+}
+
+const ItemsBlock: React.FC<ItemsBlockProps> = ({
   title,
   icon = false,
   dates,
-}) {
+}) => {
   const words = title.trim().split(/\s+/);
   const firstWord = words[0];
   const restWords = words.slice(1).join(' ');
-  const listRef = useRef(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (direction) => {
+  const scroll = (direction: 'left' | 'right') => {
     if (!listRef.current) return;
     
     const scrollAmount = 300;
-    const { scrollLeft, clientWidth, scrollWidth } = listRef.current;
+    //const { scrollLeft } = listRef.current;
     
     if (direction === 'left') {
       listRef.current.scrollLeft -= scrollAmount;

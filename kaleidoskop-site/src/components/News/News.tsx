@@ -1,8 +1,8 @@
 import './news.scss'
-import news from '../../img/news.jpg'
-import saw from '../../img/saw.png'
+import news from '../../assets/news.jpg'
+import saw from '../../assets/saw.png'
 
-function News () {
+const News: React.FC = () => {
   return (
     <div className='news'>
       <div className="news-head">

@@ -1,7 +1,7 @@
 import './itemCard.scss'
-import itemImg from '../../img/item.png'
+import itemImg from '../../assets/item.png'
 
-function ItemCard () {
+const ItemCard: React.FC = () => {
   return (
     <div className='item-card'>
       <div className="item-card_img">
