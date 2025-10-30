@@ -88,3 +88,9 @@ class ReceiveRemainsView(APIView):
             print(remains.errors)
 
         return Response({"message": "done"}, status=status.HTTP_200_OK)
+
+
+class ReceiveTestView(APIView):
+    def post(self, request):
+        print(request.data)
+        return Response({"message": "success"})

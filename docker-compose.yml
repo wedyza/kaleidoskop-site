@@ -31,7 +31,7 @@ services:
       retries: 3
   
   rabbitmq:
-    image: rabbitmq:3.10-management
+    image: rabbitmq:4.2-management
     container_name: kaleidoskop_rabbitmq
     ports:
       - 15672:15672
@@ -45,6 +45,7 @@ services:
         interval: 30s
         timeout: 10s
         retries: 5
+    # network_mode: "host"
   
   app:
     build: ./kaleidoskop/
@@ -58,6 +59,7 @@ services:
     build: ./kaleidoskop/
     container_name: celery_worker_kaleidoskop
     restart: always
+    # network_mode: "host"
     depends_on:
       - app
       - rabbitmq
@@ -78,6 +80,9 @@ services:
     image: redis
     container_name: redis
     restart: unless-stopped
+    env_file:
+      - .env
+    # network_mode: "host"
     volumes:
         - ./redis/data:/data
         - ./redis/redis.conf:/usr/local/etc/redis/redis.conf

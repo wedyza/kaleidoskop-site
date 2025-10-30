@@ -170,11 +170,7 @@ class Order(UUIDModel):
         CREDIT_CARD = 'Картой'
         ONLINE = 'Онлайн' # СБП / Онлайн банкинг
 
-    address = models.CharField("Адрес", null=False, max_length=100)
-    address_longtitude = models.DecimalField(
-        "Долгота", max_digits=9, decimal_places=6, null=True
-    )
-    address_latitude = models.DecimalField("Широта", max_digits=9, decimal_places=6, null=True)
+    address = models.CharField("Адрес", null=True, max_length=100) # Если будет возможно, то сделать дробление (Зависит от Яндекс карт) и мб вернуть длину и ширину тогда
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=False, verbose_name="Пользователь"
     )

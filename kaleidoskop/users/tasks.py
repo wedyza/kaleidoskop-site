@@ -3,6 +3,8 @@ from django.conf import settings
 from celery import shared_task
 from django.template.loader import render_to_string
 from .models import CustomAbstractUser
+from api.serializers import CartTo1CSerializer
+from typing import Dict
 import httpx
 
 LINK_1C = settings.SERVER_1C    
@@ -20,6 +22,23 @@ def multitasker(f): #Позволяет не бегать туда сюда и �
             return f.delay(*args, **kwargs)
         return f(*args, **kwargs)
     return wrapper
+
+
+def create_order_1c(cart_serializer: CartTo1CSerializer, user: CustomAbstractUser):
+    response = client.post(
+            settings.SERVER_1C + '/orders/',
+            json= cart_serializer.data | {
+                "user_code": user.code,
+                "warehouse": "1",
+                "delivery_type": "Самовывоз"
+            },
+            timeout=15
+        )
+    print(cart_serializer.data | {
+                "user_code": user.code,
+                "warehouse": "1",
+                "delivery_type": "Самовывоз"})
+    return response
 
 
 @multitasker

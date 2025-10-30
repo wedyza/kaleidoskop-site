@@ -3,7 +3,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from .paginators import CustomPagination
-from typing import List
 from django.core.exceptions import ValidationError
 from .serializers import (
     CartSerializer,
@@ -17,6 +16,7 @@ from .serializers import (
     OrderSerializer,
     SwitchSerializer,
     UserSerializer,
+    CartTo1CSerializer
 )
 from .models import Cart, Category, Item, Like, Comment, CartItem, Nomenclature, NomenclatureCategory, Order
 from search.views import PaginatedElasticSearchAPIView
@@ -26,7 +26,9 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .functions import get_nomenclatures
 from django.db.models import F, Sum
-from users.tasks import update_user_1c
+from users.tasks import update_user_1c, create_order_1c
+import httpx
+
 
 User = get_user_model()
 
@@ -304,17 +306,34 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
             raise ValidationError("Невозможно создать заказ с пустой корзиной!")
             # return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
 
-        total_sum = cart.items.filter(marked_for_order=True).aggregate(total=Sum(F("item__price") * F("amount")))["total"]
+        items_for_order = cart.items.filter(marked_for_order=True)
+
+        total_sum = items_for_order.aggregate(total=Sum(F("item__price") * F("amount")))["total"]
         if total_sum == 0:
             raise ValidationError("Невозможно создать заказ с пустой корзиной!")
             # return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
-
-        aviable_to_create = cart.items.filter(marked_for_order=True).filter(amount__lt=Sum("item__remains__count")).count() == cart.items.count()
+            
+        aviable_to_create = items_for_order.filter(amount__lte=Sum("item__remains__count")).count() == items_for_order.count()
         if not aviable_to_create:
             raise ValidationError("Невозможно создать заказ. Не хватает товаров на складе")
             # return Response({"detail": "Невозможно создать заказ. Не хватает товаров на складе"}, status=status.HTTP_400_BAD_REQUEST)
         
         #Также надо будет создать проверку на место, куда будет доставляться заказ, не выходит ли за пределы калейдоскопа + сделать генерацию адресов, может быть стоит создат новую модель address, в которой будет храниться отдельно все значения для генерации адреса в Яндекс Картах, а также экспорта в 1С.    
+
+        order_cart = Cart.objects.create(user=request.user, current_cart=False)
+        order_cart.items.add(*items_for_order.all())
+        
+        cart_serializer = CartTo1CSerializer(instance=order_cart)
+        
+        try: # Тут пока что сделано так, чтобы в любом случае сделать так, чтобы все возвращалось в конце концов в начальное положение, потом сделаю нормально, когда заказы будут закончены
+            response = create_order_1c(cart_serializer, request.user)
+        except httpx.TimeoutException:
+            return Response({"detail": "Запущено в режиме отладки"})
+        finally:
+            cart.items.add(*order_cart.items.all())
+            order_cart.delete()
+
+        return Response("response")
 
         # Это после отправки в 1С и получении кода товара
         # instance = order.save(user=self.request.user, code=code)

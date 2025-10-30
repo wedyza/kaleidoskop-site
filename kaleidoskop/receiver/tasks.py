@@ -2,9 +2,10 @@ import time
 from celery import shared_task
 from api.models import Category, Item
 from .serializers import NomenclatureCreateSerializer
-import httpx
+from users.tasks import multitasker
 
 
+@multitasker
 @shared_task
 def parse_nomenclatures(json: dict):
     nomenclatures = NomenclatureCreateSerializer(data=json)

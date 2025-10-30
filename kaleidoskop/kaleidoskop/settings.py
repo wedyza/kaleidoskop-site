@@ -37,7 +37,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
-CONTAINER_LAUNCHER = False
+CONTAINER_LAUNCHER = os.getenv("CONTAINER_LAUNCHER", False)
 
 # Application definition
 
@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "receiver.apps.ReceiverConfig",
     "search.apps.SearchConfig",
-    "recomendation_system.apps.RecomendationSystemConfig"
+    "recomendation_system.apps.RecomendationSystemConfig",
+    "admin_panel.apps.AdminPanelConfig"
 ]
 
 MIDDLEWARE = [
@@ -161,11 +162,11 @@ REST_FRAMEWORK = {
 
 # File Storage
 
-# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# AWS_STORAGE_BUCKET_NAME = "local"
-# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-# AWS_S3_ENDPOINT_URL = "http://localhost:9000"
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+AWS_STORAGE_BUCKET_NAME = "local"
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_S3_ENDPOINT_URL = "http://localhost:9000"
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//")  # Когда пакуешь в контейнер поменять localhost->rabbitmq
 BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") # Когда пакуешь в контейнер поменять localhost->rabbitmq

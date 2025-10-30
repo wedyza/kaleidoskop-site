@@ -33,7 +33,8 @@ urlpatterns = [
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
     path("test", TestView.as_view()),
-    path("cart_items/switch_to_order/", CartItemView.as_view())
+    path("cart_items/switch_to_order/", CartItemView.as_view()),
+    path("admin_panel/", include("admin_panel.urls"))
     # path("admin/nomenclatures", AdminNomenclaturesView)
     # path("search/", include("search.urls"))
 ]

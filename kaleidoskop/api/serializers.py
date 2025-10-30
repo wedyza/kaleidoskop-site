@@ -74,7 +74,7 @@ class SwitchSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "first_name", "last_name", "email", "sex")  # avatar
+        fields = ("id", "first_name", "last_name", "email", "sex", "avatar")  # avatar
 
 
 class NomenclatureSerializer(serializers.ModelSerializer):
@@ -107,3 +107,25 @@ class ListCartItemSerializer(serializers.Serializer):
         child=serializers.UUIDField()
     )
     enable = serializers.BooleanField()
+
+
+class OrderItemTo1CSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ("code", "price")
+
+
+class OrderCartItemsTo1CSerializer(serializers.ModelSerializer):
+    item = OrderItemTo1CSerializer()
+
+    class Meta:
+        model = CartItem
+        fields = ("item", "amount")
+
+
+class CartTo1CSerializer(serializers.ModelSerializer):
+    items = OrderCartItemsTo1CSerializer(many=True)
+
+    class Meta:
+        model = Cart
+        fields = ("items", )
