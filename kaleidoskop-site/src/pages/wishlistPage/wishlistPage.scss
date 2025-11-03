@@ -1,0 +1,30 @@
+.wishlist-section {
+  padding: 30px 40px;
+}
+
+.wishlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wishlist-clear {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wishlist-clear_img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.wishlist-content {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}

@@ -24,6 +24,10 @@
   }
 }
 
+.item-card_info {
+  width: 100%;
+}
+
 .item-card_discount {
   position: absolute;
   bottom: 5px;
@@ -46,7 +50,6 @@
 }
 
 .item-card_name-container {
-  width: 165px;
   margin-top: 10px;
 }
 

@@ -5,22 +5,20 @@ import './mainPage.scss'
 
 function MainPage () {
   return (
-    <div className="page">
-      <div className="page-content">
-        <Services />
-        <ItemsBlock 
-          title={'Горячие предложения'}
-          icon
-          dates={'01.07 - 16.07'}
-        />
-        <ItemsBlock 
-          title={'Популярные товары'}
-        />
-        <ItemsBlock 
-          title={'Новинки'}
-        />
-        <News />
-      </div>
+    <div className="page-main">
+      <Services />
+      <ItemsBlock 
+        title={'Горячие предложения'}
+        icon
+        dates={'01.07 - 16.07'}
+      />
+      <ItemsBlock 
+        title={'Популярные товары'}
+      />
+      <ItemsBlock 
+        title={'Новинки'}
+      />
+      <News />
     </div>
   )
 }

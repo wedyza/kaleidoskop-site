@@ -47,7 +47,7 @@
   --border-radius: 5px;
   --big-radius: 10px;
   --shadow3: 0 0 15px 0px rgba(0, 0, 0, 0.03);
-  --shadow10: 0 4px 15px 0px rgba(0, 0, 0, 0.1);
+  --shadow10: 0 0 15px 0px rgba(0, 0, 0, 0.1);
   --header-height: 149px;
 }
 
@@ -57,6 +57,17 @@ body {
   font-size: 20px;
   background-color: var(--grey50);
   color: var(--black-r);
+}
+
+a, a:link, button {
+  cursor: pointer;
+  transition: .1s;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 // .page {
@@ -133,6 +144,12 @@ body {
   letter-spacing: 0%;
 }
 
+.inter16-400 {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+}
+
 .inter14-600 {
   font-weight: 600;
   font-size: 14px;
@@ -189,6 +206,11 @@ body {
   letter-spacing: 0%;
 }
 
+.inter11-400 {
+  font-size: 11px;
+  line-height: 120%;
+}
+
 
 .accent-border {
   border: 2px solid var(--orange500);
@@ -198,9 +220,25 @@ body {
 .accent-btn {
   background-color: var(--orange500);
   border-radius: var(--border-radius);
+  color: var(--white);
 }
 
-.second-btn {
+.accent-btn:hover {
+  background-color: var(--orange600);
+}
+
+.accent-btn__second {
   background-color: var(--orange200);
   border-radius: var(--border-radius);
+}
+
+.grey-btn {
+  background-color: var(--grey200);
+  color: var(--grey900);
+  border-radius: var(--border-radius);
+}
+
+.grey-btn:hover {
+  background-color: var(--grey950);
+  color: var(--white);
 }

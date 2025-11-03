@@ -117,6 +117,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  color: var(--white);
+}
+
+.header-nav-item:visited {
+  color: var(--white);
+}
+
+.header-nav-item:hover {
+  color: var(--orange500);
+
+  .header-nav_icon svg path {
+    fill: var(--orange500);
+  }
 }
 
 .header-nav_icon {

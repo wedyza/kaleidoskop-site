@@ -4,13 +4,13 @@ import Footer from "../components/Footer/Footer";
 import { useState } from "react";
 import CatalogModal from "../components/catalogModal/CatalogModal";
 
-export const Layout = () => {
+export const AppLayout = () => {
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="page">
       <Header onCatalogClick={() => setIsCatalogOpen(!isCatalogOpen)} />
-      <main>
+      <main className="page-content">
         <Outlet />
       </main>
       <Footer />
