@@ -1,0 +1,101 @@
+.catalog-modal {
+  background-color: var(--white);
+  position: fixed;
+  top: calc(var(--header-height) - 7px);
+  bottom: 42px;
+  right: 45px;
+  left: 45px;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: calc(25% - 18px) 1fr;
+  gap: 24px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow10);
+  overflow: hidden;
+}
+
+.catalog-cat_list {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 20px;
+  background-color: var(--white-gray);
+  box-shadow: var(--shadow10);
+  overflow-y: auto;
+}
+
+.catalog-cat_item {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  min-height: 55px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.catalog-cat_name {
+  z-index: 1;
+}
+
+.catalog-cat_item__active {
+  position: relative;
+  background-color: var(--orange50);
+  color: var(--orange500);
+  font-weight: 600;
+}
+
+// .catalog-cat_item__active::before {
+//   content: '';
+//   background-color: var(--accent);
+//   border-radius: var(--big-radius);
+//   box-shadow: 2px 2px 10px 0px var(--accent40);
+//   position: absolute;
+//   top: -5px;
+//   bottom: -5px;
+//   left: 0;
+//   right: 0;
+//   z-index: 0;
+// }
+
+// .catalog-cat_item__active .catalog-cat_img {
+//   filter: brightness(0) saturate(100%) invert(100%);
+// }
+
+.catalog-subcat_panel-container {
+  overflow-y: scroll;
+  width: 100%;
+}
+
+// .catalog-subcat_panel-container::-webkit-scrollbar {
+//   width: 6px;
+// }
+
+// .catalog-subcat_panel-container::-webkit-scrollbar-track {
+//   background: var(--grey100);
+// }
+
+// .catalog-subcat_panel-container::-webkit-scrollbar-thumb {
+//   background-color: var(--grey700);
+//   border-radius: 5px;
+// }
+
+.catalog-subcat_panel {
+  column-count: 3;
+  column-gap: 40px;
+  width: 80%;
+  height: fit-content;
+  padding: 40px 45px 24px 45px;
+}
+
+.catalog-subcat_block {
+  break-inside: avoid;
+  background-color: var(--white-gray);
+  border-radius: var(--radius);
+  margin-bottom: 40px;
+}
+
+.catalog-subcat_list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 15px;
+}
