@@ -1,0 +1,135 @@
+.basket-card {
+  display: grid;
+  grid-template-areas: 
+    '. . id .'
+    'input img info act'
+  ;
+  grid-template-columns: auto auto auto 1fr;
+  row-gap: 15px;
+  padding-top: 30px;
+  padding-bottom: 50px;
+}
+
+.basket-card_id {
+  grid-area: id;
+  color: var(--grey300);
+}
+
+.basket-card_checkbox {
+  grid-area: input;
+  margin-right: 54px;
+  width: 20px;
+  height: 20px;
+}
+
+.basket-card_img {
+  margin-right: 10px;
+  width: 97px;
+  height: 97px;
+  border-radius: var(--border-radius);
+  object-fit: cover;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: img;
+}
+
+.basket-card_info {
+  display: flex;
+  gap: 22px;
+  grid-area: info;
+}
+
+.basket-card_info-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.basket-card_name {
+  max-width: 301px;
+}
+
+.basket-card_price-one {
+  color: var(--grey500);
+  margin-top: 10px;
+}
+
+.basket-card_date {
+  color: var(--grey400);
+  margin-top: 25px;
+  display: flex;
+  gap: 3px;
+}
+
+.basket-card_date__accent {
+  color: var(--orange500);
+}
+
+.basket-card_count {
+  margin-top: 32px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.basket-card_count-btn {
+  background-color: var(--orange500);
+  height: 25px;
+  width: 35px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.basket-card_count-btn__inactive {
+  background-color: var(--grey100);
+
+  svg path {
+    fill: var(--grey950)
+  }
+}
+
+.basket-card_info-price {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.basket-card_discount {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.basket-card_discount-value {
+  color: var(--grey300);
+  text-decoration: line-through;
+}
+
+.basket-card_discount-percent {
+  padding: 4px 5px;
+  background-color: var(--orange500);
+  border-radius: var(--border-radius);
+  color: var(--white);
+}
+
+.basket-card_actions {
+  margin-left: auto;
+  grid-area: act;
+  display: flex;
+  gap: 7px;
+  height: fit-content;
+  align-items: center;
+}
+
+.basket-card_remove {
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow3);
+  border-radius: var(--border-radius);
+}

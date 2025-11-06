@@ -37,8 +37,12 @@
   font-weight: 600;
 }
 
-.section-content {
+.section-content__with-nav {
   background-color: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow3);
+}
+
+.section-content {
+  margin-top: 40px;
 }

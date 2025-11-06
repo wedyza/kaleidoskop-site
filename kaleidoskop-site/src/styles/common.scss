@@ -46,7 +46,7 @@
   --padding: 80px;
   --border-radius: 5px;
   --big-radius: 10px;
-  --shadow3: 0 0 15px 0px rgba(0, 0, 0, 0.03);
+  --shadow3: 0 0 15px 0px rgba(0, 0, 0, 0.05);
   --shadow10: 0 0 15px 0px rgba(0, 0, 0, 0.1);
   --header-height: 149px;
 }
@@ -204,6 +204,12 @@ a, a:link, button {
   font-size: 12px;
   line-height: 120%;
   letter-spacing: 0%;
+}
+
+.inter11-600 {
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 120%;
 }
 
 .inter11-400 {

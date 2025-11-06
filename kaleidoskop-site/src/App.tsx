@@ -5,6 +5,7 @@ import { AppLayout } from './layouts/AppLayout';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import WishlistPage from './pages/wishlistPage/WishlistPage';
 import { SectionLayout } from './layouts/SectionLayout';
+import BasketPage from './pages/BasketPage/BasketPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route element={<SectionLayout />}>
             <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/basket" element={<BasketPage />} />
           </Route>
         </Route>
       </Routes>

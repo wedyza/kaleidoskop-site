@@ -1,0 +1,15 @@
+.item-actions {
+  display: flex;
+  gap: 4px;
+  box-shadow: var(--shadow3);
+  padding: 4px;
+  border-radius: var(--border-radius);
+}
+
+.item-action {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
