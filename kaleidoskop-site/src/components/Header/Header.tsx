@@ -78,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
               Сравнение
             </span>
           </Link>
-          <Link to={''} className='header-nav-item'>
+          <Link to={'/orders'} className='header-nav-item'>
             <div className="header-nav_icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_105_43)">

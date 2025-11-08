@@ -1,0 +1,52 @@
+.page-orders {
+  padding: 30px 40px 50px 40px;
+}
+
+.orders-set {
+  display: flex;
+  justify-content: space-between;
+  height: 49px;
+  margin-top: 15px;
+}
+
+.orders-tab {
+  //background-color: var(--grey50);
+  color: var(--grey400);
+  border-radius: 10px;
+  padding: 3px 4px;
+  display: flex;
+  gap: 10px;
+}
+
+.orders-tab_item {
+  height: 100%;
+  padding: 12px 20px;
+  border-radius: 15px;
+}
+
+.orders-tab_item__active {
+  background-color: var(--orange500);
+  color: var(--white);
+}
+
+.orders-filter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-right: 10px;
+  padding-left: 13px;
+  // border: 1px solid var(--grey200);
+  // border-radius: var(--border-radius);
+}
+
+.orders-filter_svg {
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orders-list {
+  margin-top: 40px;
+}

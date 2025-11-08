@@ -2,13 +2,14 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import './section.scss'
 
 const routeTitles: Record<string, string> = {
-  "/basket": "Корзина",
-  "/wishlist": "Избранные товары",
+  '/basket': 'Корзина',
+  '/wishlist': 'Избранные товары',
+  '/orders': 'Мои заказы',
 };
 
 export const SectionLayout = () => {
   const { pathname } = useLocation();
-  const showNav = ["/wishlist"].includes(pathname);
+  const showNav = ['/wishlist', '/orders'].includes(pathname);
   const title = routeTitles[pathname] || '';
 
   return (
@@ -26,14 +27,54 @@ export const SectionLayout = () => {
       {showNav ? (
         <div className="section-block">
           <nav className='section-nav inter14-400'>
-            <Link to={''} className="section-nav_item">Личные данные</Link>
-            <Link to={''} className="section-nav_item">Мои заказы</Link>
-            <Link to={''} className="section-nav_item">Корзина</Link>
-            <Link to={''} className="section-nav_item section-nav_item__active">Избранные товары</Link>
-            <Link to={''} className="section-nav_item">Сравнение</Link>
-            <Link to={''} className="section-nav_item">Возврат товаров</Link>
-            <Link to={''} className="section-nav_item">Мои подарочные сертификаты</Link>
-            <Link to={''} className="section-nav_item">Выйти</Link>
+            <Link 
+              to={''}
+              className={`section-nav_item ${pathname === '' ? 'section-nav_item__active' : ''}`}
+            >
+              Личные данные
+            </Link>
+            <Link 
+              to={'/orders'}
+              className={`section-nav_item ${pathname === '/orders' ? 'section-nav_item__active' : ''}`}
+            >
+              Мои заказы
+            </Link>
+            <Link 
+              to={'/basket'}
+              className={`section-nav_item ${pathname === '/basket' ? 'section-nav_item__active' : ''}`}
+            >
+              Корзина
+            </Link>
+            <Link 
+              to={'/wishlist'}
+              className={`section-nav_item ${pathname === '/wishlist' ? 'section-nav_item__active' : ''}`}
+            >
+              Избранные товары
+            </Link>
+            <Link 
+              to={''}
+              className={`section-nav_item ${pathname === '' ? 'section-nav_item__active' : ''}`}
+            >
+              Сравнение
+            </Link>
+            <Link 
+              to={''}
+              className={`section-nav_item ${pathname === '' ? 'section-nav_item__active' : ''}`}
+            >
+              Возврат товаров
+            </Link>
+            <Link 
+              to={''}
+              className={`section-nav_item ${pathname === '' ? 'section-nav_item__active' : ''}`}
+            >
+              Мои подарочные сертификаты
+            </Link>
+            <Link 
+              to={''} 
+              className="section-nav_item"
+            >
+              Выйти
+            </Link>
           </nav>
           <div className='section-content__with-nav'>
             <Outlet />

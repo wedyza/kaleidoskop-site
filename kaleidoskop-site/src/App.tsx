@@ -6,6 +6,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import WishlistPage from './pages/wishlistPage/WishlistPage';
 import { SectionLayout } from './layouts/SectionLayout';
 import BasketPage from './pages/BasketPage/BasketPage';
+import OrdersPage from './pages/ordersPage/OrdersPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route element={<SectionLayout />}>
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/basket" element={<BasketPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
           </Route>
         </Route>
       </Routes>

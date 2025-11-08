@@ -1,0 +1,108 @@
+.order-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  //box-shadow: var(--shadow3);
+  border-top: 1px solid var(--grey100);
+  padding: 30px;
+  padding-bottom: 50px;
+}
+
+.order-card_status {
+  padding: 5px 15px;
+  background-color: var(--yellow);
+  width: fit-content;
+  border-radius: var(--border-radius);
+}
+
+.order-card_info {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: 90px;
+}
+
+.order-card_main {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+}
+
+.order-card_id {
+  color: var(--grey500);
+  position: absolute;
+}
+
+.order-card_items {
+  display: flex;
+  gap: 20px;
+  margin-top: 32px;
+  min-width: 0;
+  overflow-x: auto;
+  min-width: 0;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.order-card_items::-webkit-scrollbar {
+  display: none;
+}
+
+.order-card_items__left {
+  border-left: 1px solid var(--grey100);
+}
+
+.order-card_items__right {
+  border-right: 1px solid var(--grey100);
+}
+
+.order-card_item {
+  width: 155px;
+}
+
+.order-card_item-img {
+  width: 117px;
+  height: 117px;
+}
+
+.order-card_item-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  max-height: 4.8em;
+  min-height: 4.8em;
+}
+
+.order-card_sum {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+}
+
+.order-card_sum-label {
+  color: var(--grey500);
+}
+
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+}
+
+.scroll-arrow__left {
+  left: 0;
+  transform: translate(-50%);
+}
+
+.scroll-arrow__right {
+  right: 0;
+  transform: translate(50%);
+}
