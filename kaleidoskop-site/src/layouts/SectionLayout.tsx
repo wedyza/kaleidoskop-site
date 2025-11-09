@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import './section.scss'
+import './Section.scss'
 
 const routeTitles: Record<string, string> = {
   '/basket': 'Корзина',

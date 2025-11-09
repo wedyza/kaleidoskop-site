@@ -1,7 +1,7 @@
-import './basketCard.scss'
+import './BasketCard.scss'
 import itemImg from '../../assets/item.png'
-import ItemsActions from '../itemsActions/ItemsActions';
-import CustomCheckbox from '../customCheckbox/CustomCheckbox';
+import ItemsActions from '../ItemsActions/ItemsActions';
+import CustomCheckbox from '../CustomCheckbox/CustomCheckbox';
 import { useState } from 'react';
 
 const BasketCard: React.FC = () => {

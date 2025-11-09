@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './catalogModal.scss';
+import './CatalogModal.scss';
 //import book from '../../img/book.svg'
 import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
@@ -136,7 +136,7 @@ const categories: CategoryData = {
   "Канцелярия": { subcategories: [] },
 };
 
-const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
+const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, /*onClose*/ }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -155,7 +155,7 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
   return createPortal(
     <div className="catalog-modal">
       <ul className='catalog-cat_list inter14-400'>
-        {Object.keys(categories).map((cat, index) => (
+        {Object.keys(categories).map((cat) => (
           <li
             key={cat}
             className={`catalog-cat_item ${cat === selectedCategory ? 'catalog-cat_item__active' : ''}`}

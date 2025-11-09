@@ -1,4 +1,4 @@
-import './news.scss'
+import './News.scss'
 import news from '../../assets/news.jpg'
 import saw from '../../assets/saw.png'
 import { Link } from 'react-router-dom'
@@ -16,7 +16,7 @@ const News: React.FC = () => {
         <Link className="news_open inter14-600 accent-btn__second" to=''>Все новости</Link>
       </div>
       <div className="news-list">
-        {Array.from({ length: 5 }).map((_, index) => (
+        {Array.from({ length: 5 }).map((_) => (
           <div className="news-card">
             <img src={news} alt="" />
             <div className="news-card_overlay"></div>

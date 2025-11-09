@@ -1,4 +1,4 @@
-import './services.scss'
+import './Services.scss'
 import servicesImg from '../../assets/services.png'
 import screwdriver from '../../assets/screwdriver.png'
 import screw from '../../assets/screw.png'

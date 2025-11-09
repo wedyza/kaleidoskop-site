@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import './ordersPage.scss'
-import OrderCard from '../../components/orderCard/OrderCard';
+import './OrdersPage.scss'
+import OrderCard from '../../components/OrderCard/OrderCard';
 
 type OrderType = 'all' | 'legal' | 'individual';
 

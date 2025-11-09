@@ -1,4 +1,4 @@
-import './orderCard.scss'
+import './OrderCard.scss'
 import temp from '../../assets/item.png'
 import { useScrollableContainer } from '../../hooks/useScrollableContainer';
 

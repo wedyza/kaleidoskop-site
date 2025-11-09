@@ -1,4 +1,4 @@
-import './itemCardBig.scss'
+import './ItemCardBig.scss'
 import itemImg from '../../assets/item.png'
 import { Link } from 'react-router-dom';
 

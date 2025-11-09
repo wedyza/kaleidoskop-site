@@ -1,5 +1,5 @@
 import ItemCardBig from '../../components/ItemCardBig/ItemCardBig';
-import './wishlistPage.scss'
+import './WishlistPage.scss'
 
 function WishlistPage () {
   return (

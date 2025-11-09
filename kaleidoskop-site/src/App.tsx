@@ -2,26 +2,24 @@ import './styles/reset.scss'
 import './styles/common.scss'
 import MainPage from './pages/MainPage/MainPage';
 import { AppLayout } from './layouts/AppLayout';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import WishlistPage from './pages/wishlistPage/WishlistPage';
+import { Route, Routes } from 'react-router-dom';
+import WishlistPage from './pages/WishlistPage/WishlistPage';
 import { SectionLayout } from './layouts/SectionLayout';
 import BasketPage from './pages/BasketPage/BasketPage';
-import OrdersPage from './pages/ordersPage/OrdersPage';
+import OrdersPage from './pages/OrdersPage/OrdersPage';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<MainPage />} />
-          <Route element={<SectionLayout />}>
-            <Route path="/wishlist" element={<WishlistPage />} />
-            <Route path="/basket" element={<BasketPage />} />
-            <Route path="/orders" element={<OrdersPage />} />
-          </Route>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<MainPage />} />
+        <Route element={<SectionLayout />}>
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/basket" element={<BasketPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
         </Route>
-      </Routes>
-    </Router>
+      </Route>
+    </Routes>
   );
 }
 

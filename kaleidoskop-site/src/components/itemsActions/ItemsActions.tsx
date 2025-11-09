@@ -1,4 +1,4 @@
-import './itemsActions.scss'
+import './ItemsActions.scss'
 
 function ItemsActions () {
   return (

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import ItemCard from '../ItemCard/ItemCard';
-import './itemsBlock.scss'
+import './ItemsBlock.scss'
 
 interface ItemsBlockProps {
   title: string;

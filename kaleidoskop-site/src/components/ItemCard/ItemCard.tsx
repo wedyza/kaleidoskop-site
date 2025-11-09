@@ -1,4 +1,4 @@
-import './itemCard.scss'
+import './ItemCard.scss'
 import itemImg from '../../assets/item.png'
 
 const ItemCard: React.FC = () => {

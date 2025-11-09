@@ -1,4 +1,4 @@
-import './footer.scss'
+import './Footer.scss'
 import logo from './../../assets/logo.svg'
 import vk from './../../assets/vk.svg'
 import ok from './../../assets/ok.svg'

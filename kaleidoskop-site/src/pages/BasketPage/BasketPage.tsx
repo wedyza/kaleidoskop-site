@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import './basketPage.scss'
+import './BasketPage.scss'
 import BasketCard from '../../components/BasketCard/BasketCard';
 
 function BasketPage () {

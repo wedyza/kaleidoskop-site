@@ -1,7 +1,7 @@
 import ItemsBlock from '../../components/ItemsBlock/ItemsBlock';
 import News from '../../components/News/News';
 import Services from '../../components/Services/Services';
-import './mainPage.scss'
+import './MainPage.scss'
 
 function MainPage () {
   return (
