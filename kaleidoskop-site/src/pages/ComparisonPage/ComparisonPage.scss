@@ -1,0 +1,33 @@
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 28px;
+}
+
+.comparison-categories {
+  height: 49px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comparison-category {
+  padding: 12px 25px;
+  color: var(--grey400);
+  display: flex;
+  gap: 2px;
+  border-radius: 15px;
+}
+
+.comparison-category__active {
+  background-color: var(--orange500);
+  color: var(--white);
+}
+
+.comparison-category_count {
+  margin-top: -5px;
+}
+
+.comparison-clear {
+  height: 49px;
+}

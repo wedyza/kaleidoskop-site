@@ -5,6 +5,7 @@ const routeTitles: Record<string, string> = {
   '/basket': 'Корзина',
   '/wishlist': 'Избранные товары',
   '/orders': 'Мои заказы',
+  '/comparison': 'Сравнение товаров',
 };
 
 export const SectionLayout = () => {
@@ -52,7 +53,7 @@ export const SectionLayout = () => {
               Избранные товары
             </Link>
             <Link 
-              to={''}
+              to={'/comparison'}
               className={`section-nav_item ${pathname === '' ? 'section-nav_item__active' : ''}`}
             >
               Сравнение

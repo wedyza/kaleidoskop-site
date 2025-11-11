@@ -7,6 +7,7 @@ import WishlistPage from './pages/WishlistPage/WishlistPage';
 import { SectionLayout } from './layouts/SectionLayout';
 import BasketPage from './pages/BasketPage/BasketPage';
 import OrdersPage from './pages/OrdersPage/OrdersPage';
+import ComparisonPage from './pages/ComparisonPage/ComparisonPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/basket" element={<BasketPage />} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/comparison" element={<ComparisonPage />} />
         </Route>
       </Route>
     </Routes>
