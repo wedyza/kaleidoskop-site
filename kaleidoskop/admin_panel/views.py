@@ -7,9 +7,11 @@ from .serialiers import TelegramUserSerializer, SessionCodeSerializer
 from django.core.exceptions import ValidationError
 import pika
 from .rabbitmq import RabbitMQ
+from django.conf import settings
+
 # Когда вернешься -  надо сделать создание сообщений в RabbitMQ через pika (Producer) и Consumer'а в телеграмм боте, чтобы он принимал сообщения и отправлял их только нужным скорее всего через get endpoint будет ходить сюда за данными
 r = redis.StrictRedis(
-        host='localhost',  # из Endpoint
+        host=settings.REDIS_HOST,  # из Endpoint
         port=6379,  # из Endpoint
         decode_responses=True
     )
@@ -31,9 +33,9 @@ class LinkTelegrammView(views.APIView):
             chat_id = r.get(code)
             
             if chat_id is None:
-                return Response({"detail": "Did not found session"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail": "Did not found active session with that number"}, status=status.HTTP_404_NOT_FOUND)
             
-            rq.publish(action="new_session", message=f"{chat_id}")
+            rq.publish(action="new_session", message=f"{chat_id}") # Можно json туда отправлять и парсить через json.dumps/load
             return Response({'chat_id': chat_id}, status=status.HTTP_201_CREATED)
         except Exception as e:
             raise e

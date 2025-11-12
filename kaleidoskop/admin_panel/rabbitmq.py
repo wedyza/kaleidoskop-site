@@ -1,17 +1,19 @@
 import pika
 import os
 import json
+from django.conf import settings
 
 class RabbitMQ:
     
     def __init__(self):
-        self.user = os.getenv('RABBITMQ_USER', 'guest')
-        self.password = os.getenv('RABBITMQ_PASSWORD', 'guest')
-        self.host = os.getenv('RABBITMQ_HOST', 'localhost')
-        self.port = int(os.getenv('RABBITMQ_PORT', 5672))
+        self.user = settings.RABBIT_MQ_USER
+        self.password = settings.RABBIT_MQ_PASSWORD
+        self.host = settings.RABBIT_MQ_HOST
+        self.port = 5672
         self.connection = None
         self.queue_name = "notifications"
         self.channel = None
+        print("generated rabbit mq connector")
         self.connect()
 
     def connect(self):

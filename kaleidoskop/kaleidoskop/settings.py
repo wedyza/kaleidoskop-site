@@ -35,9 +35,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "188.68.80.72"]
 
-CONTAINER_LAUNCHER = os.getenv("CONTAINER_LAUNCHER", False)
+CONTAINER_LAUNCHER = os.getenv("CONTAINER_LAUNCH", False)
 
 # Application definition
 
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_elasticsearch_dsl",
+    "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -64,6 +65,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -103,7 +105,7 @@ DATABASES = {
         "NAME": os.getenv("POSTGRES_DB"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": "localhost",
+        "HOST": "localhost" if not CONTAINER_LAUNCHER else "db",
         "PORT": os.getenv("DB_PORT"),
     }
 }
@@ -168,8 +170,8 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_S3_ENDPOINT_URL = "http://localhost:9000"
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//")  # Когда пакуешь в контейнер поменять localhost->rabbitmq
-BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") # Когда пакуешь в контейнер поменять localhost->rabbitmq
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq//"  # Когда пакуешь в контейнер поменять localhost->rabbitmq
+BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq:5672//" # Когда пакуешь в контейнер поменять localhost->rabbitmq
 # CELERY_BACKEND_URL = os.getenv("CELERY_BACKEND_URL", "redis://localhost")
 
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
@@ -193,7 +195,7 @@ SIMPLE_JWT = {
 
 ELASTICSEARCH_DSL = {
     "default": {
-        "hosts": "https://localhost:9200",
+        "hosts": "https://localhost:9200" if not CONTAINER_LAUNCHER else "https://elasticsearch:9200",
         "http_auth": ("elastic", "MyPassword"),
         "verify_certs": False,
         "ca_certs": None,
@@ -209,3 +211,16 @@ ELASTICSEARCH_DSL = {
 # SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 LANGUAGE_CODE = 'ru-RU'
+
+STATIC_URL = "/static/"
+STATIC_ROOT = "/static/"
+
+REDIS_HOST = "localhost" if not CONTAINER_LAUNCHER else "redis"
+
+RABBIT_MQ_USER = os.getenv("RABBIT_MQ_USER")
+RABBIT_MQ_PASSWORD = os.getenv("RABBIT_MQ_PASSWORD")
+RABBIT_MQ_HOST = "localhost" if not CONTAINER_LAUNCHER else "rabbitmq"
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r"^/.*$"

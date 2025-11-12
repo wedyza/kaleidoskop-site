@@ -50,15 +50,21 @@ services:
   app:
     build: ./kaleidoskop/
     container_name: main_app
-    ports:
-      - 8000:8000
+    # ports:
+    #   - 8080:8000
     depends_on:
       - db
+    environment:
+      - CONTAINER_LAUNCH=true
+    volumes:
+      - static:/static/
 
   celery:
     build: ./kaleidoskop/
     container_name: celery_worker_kaleidoskop
     restart: always
+    environment:
+      - CONTAINER_LAUNCH=true
     # network_mode: "host"
     depends_on:
       - app
@@ -90,6 +96,17 @@ services:
       - 6379:6379
     command: redis-server /usr/local/etc/redis/redis.conf
 
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - 8080:80
+    depends_on:
+      - app
+    volumes:
+      - static:/static/
+
 volumes:
  pg_data:
  minio-storage:
+ static:
