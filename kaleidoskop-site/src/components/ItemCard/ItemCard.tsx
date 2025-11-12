@@ -1,9 +1,10 @@
 import './ItemCard.scss'
 import itemImg from '../../assets/item.png'
+import { Link } from 'react-router-dom';
 
 const ItemCard: React.FC = () => {
   return (
-    <div className='item-card'>
+    <Link to={'product'} className='item-card'>
       <div className="item-card_img">
         <img src={itemImg} alt="" />
         <span className="item-card_discount inter13-500">
@@ -25,7 +26,7 @@ const ItemCard: React.FC = () => {
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

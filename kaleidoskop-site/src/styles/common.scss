@@ -81,6 +81,12 @@ a, a:link, button {
   padding-top: var(--header-height);
 }
 
+.inter32-700 {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 135%;
+}
+
 .inter28-600 {
   font-weight: 600;
   font-size: 28px;
@@ -186,7 +192,6 @@ a, a:link, button {
 
 .inter13-400 {
   font-size: 13px;
-  letter-spacing: -1px;
 }
 
 .inter13-400__ls {

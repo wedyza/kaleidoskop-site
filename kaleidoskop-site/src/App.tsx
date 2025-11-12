@@ -8,12 +8,14 @@ import { SectionLayout } from './layouts/SectionLayout';
 import BasketPage from './pages/BasketPage/BasketPage';
 import OrdersPage from './pages/OrdersPage/OrdersPage';
 import ComparisonPage from './pages/ComparisonPage/ComparisonPage';
+import ProductPage from './pages/ProductPage/ProductPage';
 
 function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<MainPage />} />
+        <Route path="/product" element={<ProductPage />} />
         <Route element={<SectionLayout />}>
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/basket" element={<BasketPage />} />

@@ -1,0 +1,99 @@
+.product-info {
+  padding: 40px;
+  padding-bottom: 50px;
+  padding-right: 130px;
+  display: grid;
+  grid-template-columns: 1fr 42%;
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow3);
+  margin-top: 40px;
+  gap: 50px;
+}
+
+.product-info_id {
+  color: var(--grey300);
+}
+
+.product-info_main {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-info-price {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-info_discount {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.product-info_discount-value {
+  color: var(--grey300);
+  text-decoration: line-through;
+}
+
+.product-info_discount-percent {
+  color: var(--white);
+  background-color: var(--orange500);
+  padding: 4px 5px;
+  border-radius: var(--border-radius);
+}
+
+.product-info_price-label {
+  color: var(--grey500);
+}
+
+.product-info_actions {
+  margin-top: 20px;
+  display: flex;
+  height: 49px;
+  gap: 10px;
+}
+
+.product_basket {
+  margin-right: 5px;
+  width: 205px;
+}
+
+.product_action {
+  background-color: var(--grey50);
+  width: 49px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-info_availability {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.product-info_availability-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--grey50);
+  border-radius: 10px;
+  padding: 22px;
+}
+
+.product-info_availability-day {
+  color: var(--grey400);
+}
+
+.product-info_availability-link,
+.product-info_availability-link:visited {
+  color: var(--orange500);
+}
+
+.product-info_gallery {
+  margin-top: 25px;
+}
