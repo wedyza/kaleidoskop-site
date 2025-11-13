@@ -1,11 +1,13 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import ItemCard from '../ItemCard/ItemCard';
 import './ItemsBlock.scss'
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { fetchProducts } from '../../features/products/productsSlice';
 
 interface ItemsBlockProps {
   title: string;
   icon?: boolean;
-  dates?: string; // или любой другой тип, который подходит для dates
+  dates?: string;
 }
 
 const ItemsBlock: React.FC<ItemsBlockProps> = ({
@@ -13,6 +15,13 @@ const ItemsBlock: React.FC<ItemsBlockProps> = ({
   icon = false,
   dates,
 }) => {
+  const dispatch = useAppDispatch();
+  const products = useAppSelector((state) => state.products.items);
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
   const words = title.trim().split(/\s+/);
   const firstWord = words[0];
   const restWords = words.slice(1).join(' ');
@@ -68,15 +77,10 @@ const ItemsBlock: React.FC<ItemsBlockProps> = ({
           </button>
         </div>
       </div>
-      
       <div className="item-block_list" ref={listRef}>
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
+        {products.map((product) => (
+          <ItemCard product={product} key={product.id} />
+        ))}
       </div>
     </div>
   )

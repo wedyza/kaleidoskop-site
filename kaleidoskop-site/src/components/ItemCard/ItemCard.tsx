@@ -1,8 +1,14 @@
 import './ItemCard.scss'
 import itemImg from '../../assets/item.png'
 import { Link } from 'react-router-dom';
+import type { Product } from '../../features/products/productsSlice';
+import { formatPrice } from '../../utils/formatPrice';
 
-const ItemCard: React.FC = () => {
+interface ItemCardProps {
+  product: Product;
+}
+
+const ItemCard: React.FC<ItemCardProps> = ({product}) => {
   return (
     <Link to={'product'} className='item-card'>
       <div className="item-card_img">
@@ -14,15 +20,15 @@ const ItemCard: React.FC = () => {
       <div className="item-card_info">
         <div className="item-card_prices">
           <p className="item-card_final-price inter20-600">
-            2 790 ₽
+            {formatPrice(product.price)} ₽
           </p>
           <p className="item-card_original-price inter14-500">
-            18 190 ₽
+            {formatPrice(product.price * 4/3)} ₽
           </p>
         </div>
         <div className="item-card_name-container">
           <p className="item-card_name inter13-400">
-            Тачка садовая одноколесная 90кг объем 85л
+            {product.title}
           </p>
         </div>
       </div>
