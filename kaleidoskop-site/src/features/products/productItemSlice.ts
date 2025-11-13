@@ -1,0 +1,50 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { api } from '../../api/axiosInstance';
+import type { Product } from './productsSlice';
+
+interface ProductItemState {
+  selectedItem: Product | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: ProductItemState = {
+  selectedItem: null,
+  loading: false,
+  error: null,
+};
+
+export const fetchProductByArticle = createAsyncThunk(
+  'products/fetchProductByArticle',
+  async (article: string, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/items/by_article/${article}/`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки продуктов');
+    }
+  }
+);
+
+const productItemSlice = createSlice({
+  name: 'products',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProductByArticle.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductByArticle.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedItem = action.payload;
+      })
+      .addCase(fetchProductByArticle.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+export default productItemSlice.reducer;

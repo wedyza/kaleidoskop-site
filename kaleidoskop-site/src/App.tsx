@@ -15,7 +15,7 @@ function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<MainPage />} />
-        <Route path="/product" element={<ProductPage />} />
+        <Route path="/product/:slug" element={<ProductPage />} />
         <Route element={<SectionLayout />}>
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/basket" element={<BasketPage />} />

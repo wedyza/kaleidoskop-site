@@ -12,6 +12,7 @@ export interface Product {
   price: number;
   article: string;
   country: string;
+  slug: string;
   images?: string;
   description?: string;
   remains?: Remains[];

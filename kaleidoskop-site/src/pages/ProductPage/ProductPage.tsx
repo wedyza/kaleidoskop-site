@@ -1,8 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import './ProductPage.scss'
 import ProductGallery from '../../components/ProductGallery/ProductGallery';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { fetchProductByArticle } from '../../features/products/productItemSlice';
+import { formatPrice } from '../../utils/formatPrice';
 
 function ProductPage() {
+  const { slug } = useParams<{ slug: string }>();
+  const dispatch = useAppDispatch();
+  const selectedItem = useAppSelector((state) => state.productItem.selectedItem);
+
+  useEffect(() => {
+    if (slug) {
+      dispatch(fetchProductByArticle(slug.split('--')[1]));
+    }
+  }, [dispatch, slug]);
+  
   return (
     <div className='page-product'>
       <div className="page-path inter16-400">
@@ -23,7 +37,7 @@ function ProductPage() {
         </Link>
         <span className='page-path_separator'>/</span>
         <span className="page-path_name">
-           Снегоуборочная машина HUTER SGC 2300E электро 2300Вт
+           {selectedItem?.title}
         </span>
       </div>
 
@@ -36,19 +50,19 @@ function ProductPage() {
         </div>
         <div className='product-info_main'>
           <h1 className='product-info_name inter28-600'>
-            Снегоуборочная машина HUTER SGC 2300E электро 2300Вт
+            {selectedItem?.title}
           </h1>
           <div className='product-info-price'>
             <div className='product-info_discount'>
               <span className='product-info_discount-value inter18-500'>
-                28 190 ₽
+                {selectedItem && formatPrice(selectedItem.price * 4/3)} ₽
               </span>
               <span className='product-info_discount-percent inter11-600'>
-                - 15%
+                - 25%
               </span>
             </div>
             <span className='product-info_price inter32-700'>
-              18 190 ₽ <span className='product-info_price-label inter16-400'>за шт</span>
+              {selectedItem && formatPrice(selectedItem.price)} ₽ <span className='product-info_price-label inter16-400'>за шт</span>
             </span>
           </div>
           <div className='product-info_actions'>
