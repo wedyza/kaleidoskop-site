@@ -9,10 +9,14 @@ import BasketPage from './pages/BasketPage/BasketPage';
 import OrdersPage from './pages/OrdersPage/OrdersPage';
 import ComparisonPage from './pages/ComparisonPage/ComparisonPage';
 import ProductPage from './pages/ProductPage/ProductPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 function App() {
   return (
     <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/registration" element={<RegisterPage />} />
       <Route element={<AppLayout />}>
         <Route path="/" element={<MainPage />} />
         <Route path="/product/:slug" element={<ProductPage />} />

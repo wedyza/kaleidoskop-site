@@ -3,7 +3,7 @@
   padding-bottom: 50px;
   padding-right: 130px;
   display: grid;
-  grid-template-columns: 1fr 42%;
+  grid-template-columns: minmax(0, 600px) 1fr;
   background-color: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow3);
