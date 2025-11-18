@@ -1,7 +1,19 @@
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import ItemCardBig from '../../components/ItemCardBig/ItemCardBig';
 import './WishlistPage.scss'
+import { fetchWishlist } from '../../features/wishlist/wishlistSlice';
 
 function WishlistPage () {
+  const items = useAppSelector((state) => state.wishlist.items);
+  console.log(items[0]);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchWishlist());
+  }, [])
+
   return (
     <div className="wishlist-section">
       <div className="wishlist-header">
@@ -16,11 +28,9 @@ function WishlistPage () {
         </button>
       </div>
       <div className="wishlist-content">
-        <ItemCardBig />
-        <ItemCardBig />
-        <ItemCardBig />
-        <ItemCardBig />
-        <ItemCardBig />
+        {items.map((item) => (
+          <ItemCardBig product={item.item} />
+        ))}
       </div>
     </div>
   )

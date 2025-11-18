@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import './Section.scss'
 import { useAppDispatch } from "../app/hooks";
 import { logout } from "../features/auth/authSlice";

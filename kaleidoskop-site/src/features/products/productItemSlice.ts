@@ -26,6 +26,18 @@ export const fetchProductByArticle = createAsyncThunk(
   }
 );
 
+export const toggleWishlist = createAsyncThunk(
+  'products/toggleWishlist',
+  async ({ id, enable }: {id: string, enable: boolean}, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/items/${id}/switch_wishlist/`, { enable });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки продуктов');
+    }
+  }
+);
+
 const productItemSlice = createSlice({
   name: 'products',
   initialState,
@@ -43,6 +55,12 @@ const productItemSlice = createSlice({
       .addCase(fetchProductByArticle.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(toggleWishlist.fulfilled, (state, action) => {
+        const updated = action.payload;
+        if (state.selectedItem?.id === updated.id) {
+          state.selectedItem = updated;
+        }
       });
   },
 });

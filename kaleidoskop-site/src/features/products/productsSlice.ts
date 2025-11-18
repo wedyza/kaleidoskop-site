@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
+import { toggleWishlist } from './productItemSlice';
 
 interface Remains {
   warehouse: string;
@@ -16,6 +17,8 @@ export interface Product {
   images?: string;
   description?: string;
   remains?: Remains[];
+  in_wishlist: boolean;
+  basket_count?: number;
 }
 
 interface ProductsState {
@@ -67,6 +70,13 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(toggleWishlist.fulfilled, (state, action) => {
+        const id = action.meta.arg.id;
+        const index = state.items.findIndex((item) => item.id === id);
+        if (index !== -1) {
+          state.items[index].in_wishlist = !state.items[index].in_wishlist;
+        }
       });
   },
 });

@@ -61,7 +61,7 @@ const BasketCard: React.FC = () => {
         </div>
       </div>
       <div className='basket-card_actions'>
-        <ItemsActions />
+        {/* <ItemsActions /> */}
         <div className='basket-card_remove'>
           <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.25 4.25L16.6303 14.2751C16.4719 16.8364 16.3928 18.1171 15.7508 19.0379C15.4333 19.4931 15.0247 19.8773 14.5507 20.166C13.5921 20.75 12.309 20.75 9.74274 20.75C7.17312 20.75 5.8883 20.75 4.92905 20.1649C4.4548 19.8757 4.046 19.4908 3.72868 19.0348C3.08688 18.1126 3.00945 16.8301 2.85461 14.2652L2.25 4.25" stroke="#161616" stroke-width="1.5" stroke-linecap="round"/>

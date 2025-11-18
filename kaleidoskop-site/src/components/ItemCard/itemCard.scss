@@ -38,6 +38,12 @@
   border-radius: var(--big-radius);
 }
 
+.item-card_actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .item-card_prices {
   display: flex;
   align-items: center;

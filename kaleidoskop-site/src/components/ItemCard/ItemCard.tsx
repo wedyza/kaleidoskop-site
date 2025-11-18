@@ -3,6 +3,7 @@ import itemImg from '../../assets/item.png'
 import { Link } from 'react-router-dom';
 import type { Product } from '../../features/products/productsSlice';
 import { formatPrice } from '../../utils/formatPrice';
+import ItemsActions from '../ItemsActions/ItemsActions';
 
 interface ItemCardProps {
   product: Product;
@@ -16,6 +17,9 @@ const ItemCard: React.FC<ItemCardProps> = ({product}) => {
         <span className="item-card_discount inter13-500">
           - 25%
         </span>
+        <div className="item-card_actions">
+          <ItemsActions product={product} />
+        </div>
       </div>
       <div className="item-card_info">
         <div className="item-card_prices">

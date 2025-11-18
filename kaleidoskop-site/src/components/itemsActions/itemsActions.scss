@@ -4,6 +4,8 @@
   box-shadow: var(--shadow3);
   padding: 4px;
   border-radius: var(--border-radius);
+  width: fit-content;
+  background-color: var(--white);
 }
 
 .item-action {
@@ -12,4 +14,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  svg {
+    height: 100%;
+  }
+}
+
+.item-action__active {
+  svg path {
+    fill: var(--orange500)
+  }
 }
