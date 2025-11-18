@@ -70,6 +70,12 @@
   justify-content: center;
 }
 
+.product_action__active {
+  svg path {
+    fill: var(--orange500)
+  }
+}
+
 .product-info_availability {
   margin-top: 30px;
   display: flex;

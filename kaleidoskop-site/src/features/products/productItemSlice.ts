@@ -57,9 +57,9 @@ const productItemSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(toggleWishlist.fulfilled, (state, action) => {
-        const updated = action.payload;
-        if (state.selectedItem?.id === updated.id) {
-          state.selectedItem = updated;
+        const id = action.meta.arg.id;
+        if (state.selectedItem?.id === id) {
+          state.selectedItem.in_wishlist = !state.selectedItem.in_wishlist;
         }
       });
   },

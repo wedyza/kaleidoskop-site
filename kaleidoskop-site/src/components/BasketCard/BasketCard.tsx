@@ -3,14 +3,26 @@ import itemImg from '../../assets/item.png'
 import ItemsActions from '../ItemsActions/ItemsActions';
 import CustomCheckbox from '../CustomCheckbox/CustomCheckbox';
 import { useState } from 'react';
+import { toggleBasketItem, type BasketEntry } from '../../features/basket/basketSlice';
+import { formatPrice } from '../../utils/formatPrice';
+import { useAppDispatch } from '../../app/hooks';
 
-const BasketCard: React.FC = () => {
+interface BasketCardProps {
+  item: BasketEntry;
+}
+
+const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
   const [isChecked, setIsChecked] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const handleAddToBasket = async () => {
+    await dispatch(toggleBasketItem({ id: item.item.id, enable: false }));
+  };
   
   return (
     <div className='basket-card'>
       <span className='basket-card_id inter11-400'>
-        код: 18803520
+        код: {item.item.article}
       </span>
       <CustomCheckbox
         checked={isChecked}
@@ -23,10 +35,10 @@ const BasketCard: React.FC = () => {
       <div className="basket-card_info">
         <div className='basket-card_info-main'>
           <span className='basket-card_name inter14-400'>
-            Снегоуборочная машина HUTER SGC 2300E электро 2300Вт
+            {item.item.title}
           </span>
           <span className='basket-card_price-one inter13-400'>
-            18 190 ₽ за шт
+            {item.item.price} за шт
           </span>
           <span className='basket-card_date inter11-400'>
             Забрать сегодня:
@@ -49,27 +61,30 @@ const BasketCard: React.FC = () => {
         <div className='basket-card_info-price'>
           <div className='basket-card_discount'>
             <span className='basket-card_discount-value inter14-500'>
-              28 190 ₽
+              {formatPrice(item.item.price * 4/3 * item.amount)} ₽
             </span>
             <span className='basket-card_discount-percent inter11-600'>
-              - 15%
+              - 25%
             </span>
           </div>
           <span className='basket-card_price inter20-600'>
-            18 190 ₽
+            {formatPrice(item.item.price * item.amount)} ₽
           </span>
         </div>
       </div>
       <div className='basket-card_actions'>
         {/* <ItemsActions /> */}
-        <div className='basket-card_remove'>
+        <button
+          onClick={handleAddToBasket}
+          className='basket-card_remove'
+        >
           <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.25 4.25L16.6303 14.2751C16.4719 16.8364 16.3928 18.1171 15.7508 19.0379C15.4333 19.4931 15.0247 19.8773 14.5507 20.166C13.5921 20.75 12.309 20.75 9.74274 20.75C7.17312 20.75 5.8883 20.75 4.92905 20.1649C4.4548 19.8757 4.046 19.4908 3.72868 19.0348C3.08688 18.1126 3.00945 16.8301 2.85461 14.2652L2.25 4.25" stroke="#161616" stroke-width="1.5" stroke-linecap="round"/>
             <path d="M0.75 4.25H18.75M13.8057 4.25L13.1231 2.84173C12.6696 1.90626 12.4428 1.43852 12.0517 1.14681C11.965 1.0821 11.8731 1.02454 11.777 0.974701C11.3439 0.75 10.8241 0.75 9.78453 0.75C8.71883 0.75 8.18598 0.75 7.74568 0.98412C7.6481 1.03601 7.55498 1.0959 7.46729 1.16317C7.07164 1.4667 6.85063 1.95155 6.40861 2.92126L5.80292 4.25" stroke="#161616" stroke-width="1.5" stroke-linecap="round"/>
             <path d="M7.25 15.25L7.25 9.25" stroke="#161616" stroke-width="1.5" stroke-linecap="round"/>
             <path d="M12.25 15.25L12.25 9.25" stroke="#161616" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
-        </div>
+        </button>
       </div>
     </div>
   )

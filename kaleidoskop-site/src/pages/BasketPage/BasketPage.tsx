@@ -1,8 +1,53 @@
 import { Link } from 'react-router-dom';
 import './BasketPage.scss'
 import BasketCard from '../../components/BasketCard/BasketCard';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useEffect } from 'react';
+import { fetchBasket/*, clearSelectedItems, setSelectedItems*/ } from '../../features/basket/basketSlice';
 
 function BasketPage () {
+  const dispatch = useAppDispatch();
+  const { items /*, selectedIds */} = useAppSelector((state) => state.basket);
+
+  useEffect(() => {
+    dispatch(fetchBasket());
+  }, [dispatch]);
+
+  // const toggleSelectAll = () => {
+  //   if (selectedIds.length === items.length) {
+  //     dispatch(clearSelectedItems());
+  //   } else {
+  //     const allIds = items.map(({ item }) => item.id);
+  //     dispatch(setSelectedItems(allIds));
+  //   }
+  // };
+
+  // const clearAll = () => {
+  //   dispatch(clearSelectedItems());
+  // };
+
+  // const handleToggleSingle = (id: number) => {
+  //   const updated = selectedIds.includes(id)
+  //     ? selectedIds.filter((i) => i !== id)
+  //     : [...selectedIds, id];
+  //   dispatch(setSelectedItems(updated));
+  // };
+
+  // const isAllSelected = selectedIds.length === items.length && items.length > 0;
+  // const selectedGoods = items.filter(({ item }) => selectedIds.includes(item.id));
+
+  // useEffect(() => {
+  //   localStorage.setItem('selectedBasketIds', JSON.stringify(selectedIds));
+  // }, [selectedIds]);
+
+  // useEffect(() => {
+  //   const saved = localStorage.getItem('selectedBasketIds');
+  //   if (saved) {
+  //     const parsed = JSON.parse(saved);
+  //     dispatch(setSelectedItems(parsed));
+  //   }
+  // }, [dispatch]);
+
   return (
     <div className="page-basket">
       <div className='basket-content'>
@@ -19,8 +64,9 @@ function BasketPage () {
         </div>
 
         <div className='basket-list'>
-          <BasketCard />
-          <BasketCard />
+          {items && items.length > 0 && items.map((item) => (
+            <BasketCard item={item} key={item.id} />
+          ))}
         </div>
       </div>
 
