@@ -23,6 +23,8 @@ class ItemRemainsSerializer(serializers.ModelSerializer):
 
 class ItemSerializer(serializers.ModelSerializer):
     remains = ItemRemainsSerializer(many=True, read_only=True)
+    in_wishlist = serializers.SerializerMethodField("get_in_wishlist", read_only=True)
+    cart_count = serializers.SerializerMethodField("get_cart_count", read_only=True)
 
     class Meta:
         model = Item
@@ -34,8 +36,31 @@ class ItemSerializer(serializers.ModelSerializer):
             "article",
             "country",
             "remains",
+            "slug",
+            "in_wishlist",
+            "cart_count"
         )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
 
+    
+    def get_in_wishlist(self, obj):
+        user = self.context["request"].user
+        if user.is_anonymous:
+            return False
+        
+        wishlist = Like.objects.filter(user=user).filter(item=obj).first()
+
+        return not wishlist is None
+
+    def get_cart_count(self, obj):
+        user = self.context["request"].user
+        if user.is_anonymous:
+            return False
+        
+        cart_item = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=user).filter(current_cart=True))).filter(item=obj).first()
+
+        if cart_item is None:
+            return cart_item
+        return cart_item.amount
 
 class CartItemSerializer(serializers.ModelSerializer):
     item = ItemSerializer(read_only=True)
@@ -58,7 +83,7 @@ class LikeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Like
-        fields = "__all__"
+        fields = ("item", )
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -74,7 +99,7 @@ class SwitchSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "first_name", "last_name", "email", "sex", "avatar")  # avatar
+        fields = ("id", "first_name", "last_name", "email", "sex", "avatar", "is_superuser", "phone_number")  # avatar
 
 
 class NomenclatureSerializer(serializers.ModelSerializer):

@@ -36,7 +36,7 @@ class RegisterView(APIView): # Пока что разделим эту логи�
         user.otp_expires = timezone.now() + timezone.timedelta(minutes=15)
         user.save()
         
-        link_with_1c(user)
+        # link_with_1c(user.id)
         send_otp_email(user.email, otp)
 
         return Response(  # pragma: no cover

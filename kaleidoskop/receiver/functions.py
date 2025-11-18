@@ -1,4 +1,5 @@
 from api.models import Category, Item, Nomenclature, Remains, Warehouse
+from api.serializers import ItemSerializer
 from django.db.models import Q
 
 def get_or_create_item(item) -> tuple[Item, bool]:
@@ -36,6 +37,9 @@ def get_or_create_remain(remain) -> tuple[Remains | None, bool]:
 
 
 def fillup_nomenclatures_with_parents():
+    """
+    Заполняет родительские номенклатуры
+    """
     nomenclatures = Nomenclature.objects.exclude(parent_code=None).filter(parent=None).all()
     for nomenclature in nomenclatures:
         try:
@@ -46,6 +50,9 @@ def fillup_nomenclatures_with_parents():
 
 
 def fillup_items_with_parents():
+    """
+    Заполняет значения предметов и их номенклатур
+    """
     items = Item.objects.exclude(parent_code=None).filter(nomenclature=None).all()
     c = 0
     for item in items:
@@ -56,3 +63,19 @@ def fillup_items_with_parents():
             continue
     print('начинается булка')
     Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)
+
+def create_new_items(data:list) -> bool: # Тут добавить обновление товаров помимо создания / Либо можно выгружать раз в день, как думал сделать раньше. Когда некст раз откроешь тут, лучше сесть делать заказы дальше. Также еще телеграм уведомления необходимо обернуть в контейнер, так же, как и рекомендации. Поместить все в контейнер и начать их работу в основном приложении. Также можно разметить характеристики наглядно и подумать насчет импорта картинок (поискать LLM и реализации в инете). Сейчас из задача окончить заказы и приьбраться в основном приложении
+    """
+    Создает не существующие в бд записи товаров
+    """
+    new_items = [Item(**item) for item in data]
+    created = Item.objects.bulk_create(new_items, ignore_conflicts=True)
+    return len(created) != 0
+
+def create_new_nomenclatures(data:list) -> bool:
+    """
+    Создает не существующие в бд номенклатуры
+    """
+    new_nomenclatures = [Nomenclature(**nomenclature) for nomenclature in data]
+    created = Nomenclature.objects.bulk_create(new_nomenclatures, ignore_conflicts=True)
+    return len(created) != 0

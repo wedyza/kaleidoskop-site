@@ -3,7 +3,7 @@ from celery import shared_task
 from api.models import Category, Item
 from .serializers import NomenclatureCreateSerializer
 from users.tasks import multitasker
-
+import httpx
 
 @multitasker
 @shared_task

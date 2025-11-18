@@ -87,6 +87,11 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
         )
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
     @action(detail=False, methods=["GET"], url_path="search/(?P<queryset>.*)")
     def search(self, request, queryset=None):
         try:
@@ -95,10 +100,18 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             total = search.count()
             response = search[0:total].to_queryset()
             results = self.paginate_queryset(response)
-            serializer = self.serializer_class(results, many=True)
+            serializer = self.serializer_class(results, context={"request": request}, many=True)
             return self.get_paginated_response(serializer.data)
         except Exception as e:
             return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=["GET"], url_path="by_article/(?P<article>.+)")
+    def get_by_article(self, request, article):
+        try:
+            item = Item.objects.filter(article=article).first()
+            return Response(self.serializer_class(instance=item, context={"request": request}).data)
+        except Exception as e:
+            return Response({"detail": "Did not found any items with that article"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(
         detail=True,
@@ -162,8 +175,27 @@ class CommentViewSet(
     mixins.RetrieveModelMixin,
 ):
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    queryset = Comment.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+    
+    def get_queryset(self):
+        return Comment.objects.filter(user=self.request.user).all()
+    
+    def create(self):
+        comment = self.get_serializer(data=self.request.data)
+
+        if not comment.is_valid():
+            return Response(comment.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        bought  = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=self.request.user).filter(bought=True).all())).values_list("item_id", flat=True).distinct()
+
+        if int(comment.initial_data["item"]) not in bought:
+            return Response(
+                {"detail": "You cant comment this item yet"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        comment.save(user=self.request.user)
+        return Response(comment.data, status=status.HTTP_201_CREATED)
 
 
 class UsersViewSet(
@@ -191,7 +223,7 @@ class UsersViewSet(
         )
         if serializer.is_valid():
             serializer.save()
-            update_user_1c(request.user)
+            # update_user_1c(request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors)
 
@@ -211,7 +243,7 @@ class UsersViewSet(
         )
         if current_cart is None:
             return []
-        serializer = self.serializer_class(instance=current_cart)
+        serializer = self.serializer_class(instance=current_cart, context={"request": request})
         return Response(serializer.data)
 
 
@@ -296,7 +328,7 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
         return Response(serializer.data)
 
 
-    def create(self, request, *args, **kwargs): #  закончить и подумать насчет системы с корзинами
+    def create(self, request, *args, **kwargs):
         order = self.get_serializer(data=request.data)
         if not order.is_valid():
             return Response(order.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -304,19 +336,16 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
         cart = Cart.objects.filter(bought=False).filter(current_cart=True).filter(user=self.request.user).first()
         if cart is None:
             raise ValidationError("Невозможно создать заказ с пустой корзиной!")
-            # return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         items_for_order = cart.items.filter(marked_for_order=True)
 
         total_sum = items_for_order.aggregate(total=Sum(F("item__price") * F("amount")))["total"]
         if total_sum == 0:
             raise ValidationError("Невозможно создать заказ с пустой корзиной!")
-            # return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
             
         aviable_to_create = items_for_order.filter(amount__lte=Sum("item__remains__count")).count() == items_for_order.count()
         if not aviable_to_create:
             raise ValidationError("Невозможно создать заказ. Не хватает товаров на складе")
-            # return Response({"detail": "Невозможно создать заказ. Не хватает товаров на складе"}, status=status.HTTP_400_BAD_REQUEST)
         
         #Также надо будет создать проверку на место, куда будет доставляться заказ, не выходит ли за пределы калейдоскопа + сделать генерацию адресов, может быть стоит создат новую модель address, в которой будет храниться отдельно все значения для генерации адреса в Яндекс Картах, а также экспорта в 1С.    
 
@@ -325,17 +354,16 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
         
         cart_serializer = CartTo1CSerializer(instance=order_cart)
         
-        try: # Тут пока что сделано так, чтобы в любом случае сделать так, чтобы все возвращалось в конце концов в начальное положение, потом сделаю нормально, когда заказы будут закончены
+        try: 
             response = create_order_1c(cart_serializer, request.user)
         except httpx.TimeoutException:
             return Response({"detail": "Запущено в режиме отладки"})
-        finally:
-            cart.items.add(*order_cart.items.all())
-            order_cart.delete()
+        except Exception as e:
+            return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # finally:
+        #     cart.items.add(*order_cart.items.all())
+        #     order_cart.delete()
 
-        return Response("response")
-
-        # Это после отправки в 1С и получении кода товара
-        # instance = order.save(user=self.request.user, code=code)
-
-        return Response({"detail": "All tests passed"}, status=status.HTTP_200_OK)
+        instance = order.save(user=self.request.user, code=response["code"])
+        return Response(self.get_serializer(instance=instance))
+    

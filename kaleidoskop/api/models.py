@@ -69,7 +69,7 @@ class Category(UUIDModel):
 
     @property
     def slug(self):
-        return slugify(self.title) + "-" + slugify(self.code)
+        return slugify(self.title)
     
 
     def __str__(self):
@@ -103,7 +103,7 @@ class Item(UUIDModel):
         related_name="items",
         on_delete=models.DO_NOTHING,
     )
-    description = models.TextField("Описание", max_length=500)
+    description = models.TextField("Описание", max_length=500, null=True)
     price = models.FloatField("Цена", null=False)
     article = models.CharField(
         "Артикул", max_length=40, unique=True, null=False
@@ -128,7 +128,7 @@ class Item(UUIDModel):
         
     @property
     def slug(self):
-        return slugify(self.title) + "-" + slugify(self.article)
+        return slugify(self.title) + "--" + self.article
     
     
     def __str__(self):
@@ -186,12 +186,14 @@ class Order(UUIDModel):
     delivery_method = models.TextField(
         'Способ доставки',
         choices=DeliveryMethods.choices,
-        default=DeliveryMethods.SELF_PICKUP
+        default=DeliveryMethods.SELF_PICKUP,
+        null=False
     )
     payment_method = models.TextField(
         'Способ оплаты',
         choices=PaymentMethods.choices,
-        default=PaymentMethods.ONLINE
+        default=PaymentMethods.ONLINE,
+        null=False
     )
     code = models.CharField('Код', null=True, unique=True, max_length=20) # Для 1С
 

@@ -6,6 +6,7 @@ from .models import CustomAbstractUser
 from api.serializers import CartTo1CSerializer
 from typing import Dict
 import httpx
+import json
 
 LINK_1C = settings.SERVER_1C    
 
@@ -34,11 +35,7 @@ def create_order_1c(cart_serializer: CartTo1CSerializer, user: CustomAbstractUse
             },
             timeout=15
         )
-    print(cart_serializer.data | {
-                "user_code": user.code,
-                "warehouse": "1",
-                "delivery_type": "Самовывоз"})
-    return response
+    return response.json()
 
 
 @multitasker
@@ -61,10 +58,11 @@ def send_otp_email(email, otp):
 
 @multitasker
 @shared_task
-def link_with_1c(user: CustomAbstractUser):
+def link_with_1c(user_id):
     """
     При регистрации связывает пользователя с контрагентов в 1С
     """
+    user = CustomAbstractUser.objects.get(user_id)
     response = client.post(LINK_1C + '/users', 
                         params={"API_KEY": settings.API_KEY_1C}, 
                         json={"email": user.email},
@@ -78,10 +76,11 @@ def link_with_1c(user: CustomAbstractUser):
 
 @multitasker
 @shared_task
-def update_user_1c(user: CustomAbstractUser):
+def update_user_1c(user_id):
     """
     Обновляет пользователя в 1С системе по его текущим, вызывать при UPDATE users/me/
     """
+    user = CustomAbstractUser.objects.get(user_id)
     client.put(
         LINK_1C + '/users',
         params={"API_KEY": settings.API_KEY_1C}, 
@@ -94,4 +93,41 @@ def update_user_1c(user: CustomAbstractUser):
         },
         timeout=15
     )
-    
+
+
+@multitasker
+@shared_task
+def sync_items():
+    response = client.get(
+        LINK_1C + '/items/',
+        params={"API_KEY": settings.API_KEY_1C},
+        timeout=60
+    )
+    if response.status_code != 200:
+        raise BaseException("something went wrong")
+    items = response.json()
+    return items
+
+@multitasker
+@shared_task
+def sync_nomenclatures():
+    response = client.get(
+        LINK_1C + '/nomenclatures/',
+        params={"API_KEY": settings.API_KEY_1C},
+        timeout=60
+    )
+    if response.status_code != 200:
+        raise BaseException("somethign went wrong")
+    return response.json()
+
+@multitasker
+@shared_task
+def sync_remains():
+    response = client.get(
+        LINK_1C + '/remains/',
+        params={"API_KEY": settings.API_KEY_1C},
+        timeout=15
+    )
+    if response.status_code != 200:
+        raise BaseException("somethign went wrong")
+    return response.json()

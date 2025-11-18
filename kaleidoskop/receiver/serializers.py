@@ -70,7 +70,9 @@ class ListRemainsReceiveSerializer(serializers.ListSerializer):
         remains_to_update = []
         remains_to_create = []
 
+        # print("start to create")
         for remain in validated_data:
+            print(remain)
             another_remain, is_created = get_or_create_remain(remain)
             if another_remain is None:
                 continue
@@ -78,12 +80,12 @@ class ListRemainsReceiveSerializer(serializers.ListSerializer):
                 remains_to_create.append(another_remain)
             else:
                 remains_to_update.append(another_remain)
-
+        # print("ended to create")
         created_remains = Remains.objects.bulk_create(
             remains_to_create, ignore_conflicts=True
         )
         Remains.objects.bulk_update(remains_to_update, ["count"])
-
+        # print("returned")
         return created_remains
 
 
@@ -123,3 +125,9 @@ class RemainsReceiveSerializer(serializers.Serializer):
         if count < 0:
             data["count"] = 0
         return data
+
+
+class UpdateRemainsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Remains
+        fields = '__all__'

@@ -224,3 +224,22 @@ RABBIT_MQ_HOST = "localhost" if not CONTAINER_LAUNCHER else "rabbitmq"
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r"^/.*$"
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+CSRF_TRUSTED_ORIGINS = [
+    "http://188.68.80.72:8000",
+    "http://188.68.80.72",
+    "http://localhost:5173",
+]# костыль
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+        }
+    },
+    "DEFAULT_INFO": "your_project.urls.api_info",
+    # другие опции...
+}
