@@ -1,5 +1,7 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import './Section.scss'
+import { useAppDispatch } from "../app/hooks";
+import { logout } from "../features/auth/authSlice";
 
 const routeTitles: Record<string, string> = {
   '/basket': 'Корзина',
@@ -12,6 +14,12 @@ export const SectionLayout = () => {
   const { pathname } = useLocation();
   const showNav = ['/wishlist', '/orders'].includes(pathname);
   const title = routeTitles[pathname] || '';
+
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  }
 
   return (
     <div className="page-section">
@@ -70,12 +78,12 @@ export const SectionLayout = () => {
             >
               Мои подарочные сертификаты
             </Link>
-            <Link 
-              to={''} 
-              className="section-nav_item"
+            <button
+              onClick={handleLogout}
+              className="section-nav_item section-nav_item__logout"
             >
               Выйти
-            </Link>
+            </button>
           </nav>
           <div className='section-content__with-nav'>
             <Outlet />

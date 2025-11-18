@@ -26,8 +26,17 @@
 }
 
 .section-nav_item {
-  padding: 16px 15px;
+  padding: 0 15px;
+  height: 50px;
   border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+}
+
+.section-nav_item__logout {
+  margin-top: 5px;
+  border-top: 1px solid var(--grey100);
+  border-radius: 0;
 }
 
 .section-nav_item__active,

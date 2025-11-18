@@ -1,12 +1,15 @@
 import './Header.scss'
 import logo from './../../assets/logo.svg'
 import { Link } from 'react-router-dom';
+import { useAppSelector } from '../../app/hooks';
 
 interface HeaderProps {
   onCatalogClick: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
+  const userName = useAppSelector((state) => state.user.firstName);
+
   return (
     <header className='header'>
       <div className='header-info'>
@@ -125,7 +128,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
               </svg>
             </div>
             <span className="header-nav_text">
-              Имя юзера
+              {userName || 'Войти'}
             </span>
           </Link>
         </nav>
