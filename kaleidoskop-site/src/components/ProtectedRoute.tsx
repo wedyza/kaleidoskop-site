@@ -10,7 +10,7 @@ export default function ProtectedRoute({ allowedFor }: ProtectedRouteProps) {
   const isAuth = Boolean(token);
 
   if (allowedFor === 'auth' && !isAuth) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (allowedFor === 'guest' && isAuth) {

@@ -59,6 +59,17 @@ body {
   color: var(--black-r);
 }
 
+body {
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+@supports (overflow-x: clip) {
+  body {
+    overflow-x: clip;
+  }
+}
+
 a, a:link, button {
   cursor: pointer;
   transition: .2s;
@@ -244,7 +255,7 @@ a, a:link, button {
 }
 
 .grey-btn {
-  background-color: var(--grey200);
+  background-color: var(--grey100);
   color: var(--grey900);
   border-radius: var(--border-radius);
 }

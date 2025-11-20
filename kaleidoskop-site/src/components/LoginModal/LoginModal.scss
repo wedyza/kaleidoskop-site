@@ -1,0 +1,73 @@
+.login-modal {
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-modal_email-input {
+  margin-top: 30px;
+  border: 1px solid var(--grey300);
+  border-radius: var(--border-radius);
+  padding: 0 25px;
+  height: 40px;
+}
+
+.login-modal_btn {
+  height: 40px;
+  margin-top: 30px;
+}
+
+.login-modal_header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.login-modal_email-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+.login-modal_email-info__label {
+  color: var(--grey500);
+}
+
+.login-modal_code {
+  width: 100%;
+  margin-top: 30px;
+  position: relative;
+}
+
+.login-modal_code-input {
+  border: 2px solid var(--orange700);
+  border-radius: var(--border-radius);
+  padding: 0 27px;
+  height: 40px;
+  width: 100%;
+}
+
+.login-modal_code-label {
+  position: absolute;
+  background-color: var(--white);
+  color: var(--grey400);
+  transform: translateY(-50%);
+  left: 23px;
+  padding-left: 3px;
+  padding-right: 10px;
+}
+
+.login-modal_repeat {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  color: var(--grey500);
+}
+
+.login-modal_resend {
+  height: 40px;
+  padding: 0 20px;
+  align-self: flex-start;
+  margin-top: 20px;
+}

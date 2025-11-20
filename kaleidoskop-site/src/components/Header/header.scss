@@ -6,7 +6,7 @@
   background-color: var(--black-g);
   box-shadow: 0px 1px 100px 1px var(--black10);
   position: fixed;
-  width: 100%;
+  width: 100vw;
   z-index: 100;
   color: var(--white);
   height: var(--header-height);
@@ -138,7 +138,19 @@
   }
 }
 
-.header-login {
-  width: 97px;
-  margin-left: 20px;
+// .header-login {
+//   width: 97px;
+//   margin-left: 20px;
+// }
+
+.header-nav_login {
+  height: 40px;
+  width: 75px;
+  background-color: var(--grey200);
+  border-radius: var(--border-radius);
+  color: var(--grey900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
 }

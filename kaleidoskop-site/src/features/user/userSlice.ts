@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
+import { logout } from '../auth/authSlice';
 
 interface UserState {
   id?: number;
@@ -130,7 +131,14 @@ const userSlice = createSlice({
       // .addCase(updateUserAvatar.fulfilled, (state, action) => {
       //   state.avatar = action.payload;
       //   state.loading = false;
-      // });
+      // })
+      .addCase(logout, (state) => {
+        state.firstName = '';
+        state.lastName = '';
+        state.email = '';
+        state.sex = undefined;
+        state.is_superuser = false;
+      });
   },
 });
 

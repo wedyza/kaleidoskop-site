@@ -9,8 +9,6 @@ import BasketPage from './pages/BasketPage/BasketPage';
 import OrdersPage from './pages/OrdersPage/OrdersPage';
 import ComparisonPage from './pages/ComparisonPage/ComparisonPage';
 import ProductPage from './pages/ProductPage/ProductPage';
-import LoginPage from './pages/LoginPage/LoginPage';
-import RegisterPage from './pages/RegisterPage/RegisterPage';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { fetchUserInfo } from './features/user/userSlice';
@@ -28,10 +26,10 @@ function App() {
 
   return (
     <Routes>
-      <Route element={<ProtectedRoute allowedFor='guest' />}>
+      {/* <Route element={<ProtectedRoute allowedFor='guest' />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registration" element={<RegisterPage />} />
-      </Route>
+      </Route> */}
 
       <Route element={<AppLayout />}>
         <Route element={<ProtectedRoute allowedFor='auth' />}>
