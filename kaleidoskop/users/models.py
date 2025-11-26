@@ -82,11 +82,9 @@ class CustomAbstractUser(AbstractUser):
     middle_name = models.CharField("Отчество", max_length=30, null=True)
     code = models.CharField("Код", max_length=15, null=True)
 
+    email_to_change = models.EmailField(null=True, blank=True)
+    otp_expires_change_email = models.DateTimeField("Время жизни otp", null=True, blank=True)
+    otp_change_email = models.CharField(max_length=6, null=True, blank=True)
+
     def __str__(self):
         return self.email
-    
-
-# from django.contrib.auth.admin import UserAdmin
-# class CustomAbstractAdminUser(UserAdmin):
-#     ordering = ['email']
-#     list_display = ['email']

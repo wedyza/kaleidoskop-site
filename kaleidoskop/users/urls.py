@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LoginView, ValidateOTPView, RegisterView
+from .views import ChangeEmailOTPView, LoginView, ValidateChangeEmailOTPView, ValidateOTPView, RegisterView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
@@ -11,5 +11,7 @@ urlpatterns = [
         ValidateOTPView.as_view(),
         name="email-otp-validate",
     ),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh")
+    path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
+    path("change-email/", ChangeEmailOTPView.as_view(), name='change-email'),
+    path('change-email/validate', ValidateChangeEmailOTPView.as_view(), name='otp-change-email')
 ]

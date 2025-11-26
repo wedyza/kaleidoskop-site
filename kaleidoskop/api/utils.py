@@ -1,4 +1,6 @@
 from django.template.defaultfilters import slugify as django_slugify
+# import httpx
+# from .models import Item
 
 
 # Slugify (Cyrillic)
@@ -39,3 +41,17 @@ alphabet = {
 
 def slugify(s):
     return django_slugify("".join(alphabet.get(w, w) for w in s.lower()))
+
+
+# def importer():
+#     url = 'https://b2b.utake.ru/wa-data/public/shop/products/13/16/21613/images/36830/36830.970.png'
+
+#     client = httpx.Client(headers={
+#         'User-Agent': '1',
+#         'Host': 'b2b.utake.ru',
+#         # 'Postman-Token': '1c3bc6a4-3d0f-486b-b8a4-7024a036c062'
+#     })
+
+#     response = client.get(url)
+
+# #     item = Item.ob

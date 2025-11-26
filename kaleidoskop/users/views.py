@@ -118,3 +118,61 @@ class ValidateOTPView(APIView):
             return Response(
                 {"error": "Неправильный код."}, status=status.HTTP_400_BAD_REQUEST
             )
+        
+
+class ChangeEmailOTPView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    @swagger_auto_schema(request_body=UserLoginSerializer)
+    def post(self, request):
+        email = UserLoginSerializer(data=request.data)
+        if not email.is_valid():
+            return Response(email.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        user_exists = User.objects.filter(email=email.data["email"]).exists()
+        if user_exists:
+            return Response({"detail": "Невозможно поменять почту на данную!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+
+        otp = generate_otp()
+        user.email_to_change = email.data["email"]
+        user.otp_change_email = otp
+        user.otp_expires_change_email = timezone.now() + timezone.timedelta(minutes=15)
+        user.save()
+
+        send_otp_email(email.data["email"], otp)
+
+        return Response({"message": "Письмо с подтверждением отправлено на указанную почту. Код действителен в течении 15 минут"})
+
+
+class ValidateChangeEmailOTPView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    @swagger_auto_schema(request_body=UserLoginOTPSerializer)
+    def post(self, request):
+        payload = UserLoginOTPSerializer(data=request.data)
+
+        if not payload.is_valid():
+            return Response(payload.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = request.user
+
+        otp = payload.data["otp"]
+        if user.otp_change_email == otp:
+            if timezone.now() > user.otp_expires_change_email:
+                return Response(  # pragma: no cover
+                    {"error": "Срок действия пароля истек"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            user.otp_change_email = None
+            user.otp_expires_change_email = None
+            user.email = user.email_to_change
+            user.email_to_change = None
+            user.save()
+
+            return Response({"detail": "Успешно"})
+        else:
+            return Response({"detail": "Неверный код"}, status=status.HTTP_400_BAD_REQUEST)

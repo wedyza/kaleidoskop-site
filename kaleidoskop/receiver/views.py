@@ -34,6 +34,7 @@ class ReceiveNomenclaturesView(APIView):
         # parse_nomenclatures(request.data)
         return Response({"message": "hi"})
     
+    # Тут надо будет понять, что именно меняется на приемке и менять
     def put(self, request):
         return Response()
 
@@ -49,7 +50,8 @@ class ReceiveItemsView(APIView):
             ItemDocument().update(Item.objects.all())
         return Response()
     
-    def put(self, request):
+    # Тут надо будет понять, что именно меняется на приемке и менять
+    def put(self, request): #
         return Response()
 
 
@@ -58,7 +60,6 @@ class ReceiveRemainsView(APIView):
     permission_classes = (ContainsAPIKey,)
 
     def post(self, request):
-        print('start')
         data = sync_remains()
         remains = RemainsReceiveSerializer(data=data, many=True)
         if remains.is_valid():

@@ -5,6 +5,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions, routers
 from .views import (
+    CartItemViewSet,
     ItemViewSet,
     CommentViewSet,
     OrderViewSet,
@@ -27,6 +28,7 @@ router.register("users", UsersViewSet, basename="users")
 router.register("admin/nomenclatures", AdminNomenclaturesViewSet, basename='nomenclantures')
 router.register("orders", OrderViewSet, basename='orders')
 # router.register("users/me/cart", CartViewSet, basename='cart')
+router.register("cart_items", CartItemViewSet, basename="cart")
 
 urlpatterns = [
     path("", include(router.urls)),

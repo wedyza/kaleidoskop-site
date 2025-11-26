@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Item, Cart, CartItem, Like, Comment, NomenclatureCategory, Order, Remains, Nomenclature
+from .models import Category, Item, Cart, CartItem, ItemImage, Like, Comment, NomenclatureCategory, Order, Parameter, Remains, Nomenclature
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -11,6 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         exclude = ('nomenclatures', )
+        read_only_fields = ('id',)
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):
@@ -21,10 +22,24 @@ class ItemRemainsSerializer(serializers.ModelSerializer):
         fields = ("warehouse", "count")
 
 
+class ItemImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemImage
+        fields = ('source',)
+
+
+class ParameterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Parameter
+        fields = ('title', 'unit', 'value')
+
+
 class ItemSerializer(serializers.ModelSerializer):
     remains = ItemRemainsSerializer(many=True, read_only=True)
     in_wishlist = serializers.SerializerMethodField("get_in_wishlist", read_only=True)
     cart_count = serializers.SerializerMethodField("get_cart_count", read_only=True)
+    images = ItemImageSerializer(many=True, read_only=True)
+    parameters = ParameterSerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
@@ -38,7 +53,9 @@ class ItemSerializer(serializers.ModelSerializer):
             "remains",
             "slug",
             "in_wishlist",
-            "cart_count"
+            "cart_count",
+            'images',
+            'parameters'
         )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
 
     
@@ -54,7 +71,7 @@ class ItemSerializer(serializers.ModelSerializer):
     def get_cart_count(self, obj):
         user = self.context["request"].user
         if user.is_anonymous:
-            return False
+            return None
         
         cart_item = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=user).filter(current_cart=True))).filter(item=obj).first()
 
@@ -67,7 +84,8 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ("item", "amount", 'id')
+        fields = ("item", 'id', 'amount', 'marked_for_order')
+        read_only_fields = ('item',)
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -154,3 +172,7 @@ class CartTo1CSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ("items", )
+
+
+class ItemCartAmountSerialzier(serializers.Serializer):
+    amount = serializers.IntegerField()

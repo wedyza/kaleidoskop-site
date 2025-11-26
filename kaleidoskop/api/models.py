@@ -120,7 +120,15 @@ class Item(UUIDModel):
     parent_code = models.CharField("Код родителя", max_length=20, null=True)
     country = models.CharField("Страна-производитель", max_length=25, null=True)
     public = models.BooleanField("Доступен публично", default=False, null=False)
-    
+
+    parameters = models.ManyToManyField(
+        'Parameter',
+        related_name='items',
+        verbose_name='Параметры',
+        null=True,
+        blank=True
+    )
+
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = "Товары"
@@ -229,7 +237,9 @@ class CartItem(UUIDModel):
         verbose_name="Корзина",
         related_name="items",
     )
-    amount = models.IntegerField("Количество")
+    amount = models.IntegerField("Количество", validators=[
+        MinValueValidator(0), MaxValueValidator(1000)
+    ])
     marked_for_order = models.BooleanField("Помечено для заказа", default=False)
 
     
@@ -303,6 +313,21 @@ class Remains(UUIDModel):
     
     def __str__(self):
         return f"{self.item.title} - {self.warehouse.name}"
+
+class ItemImage(UUIDModel):
+    source = models.ImageField(upload_to="media", null=False, max_length=300)
+    item = models.ForeignKey(
+        Item,
+        verbose_name="Товар",
+        related_name="images",
+        on_delete=models.CASCADE
+    )
+
+
+class Parameter(UUIDModel):
+    title = models.CharField("Название", max_length=100, null=False, blank=False)
+    unit = models.CharField("Единица измерения", max_length=25, blank=True, null=True)
+    value = models.TextField("Значение", max_length=200, null=False, blank=False)
 
 
 # class SiteSettings(models.Model):

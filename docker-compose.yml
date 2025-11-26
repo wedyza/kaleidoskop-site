@@ -106,6 +106,22 @@ services:
     volumes:
       - static:/static/
 
+  telegram_bot:
+    build: ./Telegram_Notification
+    container_name: telegram
+    depends_on:
+      - redis
+      - rabbitmq
+    profiles: [donotstart]
+  
+  recommendation_system:
+    build: ./AI_Feature
+    container_name: ai_web_app
+    ports:
+      - 8082:8000
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    profiles: [donotstart]
+  
 volumes:
  pg_data:
  minio-storage:

@@ -5,8 +5,10 @@ from django.contrib.auth import get_user_model
 from .paginators import CustomPagination
 from django.core.exceptions import ValidationError
 from .serializers import (
+    CartItemSerializer,
     CartSerializer,
     CategorySerializer,
+    ItemCartAmountSerialzier,
     ItemSerializer,
     LikeSerializer,
     CommentSerializer,
@@ -24,8 +26,9 @@ from search.documents import ItemDocument
 from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from .functions import get_nomenclatures
+from .functions import get_daughter_nomenclatures, get_nomenclatures
 from django.db.models import F, Sum
+from django.db.models import Q as Query
 from users.tasks import update_user_1c, create_order_1c
 import httpx
 
@@ -46,6 +49,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         manual_parameters=[
             openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
             openapi.Parameter("page", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
+            # openapi.Parameter("wrapper", openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN)
         ]
     )
     @action(
@@ -53,10 +57,20 @@ class CategoryViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path="items",
         pagination_class=CustomPagination,
+        serializer_class=ItemSerializer
     )
     def get_items(self, request, pk):
         category = Category.objects.get(id=pk)
-        items = Item.objects.filter(nomenclature__in=category.nomenclatures.all()).all()
+        # if category.daughter.count() != 0:
+        #     daughter_categories = category.daughter.all()
+        #     base_query = Item.objects.none()
+        #     for category in daughter_categories:
+        #         base_query |= Item.objects.filter(nomenclature__in=category.nomenclatures.all()).all()
+        #     items= base_query
+        # else:
+        #     items = Item.objects.filter(nomenclature__in=category.nomenclatures.all()).all()
+        nomenclatures = get_daughter_nomenclatures(category.nomenclatures.all())
+        items=  Item.objects.filter(nomenclature__in=nomenclatures).all()
         page = self.paginate_queryset(items)
 
         if page is not None:
@@ -165,6 +179,34 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             cart_item.delete()
 
         return Response({"enabled": enable}, status=status.HTTP_200_OK)
+    
+
+    @swagger_auto_schema(
+        request_body=ItemCartAmountSerialzier(),
+        responses={201: CartItemSerializer()}
+    )
+    @action(
+        detail=True,
+        permission_classes=(permissions.IsAuthenticated,),
+        methods=["PATCH"],
+        url_path="cart/update_amount",
+        serializer_class=ItemCartAmountSerialzier
+    )
+    def change_cart_count(self, request, pk):
+        amount = self.get_serializer(data=request.data)
+        if not amount.is_valid():
+            return Response(amount.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        item = Item.objects.get(id=pk)
+        cart_item = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=request.user).filter(current_cart=True))).filter(item=item).first()
+
+        if cart_item is None:
+            return Response({"detail": "This item is not currently in cart!"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        cart_item.amount = amount.validated_data["amount"]
+        cart_item.save()
+
+        return Response(CartItemSerializer(instance=cart_item, context={"request": request}).data)
 
 
 class CommentViewSet(
@@ -269,7 +311,11 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin
 
         serializer = self.get_serializer(nomenclatures, many=True)
         return Response(serializer.data)
-        
+
+    @swagger_auto_schema(
+        request_body=NomenclatureCategorySerializer(many=True),
+        responses={201: NomenclatureCategorySerializer(many=True)}
+    )        
     @action(methods=['POST'], url_path='add_to_category', detail=False, serializer_class=NomenclatureCategorySerializer)
     def add_nomenclature_to_category(self, request):
         """
@@ -280,6 +326,17 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CartItemViewSet(viewsets.GenericViewSet,
+                      mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin):
+    model = CartItem
+    serializer_class = CartItemSerializer
+    permission_classes = (permissions.IsAuthenticated,) # Добавить потом Owner, чтобы ограничить вмешательство в чужие корзины
+
+    def get_queryset(self):
+        return CartItem.objects.filter(cart__in=(Cart.objects.filter(user=self.request.user).filter(current_cart=True))).all()
 
 
 class CartItemView(views.APIView):
