@@ -17,6 +17,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { step } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
 
+  console.log(step);
   const handleRequestOtp = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;

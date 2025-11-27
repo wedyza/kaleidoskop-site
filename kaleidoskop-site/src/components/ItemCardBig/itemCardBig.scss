@@ -9,12 +9,6 @@
     height: 100%;
   }
 }
-
-.item-card_basket {
-  height: 40px;
-  width: 100%;
-}
-
 .item-card_actions__big {
   width: 100%;
   display: flex;
@@ -31,4 +25,9 @@
 .item-card_shops-link,
 .item-card_shops-link:visited {
   color: var(--orange500);
+}
+
+.item-card_actions-cart__big {
+  height: 40px;
+  width: 100%;
 }

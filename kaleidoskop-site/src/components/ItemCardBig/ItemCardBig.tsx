@@ -4,14 +4,19 @@ import { Link } from 'react-router-dom';
 import type { Product } from '../../features/products/productsSlice';
 import ItemsActions from '../ItemsActions/ItemsActions';
 import { formatPrice } from '../../utils/formatPrice';
+import { useAppDispatch } from '../../app/hooks';
+import ToBasket from '../ToBasket/ToBasket';
+import { toggleBasketItem, updateBasketItemAmount } from '../../features/basket/basketSlice';
 
 interface ItemCardBigProps {
   product: Product;
 }
 
 const ItemCardBig: React.FC<ItemCardBigProps> = ({product}) => {
+  const dispatch = useAppDispatch();
+
   return (
-    <div className='item-card item-card__big'>
+    <Link to={`/product/${product.slug}`} className='item-card item-card__big'>
       <div className="item-card_img">
         <img src={itemImg} alt="" />
         <span className="item-card_discount inter13-500">
@@ -37,19 +42,39 @@ const ItemCardBig: React.FC<ItemCardBigProps> = ({product}) => {
         </div>
       </div>
       <div className="item-card_actions__big">
-        <button className="item-card_basket grey-btn inter14-600">
-          В корзину
-        </button>
-        <div className='item-card_shops inter11-400'>
+        <div className="item-card_actions-cart__big">
+          <ToBasket
+            product={product}
+            classBtn='grey-btn'
+            onAdd={() => dispatch(toggleBasketItem({ id: product.id, enable: true }))}
+
+            onRemove={() => dispatch(toggleBasketItem({ id: product.id, enable: false }))}
+
+            onIncrease={() =>
+              dispatch(updateBasketItemAmount({
+                id: product.id!,
+                amount: product.cart_count! + 1
+              }))
+            }
+
+            onDecrease={() =>
+              dispatch(updateBasketItemAmount({
+                id: product.id!,
+                amount: product.cart_count! - 1
+              }))
+            }
+          />
+        </div>
+        {/* <div className='item-card_shops inter11-400'>
           <span>
             Сегодня:
           </span>
           <Link to={''} className='item-card_shops-link'>
             Посмотреть магазины
           </Link>
-        </div>
+        </div> */}
       </div>
-    </div>
+    </Link>
   )
 }
 

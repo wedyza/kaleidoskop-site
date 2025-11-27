@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
 import type { Product } from '../products/productsSlice';
 import { toggleWishlist } from '../products/productItemSlice';
+import { toggleBasketItem, updateBasketItemAmount } from '../basket/basketSlice';
 
 interface WishlistEntry {
   item: Product;
@@ -56,6 +57,36 @@ const wishlistSlice = createSlice({
         const index = state.items.findIndex((item) => item.item.id === id);
         if (index !== -1) {
           state.items.splice(index, 1);
+        }
+      })
+      .addCase(toggleBasketItem.fulfilled, (state, action) => {
+        const { id, enable } = action.meta.arg;
+
+        const index = state.items.findIndex((p) => p.item.id === id);
+        if (index !== -1) {
+          if (enable) {
+            state.items[index].item.cart_count = 1;
+          } 
+          else {
+            state.items[index].item.cart_count = 0;
+          }
+        }
+      })
+      .addCase(updateBasketItemAmount.fulfilled, (state, action) => {
+        const update = action.payload;
+
+        if (!update) {
+          const { id } = action.meta.arg;
+          const index = state.items.findIndex((p) => p.item.id === id);
+          if (index !== -1) {
+            state.items[index].item.cart_count = 0;
+          }
+          return;
+        }
+
+        const index = state.items.findIndex((p) => p.item.id === update.item.id);
+        if (index !== -1) {
+          state.items[index].item.cart_count = update.amount;
         }
       });
   },

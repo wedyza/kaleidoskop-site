@@ -4,6 +4,7 @@ import BasketCard from '../../components/BasketCard/BasketCard';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useEffect } from 'react';
 import { fetchBasket/*, clearSelectedItems, setSelectedItems*/ } from '../../features/basket/basketSlice';
+import { formatPrice } from '../../utils/formatPrice';
 
 function BasketPage () {
   const dispatch = useAppDispatch();
@@ -48,6 +49,10 @@ function BasketPage () {
   //   }
   // }, [dispatch]);
 
+  const totalSum = items.reduce((sum, item) => {
+    return sum + (item.item.price * (item.item.cart_count || 1));
+  }, 0);
+
   return (
     <div className="page-basket">
       <div className='basket-content'>
@@ -73,28 +78,22 @@ function BasketPage () {
       <div className='basket-placement'>
         <div className='basket-placement_content'>
           <div className="basket-placement_list">
-            <div className="basket-placement_list-item">
-              <span className='basket-placement_list__label inter12-400'>
-                Специальное чистящее средство для посудомоечной машины
-              </span>
-              <span className='basket-placement_list__value inter14-600'>5 520 ₽</span>
-            </div>
-            <div className="basket-placement_list-item">
-              <span className='basket-placement_list__label inter12-400'>
-                Снегоуборочная машина HUTER SGC 2300E электро 2300Вт
-              </span>
-              <span className='basket-placement_list__value inter14-600'>18 190 ₽</span>
-            </div>
-            <div className="basket-placement_list-item">
-              <span className='basket-placement_list__label inter12-400'>
-                fff
-              </span>
-              <span className='basket-placement_list__value inter14-600'>18 190 ₽</span>
-            </div>
+            {items && items.length > 0 && items.map((item) => (
+              <div className="basket-placement_list-item">
+                <span className='basket-placement_list__label inter12-400'>
+                  {item.item.title}
+                </span>
+                <span className='basket-placement_list__value inter14-600'>
+                  {item.item.cart_count && formatPrice(item.item.price * item.item.cart_count)} ₽
+                </span>
+              </div>
+            ))}
           </div>
           <div className="basket-placement_sum">
             <span className='basket-placement_content__label inter16-600'>Итого:</span>
-            <span className='basket-placement_content__value inter24-700'>5 520 ₽</span>
+            <span className='basket-placement_content__value inter24-700'>
+              {formatPrice(totalSum)} ₽
+            </span>
           </div>
         </div>
         <div className='basket-placement_actions'>

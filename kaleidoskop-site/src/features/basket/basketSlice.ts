@@ -49,6 +49,22 @@ export const toggleBasketItem = createAsyncThunk<
   }
 );
 
+export const updateBasketItemAmount = createAsyncThunk<
+  BasketEntry | null,
+  { id: string; amount: number },
+  { rejectValue: string }
+>(
+  'cart/updateBasketItemAmount',
+  async ({ id, amount }, { rejectWithValue }) => {
+    try {
+      const response = await api.patch(`/items/${id}/cart/update_amount/`, { amount });
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Ошибка обновления количества');
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -80,6 +96,33 @@ const cartSlice = createSlice({
         }
       })
       .addCase(toggleBasketItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateBasketItemAmount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateBasketItemAmount.fulfilled, (state, action) => {
+        state.loading = false;
+
+        const updated = action.payload;
+        const { id } = action.meta.arg;
+
+        if (!updated) {
+          state.items = state.items.filter((entry) => entry.item.id !== id);
+          return;
+        }
+
+        const index = state.items.findIndex((entry) => entry.item.id === id);
+
+        if (index !== -1) {
+          state.items[index] = updated;
+        } else {
+          state.items.push(updated);
+        }
+      })
+      .addCase(updateBasketItemAmount.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

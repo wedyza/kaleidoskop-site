@@ -18,7 +18,7 @@ export interface Product {
   description?: string;
   remains?: Remains[];
   in_wishlist: boolean;
-  basket_count?: number;
+  cart_count?: number;
 }
 
 interface ProductsState {

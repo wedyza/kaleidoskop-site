@@ -3,7 +3,7 @@ import itemImg from '../../assets/item.png'
 import ItemsActions from '../ItemsActions/ItemsActions';
 import CustomCheckbox from '../CustomCheckbox/CustomCheckbox';
 import { useState } from 'react';
-import { toggleBasketItem, type BasketEntry } from '../../features/basket/basketSlice';
+import { toggleBasketItem, updateBasketItemAmount, type BasketEntry } from '../../features/basket/basketSlice';
 import { formatPrice } from '../../utils/formatPrice';
 import { useAppDispatch } from '../../app/hooks';
 
@@ -15,8 +15,23 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
   const [isChecked, setIsChecked] = useState(false);
   const dispatch = useAppDispatch();
 
-  const handleAddToBasket = async () => {
+  const handleRemoveFromBasket = async () => {
     await dispatch(toggleBasketItem({ id: item.item.id, enable: false }));
+  };
+
+  const handleIncrease = () => {
+    dispatch(updateBasketItemAmount({
+      id: item.item.id,
+      amount: item.amount + 1
+    }));
+  };
+
+  const handleDecrease = () => {
+    if (item.amount <= 1) return;
+    dispatch(updateBasketItemAmount({
+      id: item.item.id,
+      amount: item.amount - 1
+    }));
   };
   
   return (
@@ -45,15 +60,21 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
             <span className='basket-card_date__accent'>Посмотреть магазины</span>
           </span>
           <div className='basket-card_count inter14-600'>
-            <button className='basket-card_count-btn basket-card_count-btn__inactive'>
-              <svg width="6" height="2" viewBox="0 0 6 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <button
+              className={`basket-card_count-btn ${item.amount <= 1 ? 'basket-card_count-btn__inactive' : ''}`}
+              onClick={handleDecrease}
+              disabled={item.amount <= 1}
+            >
+              <svg width="6" height="2" viewBox="0 0 6 2" fill="none">
                 <path d="M6 0V1.5H0V0H6Z" fill="white"/>
               </svg>
             </button>
-            <span>1</span>
-            <button className='basket-card_count-btn'>
-              <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.40089 6V0H3.59467V6H2.40089ZM0 3.59467V2.40089H6V3.59467H0Z" fill="white"/>
+
+            <span>{item.amount}</span>
+
+            <button className='basket-card_count-btn' onClick={handleIncrease}>
+              <svg width="6" height="6" viewBox="0 0 6 6" fill="none">
+                <path d="M2.4 6V0H3.6V6H2.4ZM0 3.6V2.4H6V3.6H0Z" fill="white"/>
               </svg>
             </button>
           </div>
@@ -61,21 +82,21 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
         <div className='basket-card_info-price'>
           <div className='basket-card_discount'>
             <span className='basket-card_discount-value inter14-500'>
-              {formatPrice(item.item.price * 4/3 * item.amount)} ₽
+              {item.item.cart_count && formatPrice(item.item.price * 4/3 * item.item.cart_count)} ₽
             </span>
             <span className='basket-card_discount-percent inter11-600'>
               - 25%
             </span>
           </div>
           <span className='basket-card_price inter20-600'>
-            {formatPrice(item.item.price * item.amount)} ₽
+            {item.item.cart_count && formatPrice(item.item.price * item.item.cart_count)} ₽
           </span>
         </div>
       </div>
       <div className='basket-card_actions'>
         {/* <ItemsActions /> */}
         <button
-          onClick={handleAddToBasket}
+          onClick={handleRemoveFromBasket}
           className='basket-card_remove'
         >
           <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">

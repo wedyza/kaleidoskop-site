@@ -5,7 +5,8 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchProductByArticle, toggleWishlist } from '../../features/products/productItemSlice';
 import { formatPrice } from '../../utils/formatPrice';
-import { toggleBasketItem } from '../../features/basket/basketSlice';
+import { toggleBasketItem, updateBasketItemAmount } from '../../features/basket/basketSlice';
+import ToBasket from '../../components/ToBasket/ToBasket';
 
 function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -26,10 +27,12 @@ function ProductPage() {
     }
   };
 
-  const handleAddToBasket = async () => {
-    if (selectedItem)
-      await dispatch(toggleBasketItem({ id: selectedItem.id, enable: true }));
-  };
+  // const handleAddToBasket = async () => {
+  //   if (selectedItem)
+  //     await dispatch(toggleBasketItem({ id: selectedItem.id, enable: true }));
+  // };
+
+  if (!selectedItem) return;
   
   return (
     <div className='page-product'>
@@ -80,12 +83,27 @@ function ProductPage() {
             </span>
           </div>
           <div className='product-info_actions'>
-            <button 
-              className='product_basket inter14-600 accent-btn'
-              onClick={handleAddToBasket}
-            >
-              В корзину
-            </button>
+            <ToBasket
+              product={selectedItem}
+              classBtn='accent-btn'
+              onAdd={() => dispatch(toggleBasketItem({ id: selectedItem.id, enable: true }))}
+
+              onRemove={() => dispatch(toggleBasketItem({ id: selectedItem.id, enable: false }))}
+
+              onIncrease={() =>
+                dispatch(updateBasketItemAmount({
+                  id: selectedItem.id!,
+                  amount: selectedItem.cart_count! + 1
+                }))
+              }
+
+              onDecrease={() =>
+                dispatch(updateBasketItemAmount({
+                  id: selectedItem.id!,
+                  amount: selectedItem.cart_count! - 1
+                }))
+              }
+            />
             <button
               onClick={handleToggleWishlist}
               className={`product_fav product_action ${selectedItem && selectedItem.in_wishlist ? 'product_action__active' : ''}`}

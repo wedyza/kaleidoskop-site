@@ -1,0 +1,25 @@
+.basket-counter {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 5px;
+  width: 205px;
+}
+
+.basket-counter_btn,
+.basket-counter_value {
+  background-color: var(--grey100);
+  height: 100%;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.basket-counter_value {
+  flex: 1;
+}
+
+.basket-counter_btn {
+  aspect-ratio: 1 / 1;
+}
