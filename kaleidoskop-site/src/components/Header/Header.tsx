@@ -11,7 +11,8 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const userName = useAppSelector((state) => state.user.firstName);
+  const userName = useAppSelector((state) => state.user.user?.first_name);
+  const token = useAppSelector(state => state.auth.token);
 
   return (
     <header className='header'>
@@ -123,8 +124,8 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
               Корзина
             </span>
           </Link>
-          {userName ? (
-            <Link to={''} className='header-nav-item'>
+          {token ? (
+            <Link to={'/profile'} className='header-nav-item'>
               <div className="header-nav_icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12.75C8.54822 12.75 5.75 15.5482 5.75 19V20C5.75 20.4142 5.41421 20.75 5 20.75C4.58579 20.75 4.25 20.4142 4.25 20V19C4.25 14.7198 7.71979 11.25 12 11.25C16.2802 11.25 19.75 14.7198 19.75 19V20C19.75 20.4142 19.4142 20.75 19 20.75C18.5858 20.75 18.25 20.4142 18.25 20V19C18.25 15.5482 15.4518 12.75 12 12.75Z" fill="white"/>
@@ -132,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
                 </svg>
               </div>
                 <span className="header-nav_text">
-                  {userName}
+                  {userName || 'Ваше имя'}
                 </span>
             </Link>
           ) : (

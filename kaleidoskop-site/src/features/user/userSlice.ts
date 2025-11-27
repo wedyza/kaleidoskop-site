@@ -2,28 +2,29 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
 import { logout } from '../auth/authSlice';
 
-interface UserState {
+interface User {
   id?: number;
-  firstName: string;
-  lastName: string;
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
   email: string;
   sex: 'MALE' | 'FEMALE' | undefined;
   avatar?: string;
-  loading: boolean;
-  error: string | null;
-  loaded: boolean;
   is_superuser: boolean;
 }
 
+interface UserState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  loaded: boolean;
+}
+
 const initialState: UserState = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  sex: undefined,
+  user: null,
   loading: false,
   error: null,
   loaded: false,
-  is_superuser: false,
 };
 
 export const fetchUserInfo = createAsyncThunk(
@@ -38,30 +39,24 @@ export const fetchUserInfo = createAsyncThunk(
   }
 );
 
-// export const updateUserInfo = createAsyncThunk(
-//   'user/updateUserInfo',
-//   async (
-//     updatedData: {
-//       first_name: string;
-//       last_name: string;
-//       email: string;
-//       gender: 'MALE' | 'FEMALE';
-//     },
-//     { rejectWithValue, getState }: any
-//   ) => {
-//     const token = getState().auth.token;
-//     try {
-//       const res = await api.patch('/users/me/', updatedData, {
-//         headers: {
-//           Authorization: `Token ${token}`,
-//         },
-//       });
-//       return res.data;
-//     } catch (err: any) {
-//       return rejectWithValue(err.response?.data?.message || 'Ошибка при обновлении данных');
-//     }
-//   }
-// );
+export const updateUserInfo = createAsyncThunk(
+  'user/updateUserInfo',
+  async (
+    userData: {
+      first_name?: string;
+      last_name?: string;
+      phone_number?: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await api.patch('/users/me/', userData);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Ошибка при обновлении данных');
+    }
+  }
+);
 
 // export const updateUserAvatar = createAsyncThunk(
 //   'user/updateUserAvatar',
@@ -76,7 +71,7 @@ export const fetchUserInfo = createAsyncThunk(
 //           Authorization: `Token ${token}`,
 //         },
 //       });
-//       return res.data.avatar;
+//       return res.data;
 //     } catch (err: any) {
 //       return rejectWithValue(err.response?.data?.message || 'Ошибка при обновлении аватара');
 //     }
@@ -90,6 +85,11 @@ const userSlice = createSlice({
     clearUser: (state) => {
       Object.assign(state, initialState);
     },
+    updateUser: (state, action) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -98,12 +98,7 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserInfo.fulfilled, (state, action) => {
-        const { first_name, last_name, email, sex, avatar } = action.payload;
-        state.firstName = first_name;
-        state.lastName = last_name;
-        state.email = email;
-        state.sex = sex;
-        state.avatar = avatar;
+        state.user = action.payload;
         state.loading = false;
         state.loaded = true;
       })
@@ -112,35 +107,29 @@ const userSlice = createSlice({
         state.error = action.payload as string;
         state.loaded = true;
       })
-      // .addCase(updateUserInfo.fulfilled, (state, action) => {
-      //   const { first_name, last_name, email, sex, user_type } = action.payload;
-      //   state.firstName = first_name;
-      //   state.lastName = last_name;
-      //   state.email = email;
-      //   state.user_type = user_type;
-      //   state.gender = sex;
-      //   state.loading = false;
-      // })
-      // .addCase(updateUserInfo.pending, (state) => {
-      //   state.loading = true;
-      // })
-      // .addCase(updateUserInfo.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload as string;
-      // })
+      .addCase(updateUserInfo.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload };
+        state.loading = false;
+      })
+      .addCase(updateUserInfo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       // .addCase(updateUserAvatar.fulfilled, (state, action) => {
-      //   state.avatar = action.payload;
+      //   if (state.user) {
+      //     state.user.avatar = action.payload;
+      //   }
       //   state.loading = false;
       // })
       .addCase(logout, (state) => {
-        state.firstName = '';
-        state.lastName = '';
-        state.email = '';
-        state.sex = undefined;
-        state.is_superuser = false;
+        state.user = null;
       });
   },
 });
 
-export const { clearUser } = userSlice.actions;
+export const { clearUser, updateUser } = userSlice.actions;
 export default userSlice.reducer;

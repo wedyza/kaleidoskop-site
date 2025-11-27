@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { fetchUserInfo } from './features/user/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -38,6 +39,7 @@ function App() {
             <Route path="/basket" element={<BasketPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/comparison" element={<ComparisonPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
         <Route path="/" element={<MainPage />} />

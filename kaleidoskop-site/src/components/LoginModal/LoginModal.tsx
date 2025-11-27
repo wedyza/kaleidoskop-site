@@ -33,6 +33,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     if (step === 'authenticated') {
       setEmail('');
       setCode('');
+      onClose();
     }
   }, [step]);
 
