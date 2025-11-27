@@ -147,7 +147,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
         </nav>
         {/* <button className='header-login inter14-400 accent-border'>Войти</button> */}
       </div>
-      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} mode="login" />
     </header>
   )
 }

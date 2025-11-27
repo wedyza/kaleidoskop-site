@@ -7,6 +7,8 @@ interface AuthState {
   step: 'email' | 'otp' | 'authenticated';
   loading: boolean;
   error: string | null;
+  changeEmailStep: 'idle' | 'requested' | 'validated'; // состояние смены почты
+  newEmail: string; // новая почта для смены
 }
 
 const initialState: AuthState = {
@@ -15,6 +17,8 @@ const initialState: AuthState = {
   step: localStorage.getItem('token') ? 'authenticated' : 'email',
   loading: false,
   error: null,
+  changeEmailStep: 'idle',
+  newEmail: '',
 };
 
 export const createOtp = createAsyncThunk(
@@ -31,44 +35,6 @@ export const createOtp = createAsyncThunk(
   }
 );
 
-// export const registerUser = createAsyncThunk(
-//   'auth/registerUser',
-//   async (
-//     { email, name, sex }: { email: string; name: string; sex: 'MALE' | 'FEMALE' },
-//     { rejectWithValue }
-//   ) => {
-//     try {
-//       const response = await api.post('/auth/register/', {
-//         email,
-//         first_name: name,
-//         sex,
-//       });
-//       return response.data;
-//     } catch (error: any) {
-//       return rejectWithValue(error.response?.data?.message || 'Ошибка регистрации');
-//     }
-//   }
-// );
-
-// export const registerSeller = createAsyncThunk(
-//   'auth/registerSeller',
-//   async (
-//     { email, name, sex }: { email: string; name: string; sex: 'MALE' | 'FEMALE' },
-//     { rejectWithValue }
-//   ) => {
-//     try {
-//       const response = await api.post('/auth/register_seller', {
-//         email,
-//         first_name: name,
-//         sex,
-//       });
-//       return response.data;
-//     } catch (error: any) {
-//       return rejectWithValue(error.response?.data?.message || 'Ошибка регистрации');
-//     }
-//   }
-// );
-
 export const validateOtp = createAsyncThunk(
   'auth/validateOtp',
   async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
@@ -77,6 +43,32 @@ export const validateOtp = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка при проверке кода');
+    }
+  }
+);
+
+export const changeEmail = createAsyncThunk(
+  'auth/changeEmail',
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/change-email/', {
+        email,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка при запросе смены почты');
+    }
+  }
+);
+
+export const validateChangeEmail = createAsyncThunk(
+  'auth/validateChangeEmail',
+  async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/change-email/validate', { email, otp });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка при подтверждении смены почты');
     }
   }
 );
@@ -92,7 +84,20 @@ const authSlice = createSlice({
       state.token = null;
       state.step = 'email';
       state.email = '';
+      state.changeEmailStep = 'idle';
+      state.newEmail = '';
       localStorage.removeItem('token');
+    },
+    setNewEmail(state, action) {
+      state.newEmail = action.payload;
+    },
+    resetChangeEmailState(state) {
+      state.changeEmailStep = 'idle';
+      state.newEmail = '';
+      state.error = null;
+    },
+    clearError(state) {
+      state.error = null;
     }
   },
   extraReducers: (builder) => {
@@ -123,32 +128,47 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // .addCase(registerUser.pending, (state) => {
-      //   state.loading = true;
-      //   state.error = null;
-      // })
-      // .addCase(registerUser.fulfilled, (state) => {
-      //   state.loading = false;
-      //   state.step = 'otp';
-      // })
-      // .addCase(registerUser.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload as string;
-      // })
-      // .addCase(registerSeller.pending, (state) => {
-      //   state.loading = true;
-      //   state.error = null;
-      // })
-      // .addCase(registerSeller.fulfilled, (state) => {
-      //   state.loading = false;
-      //   state.step = 'otp';
-      // })
-      // .addCase(registerSeller.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload as string;
-      // })
+      .addCase(changeEmail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(changeEmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.changeEmailStep = 'requested';
+        state.newEmail = action.meta.arg;
+      })
+      .addCase(changeEmail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        state.changeEmailStep = 'idle';
+      })
+      .addCase(validateChangeEmail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(validateChangeEmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.changeEmailStep = 'validated';
+        state.email = state.newEmail;
+        state.newEmail = '';
+        
+        if (action.payload.access) {
+          state.token = action.payload.access;
+          localStorage.setItem('token', action.payload.access);
+        }
+      })
+      .addCase(validateChangeEmail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { setEmail, logout } = authSlice.actions;
+export const { 
+  setEmail, 
+  logout, 
+  setNewEmail, 
+  resetChangeEmailState, 
+  clearError 
+} = authSlice.actions;
 export default authSlice.reducer;

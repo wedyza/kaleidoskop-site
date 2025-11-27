@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
-import { logout } from '../auth/authSlice';
+import { logout, validateChangeEmail } from '../auth/authSlice';
 
 interface User {
   id?: number;
@@ -127,6 +127,11 @@ const userSlice = createSlice({
       // })
       .addCase(logout, (state) => {
         state.user = null;
+      })
+      .addCase(validateChangeEmail.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.email = action.meta.arg.email;
+        }
       });
   },
 });

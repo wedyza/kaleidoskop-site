@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { updateUserInfo } from '../../features/user/userSlice';
 import './ProfilePage.scss';
+import LoginModal from '../../components/LoginModal/LoginModal';
 
 const ProfilePage = () => {
   const { user, loading } = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const [editableField, setEditableField] = useState<string | null>(null);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     phone_number: '',
     email: '',
@@ -75,7 +77,13 @@ const ProfilePage = () => {
   };
 
   const handleEmailEdit = () => {
-    console.log('Открытие модалки для изменения почты');
+    setIsEmailModalOpen(true);
+  };
+
+  const handleEmailModalClose = () => {
+    setIsEmailModalOpen(false);
+    // При закрытии модалки можно обновить данные пользователя
+    // если нужно отобразить новую почту после успешной смены
   };
 
   const renderEditableField = (fieldName: string, label: string, placeholder: string = 'Не указано') => {
@@ -150,19 +158,29 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className='page-profile'>
-      <h1 className='inter28-600'>Личные данные</h1>
-      
-      <div className='profile-contacts'>
-        {renderEditableField('phone_number', 'Номер телефона', 'Не указан')}
-        {renderEmailField()}
+    <>
+      <div className='page-profile'>
+        <h1 className='inter28-600'>Личные данные</h1>
+        
+        <div className='profile-contacts'>
+          {renderEditableField('phone_number', 'Номер телефона', 'Не указан')}
+          {renderEmailField()}
+        </div>
+        
+        <div className='profile-info'>
+          {renderEditableField('first_name', 'Имя', 'Не указано')}
+          {renderEditableField('last_name', 'Фамилия', 'Не указана')}
+        </div>
       </div>
-      
-      <div className='profile-info'>
-        {renderEditableField('first_name', 'Имя', 'Не указано')}
-        {renderEditableField('last_name', 'Фамилия', 'Не указана')}
-      </div>
-    </div>
+
+      {/* Модалка для смены почты */}
+      <LoginModal
+        isOpen={isEmailModalOpen}
+        onClose={handleEmailModalClose}
+        mode="change-email"
+        currentEmail={user?.email}
+      />
+    </>
   );
 };
 
