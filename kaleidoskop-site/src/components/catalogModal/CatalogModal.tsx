@@ -3,17 +3,11 @@ import './CatalogModal.scss';
 import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { fetchCategories } from '../../features/categories/categoriesSlice';
+import { fetchCategories, type Category } from '../../features/categories/categoriesSlice';
 
 interface CatalogModalProps {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface Category {
-  id: string;
-  title: string;
-  parent: string | null;
 }
 
 interface SubcategoryGroup {
@@ -21,7 +15,7 @@ interface SubcategoryGroup {
   rightColumn: Category[];
 }
 
-const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen }) => {
+const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
   const { categories, loading } = useAppSelector(state => state.categories);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -84,21 +78,27 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen }) => {
     return category?.title || '';
   };
 
+  const handleLinkClick = () => {
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return createPortal(
     <div className="catalog-modal">
-      <ul className='catalog-cat_list inter14-400'>
+      <div className='catalog-cat_list inter14-400'>
         {parentCategories.map((category) => (
-          <li
+          <Link
+            to={`/category/${category.slug}`} 
             key={category.id}
             className={`catalog-cat_item ${category.id === selectedCategory ? 'catalog-cat_item__active' : ''}`}
             onMouseEnter={() => setSelectedCategory(category.id)}
+            onClick={handleLinkClick}
           >
             <span className='catalog-cat_name'>{category.title}</span>
-          </li>
+          </Link>
         ))}
-      </ul>
+      </div>
       
       <div className="catalog-subcat_panel-container">
         <div className="catalog-subcat_panel">
@@ -115,8 +115,9 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen }) => {
                     {group.leftColumn.map((subcategory) => (
                       <div className="catalog-subcat_block" key={subcategory.id}>
                         <Link 
-                          to={`/category/${subcategory.id}`} 
+                          to={`/category/${subcategory.slug}`} 
                           className="catalog-subcat_title inter14-400"
+                          onClick={handleLinkClick}
                         >
                           {subcategory.title}
                         </Link>

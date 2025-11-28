@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { fetchUserInfo } from './features/user/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
+import CategoryPage from './pages/CategoryPage/CategoryPage';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -44,6 +45,7 @@ function App() {
         </Route>
         <Route path="/" element={<MainPage />} />
         <Route path="/product/:slug" element={<ProductPage />} />
+        <Route path="/category/:slug" element={<CategoryPage />} />
       </Route>
     </Routes>
   );

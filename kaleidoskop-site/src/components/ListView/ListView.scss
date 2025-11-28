@@ -1,0 +1,16 @@
+.list-container {
+  display: grid;
+  grid-template-columns: 205px 1fr;
+}
+
+.list-head {
+  display: flex;
+  gap: 22px;
+}
+
+.list-content {
+  margin-top: 35px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}

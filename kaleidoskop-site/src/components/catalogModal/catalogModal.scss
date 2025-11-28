@@ -43,6 +43,10 @@
   font-weight: 600;
 }
 
+.catalog-cat_item__active:visited {
+  color: var(--orange500);
+}
+
 // .catalog-cat_item__active::before {
 //   content: '';
 //   background-color: var(--accent);
