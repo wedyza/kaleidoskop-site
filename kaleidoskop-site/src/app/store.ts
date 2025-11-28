@@ -5,6 +5,7 @@ import authReducer from '../features/auth/authSlice'
 import userReducer from '../features/user/userSlice'
 import wishlistReducer from '../features/wishlist/wishlistSlice'
 import basketReducer from '../features/basket/basketSlice'
+import categoriesReducer from '../features/categories/categoriesSlice'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     user: userReducer,
     wishlist: wishlistReducer,
     basket: basketReducer,
+    categories: categoriesReducer,
   },
 });
 
