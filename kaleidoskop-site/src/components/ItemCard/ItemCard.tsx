@@ -1,5 +1,5 @@
 import './ItemCard.scss'
-import itemImg from '../../assets/item.png'
+import itemImg from '../../assets/empty_imgs.jpg'
 import { Link } from 'react-router-dom';
 import type { Product } from '../../features/products/productsSlice';
 import { formatPrice } from '../../utils/formatPrice';

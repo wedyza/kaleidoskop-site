@@ -1,6 +1,5 @@
 import './BasketCard.scss'
-import itemImg from '../../assets/item.png'
-import ItemsActions from '../ItemsActions/ItemsActions';
+import itemImg from '../../assets/empty_imgs.jpg'
 import CustomCheckbox from '../CustomCheckbox/CustomCheckbox';
 import { useState } from 'react';
 import { toggleBasketItem, updateBasketItemAmount, type BasketEntry } from '../../features/basket/basketSlice';
@@ -45,7 +44,11 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
         checkboxClass='basket-card_checkbox'
       />
       <div className="basket-card_img">
-        <img src={itemImg} alt="" />
+        {item.item.images && item.item.images.length > 0 ? (
+          <img src={item.item.images[0].source} alt="" />
+        ) : (
+          <img src={itemImg} alt="" />
+        )}
       </div>
       <div className="basket-card_info">
         <div className='basket-card_info-main'>

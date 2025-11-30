@@ -1,5 +1,5 @@
 import './ItemCardBig.scss'
-import itemImg from '../../assets/item.png'
+import itemImg from '../../assets/empty_imgs.jpg'
 import { Link } from 'react-router-dom';
 import type { Product } from '../../features/products/productsSlice';
 import ItemsActions from '../ItemsActions/ItemsActions';
@@ -18,7 +18,11 @@ const ItemCardBig: React.FC<ItemCardBigProps> = ({product}) => {
   return (
     <Link to={`/product/${product.slug}`} className='item-card item-card__big'>
       <div className="item-card_img">
-        <img src={itemImg} alt="" />
+        {product.images && product.images.length > 0 ? (
+          <img src={product.images[0].source} alt="" />
+        ) : (
+          <img src={itemImg} alt="" />
+        )}
         <span className="item-card_discount inter13-500">
           - 25%
         </span>
