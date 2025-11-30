@@ -27,6 +27,18 @@ export const fetchProductByArticle = createAsyncThunk(
   }
 );
 
+export const fetchProductById = createAsyncThunk(
+  'products/fetchProductById',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/items/${id}/`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки продуктов');
+    }
+  }
+);
+
 export const toggleWishlist = createAsyncThunk(
   'products/toggleWishlist',
   async ({ id, enable }: {id: string, enable: boolean}, { rejectWithValue }) => {
@@ -54,6 +66,18 @@ const productItemSlice = createSlice({
         state.selectedItem = action.payload;
       })
       .addCase(fetchProductByArticle.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedItem = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

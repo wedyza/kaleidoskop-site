@@ -1,0 +1,42 @@
+.params-main_list {
+  width: 100%;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.params-main_item {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  align-items: flex-end;
+}
+
+.params-main_item::after {
+  content: "..........................................................................................................................................................................................";
+  position: absolute;
+  right: 0;
+  white-space: nowrap;
+  color: var(--grey600);
+  pointer-events: none;
+  font-size: 10px;
+  z-index: 0;
+  bottom: -2px;
+}
+
+.params-main_item-text {
+  background-color: var(--white);
+  z-index: 1;
+  padding: 0 3px;
+}
+
+.params-main_item-label_cont {
+  z-index: 1;
+}
+
+.params-main_item-label {
+  color: var(--grey600);
+}

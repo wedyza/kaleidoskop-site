@@ -7,6 +7,20 @@ interface Remains {
   count: number;
 }
 
+export interface ProductImage {
+  source: string;
+}
+
+export interface Parameter {
+  title: string;
+  unit: string;
+}
+
+export interface ProductParameters {
+  parameter: Parameter;
+  value: string;
+}
+
 export interface Product {
   id: string;
   title: string;
@@ -14,11 +28,12 @@ export interface Product {
   article: string;
   country: string;
   slug: string;
-  images?: string;
+  images?: ProductImage[];
   description?: string;
   remains?: Remains[];
   in_wishlist: boolean;
   cart_count?: number;
+  parameters?: ProductParameters[];
 }
 
 interface ProductsState {

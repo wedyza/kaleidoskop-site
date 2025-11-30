@@ -1,23 +1,35 @@
 import { Link, useParams } from 'react-router-dom';
 import './ProductPage.scss'
 import ProductGallery from '../../components/ProductGallery/ProductGallery';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { fetchProductByArticle, toggleWishlist } from '../../features/products/productItemSlice';
+import { fetchProductById, toggleWishlist } from '../../features/products/productItemSlice';
 import { formatPrice } from '../../utils/formatPrice';
 import { toggleBasketItem, updateBasketItemAmount } from '../../features/basket/basketSlice';
 import ToBasket from '../../components/ToBasket/ToBasket';
+import MainParameters from '../../components/MainParameters/MainParameters';
 
 function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
   const dispatch = useAppDispatch();
   const selectedItem = useAppSelector((state) => state.productItem.selectedItem);
+  const prevProductIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (slug) {
-      dispatch(fetchProductByArticle(slug.split('--')[1]));
+      const productId = slug.split('--')[1];
+      dispatch(fetchProductById(productId));
+      prevProductIdRef.current = productId;
     }
   }, [dispatch, slug]);
+  const [galleryKey, setGalleryKey] = useState(0);
+  
+  useEffect(() => {
+    if (selectedItem && selectedItem.id !== prevProductIdRef.current) {
+      setGalleryKey(prev => prev + 1);
+      prevProductIdRef.current = selectedItem.id;
+    }
+  }, [selectedItem]);
 
   const handleToggleWishlist = (e: React.MouseEvent ) => {
     if (selectedItem){
@@ -49,10 +61,6 @@ function ProductPage() {
           Подкатегория
         </Link>
         <span className='page-path_separator'>/</span>
-        <Link to={'/'} className='main-link'>
-          Подподкатегория
-        </Link>
-        <span className='page-path_separator'>/</span>
         <span className="page-path_name">
            {selectedItem?.title}
         </span>
@@ -62,7 +70,10 @@ function ProductPage() {
         <div className='product-info_sub'>
           <span className='product-info_id inter14-400'>код: 18803520</span>
           <div className='product-info_gallery'>
-            <ProductGallery />
+            <ProductGallery 
+              key={galleryKey}
+              images={selectedItem?.images} 
+            />
           </div>
         </div>
         <div className='product-info_main'>
@@ -137,6 +148,12 @@ function ProductPage() {
               </Link>
             </div>
           </div>
+
+          {selectedItem.parameters && selectedItem.parameters.length > 0 && (
+            <div className='product-info_params'>
+              <MainParameters params={selectedItem.parameters} />
+            </div>
+          )}
         </div>
       </div>
     </div>

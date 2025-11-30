@@ -23,15 +23,19 @@
 
 .product-gallery_main {
   //aspect-ratio: 212 / 239;
-  aspect-ratio: 111 / 100;
   padding: 0 35px;
   width: 100%;
+}
+
+.product-gallery_main-container {
   border-radius: var(--border-radius);
   overflow: hidden;
+  aspect-ratio: 97 / 100;
 }
 
 .product-gallery_main-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
