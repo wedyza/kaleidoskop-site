@@ -1,21 +1,40 @@
 import './BasketCard.scss'
 import itemImg from '../../assets/empty_imgs.jpg'
 import CustomCheckbox from '../CustomCheckbox/CustomCheckbox';
-import { useState } from 'react';
-import { toggleBasketItem, updateBasketItemAmount, type BasketEntry } from '../../features/basket/basketSlice';
+import { setSelectedItems, toggleBasketItem, updateBasketItemAmount, type BasketEntry } from '../../features/basket/basketSlice';
 import { formatPrice } from '../../utils/formatPrice';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 interface BasketCardProps {
   item: BasketEntry;
 }
 
 const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
-  const [isChecked, setIsChecked] = useState(false);
   const dispatch = useAppDispatch();
+  const { selectedIds } = useAppSelector((state) => state.basket);
+  
+  const isChecked = selectedIds.includes(parseInt(item.id));
+
+  const handleCheckboxChange = () => {
+    const itemId = parseInt(item.id);
+    const newSelectedIds = isChecked 
+      ? selectedIds.filter(id => id !== itemId)
+      : [...selectedIds, itemId];
+    
+    dispatch(setSelectedItems(newSelectedIds));
+    
+    localStorage.setItem('selectedBasketIds', JSON.stringify(newSelectedIds));
+  };
 
   const handleRemoveFromBasket = async () => {
     await dispatch(toggleBasketItem({ id: item.item.id, enable: false }));
+    
+    const itemId = parseInt(item.id);
+    if (selectedIds.includes(itemId)) {
+      const newSelectedIds = selectedIds.filter(id => id !== itemId);
+      dispatch(setSelectedItems(newSelectedIds));
+      localStorage.setItem('selectedBasketIds', JSON.stringify(newSelectedIds));
+    }
   };
 
   const handleIncrease = () => {
@@ -40,7 +59,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
       </span>
       <CustomCheckbox
         checked={isChecked}
-        onChange={() => setIsChecked(!isChecked)}
+        onChange={handleCheckboxChange}
         checkboxClass='basket-card_checkbox'
       />
       <div className="basket-card_img">

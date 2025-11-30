@@ -6,6 +6,7 @@ import userReducer from '../features/user/userSlice'
 import wishlistReducer from '../features/wishlist/wishlistSlice'
 import basketReducer from '../features/basket/basketSlice'
 import categoriesReducer from '../features/categories/categoriesSlice'
+import ordersReducer from '../features/orders/ordersSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     wishlist: wishlistReducer,
     basket: basketReducer,
     categories: categoriesReducer,
+    orders: ordersReducer,
   },
 });
 

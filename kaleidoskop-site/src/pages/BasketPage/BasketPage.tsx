@@ -3,12 +3,13 @@ import './BasketPage.scss'
 import BasketCard from '../../components/BasketCard/BasketCard';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useEffect } from 'react';
-import { fetchBasket/*, clearSelectedItems, setSelectedItems*/ } from '../../features/basket/basketSlice';
+import { clearSelectedItems, fetchBasket/*, clearSelectedItems, setSelectedItems*/ } from '../../features/basket/basketSlice';
 import { formatPrice } from '../../utils/formatPrice';
+import { moveToOrder } from '../../features/orders/ordersSlice';
 
 function BasketPage () {
   const dispatch = useAppDispatch();
-  const { items /*, selectedIds */} = useAppSelector((state) => state.basket);
+  const { items , selectedIds } = useAppSelector((state) => state.basket);
 
   useEffect(() => {
     dispatch(fetchBasket());
@@ -49,9 +50,31 @@ function BasketPage () {
   //   }
   // }, [dispatch]);
 
-  const totalSum = items.reduce((sum, item) => {
-    return sum + (item.item.price * (item.item.cart_count || 1));
+  const selectedItems = items.filter(item => 
+    selectedIds.includes(parseInt(item.id))
+  );
+
+  const totalSum = selectedItems.reduce((sum, item) => {
+    return sum + (item.item.price * item.amount);
   }, 0);
+
+  const handleMoveToOrder = async () => {
+    if (selectedIds.length > 0) {
+      try {
+        const ids = selectedIds.map(id => id.toString());
+        
+        await dispatch(moveToOrder({ 
+          ids, 
+          enable: true 
+        })).unwrap();
+        
+        dispatch(clearSelectedItems());
+        localStorage.removeItem('selectedBasketIds');
+        
+      } catch (error) {
+      }
+    }
+  };
 
   return (
     <div className="page-basket">
@@ -78,7 +101,7 @@ function BasketPage () {
       <div className='basket-placement'>
         <div className='basket-placement_content'>
           <div className="basket-placement_list">
-            {items && items.length > 0 && items.map((item) => (
+            {selectedItems && selectedItems.length > 0 && selectedItems.map((item) => (
               <div className="basket-placement_list-item">
                 <span className='basket-placement_list__label inter12-400'>
                   {item.item.title}
@@ -100,9 +123,9 @@ function BasketPage () {
           <Link to='' className='basket-placement_gift grey-btn'>
             <span className='inter14-600'>Подарочный сертификат</span>
           </Link>
-          <Link to='' className='basket-placement_link accent-btn'>
+          <button onClick={handleMoveToOrder} className='basket-placement_link accent-btn'>
             <span className='inter14-600'>Перейти к оформлению</span>
-          </Link>
+          </button>
         </div>
       </div>
     </div>

@@ -12,10 +12,22 @@ interface BasketState {
   items: BasketEntry[];
   loading: boolean;
   error: string | null;
+  selectedIds: number[];
 }
+
+const loadSelectedIds = (): number[] => {
+  try {
+    const saved = localStorage.getItem('selectedBasketIds');
+    return saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    console.error('Ошибка чтения selectedBasketIds из localStorage:', e);
+    return [];
+  }
+};
 
 const initialState: BasketState = {
   items: [],
+  selectedIds: loadSelectedIds(),
   loading: false,
   error: null,
 };
@@ -65,10 +77,17 @@ export const updateBasketItemAmount = createAsyncThunk<
   }
 );
 
-const cartSlice = createSlice({
+const basketSlice = createSlice({
   name: 'cart',
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedItems(state, action) {
+      state.selectedIds = action.payload;
+    },
+    clearSelectedItems(state) {
+      state.selectedIds = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchBasket.pending, (state) => {
@@ -129,4 +148,5 @@ const cartSlice = createSlice({
   },
 });
 
-export default cartSlice.reducer;
+export const { setSelectedItems, clearSelectedItems } = basketSlice.actions;
+export default basketSlice.reducer;
