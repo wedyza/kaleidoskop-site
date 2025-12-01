@@ -8,12 +8,15 @@ import { formatPrice } from '../../utils/formatPrice';
 import { toggleBasketItem, updateBasketItemAmount } from '../../features/basket/basketSlice';
 import ToBasket from '../../components/ToBasket/ToBasket';
 import MainParameters from '../../components/MainParameters/MainParameters';
+import { fetchContentBasedRecommendations } from '../../features/recommendations/recommendationsSlice';
+import ItemsBlock from '../../components/ItemsBlock/ItemsBlock';
 
 function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
   const dispatch = useAppDispatch();
   const selectedItem = useAppSelector((state) => state.productItem.selectedItem);
   const prevProductIdRef = useRef<string | null>(null);
+  const recommendations = useAppSelector((state) => state.recommendations.items);
 
   useEffect(() => {
     if (slug) {
@@ -23,6 +26,14 @@ function ProductPage() {
     }
   }, [dispatch, slug]);
   const [galleryKey, setGalleryKey] = useState(0);
+
+  useEffect(() => {
+    if (selectedItem && selectedItem.id) {
+      dispatch(fetchContentBasedRecommendations({ 
+        productId: selectedItem.id, 
+      }));
+    }
+  }, [dispatch, selectedItem]);
   
   useEffect(() => {
     if (selectedItem && selectedItem.id !== prevProductIdRef.current) {
@@ -38,11 +49,6 @@ function ProductPage() {
       dispatch(toggleWishlist({id: selectedItem.id, enable: !selectedItem.in_wishlist}));
     }
   };
-
-  // const handleAddToBasket = async () => {
-  //   if (selectedItem)
-  //     await dispatch(toggleBasketItem({ id: selectedItem.id, enable: true }));
-  // };
 
   if (!selectedItem) return;
   
@@ -155,6 +161,13 @@ function ProductPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className='product-recs'>
+        <ItemsBlock
+            title="Похожие товары"
+            items={recommendations}
+          />
       </div>
     </div>
   )

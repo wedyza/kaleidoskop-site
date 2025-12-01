@@ -1,27 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import ItemCard from '../ItemCard/ItemCard';
 import './ItemsBlock.scss'
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { fetchProducts } from '../../features/products/productsSlice';
+import type { Product } from '../../features/products/productsSlice';
 
 interface ItemsBlockProps {
   title: string;
+  items: Product[];
   icon?: boolean;
   dates?: string;
 }
 
 const ItemsBlock: React.FC<ItemsBlockProps> = ({
   title,
+  items,
   icon = false,
   dates,
 }) => {
-  const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.products.items);
-
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
-
   const words = title.trim().split(/\s+/);
   const firstWord = words[0];
   const restWords = words.slice(1).join(' ');
@@ -31,7 +25,6 @@ const ItemsBlock: React.FC<ItemsBlockProps> = ({
     if (!listRef.current) return;
     
     const scrollAmount = 300;
-    //const { scrollLeft } = listRef.current;
     
     if (direction === 'left') {
       listRef.current.scrollLeft -= scrollAmount;
@@ -46,13 +39,13 @@ const ItemsBlock: React.FC<ItemsBlockProps> = ({
         <div className="item-block_head-info">
           {icon && (
             <div className="item-block_head-img">
-            <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19.6671 11.9624C19.6671 11.9624 18.698 13.386 16.6669 14.5911C16.6669 14.5911 18.1379 2.1591 8.55351 0C11.0091 9.01236 5.42996 11.5539 3.39628 6.79256C0 11.327 2.57869 15.2831 2.57869 15.2831C1.18605 15.4837 0.0162866 13.9623 0.0162866 13.9623C0.00582374 14.1497 0 14.3384 0 14.5284C0 20.0513 4.47716 24.5285 10 24.5285C15.5228 24.5285 20 20.0513 20 14.5284C20 13.6413 19.8839 12.7814 19.6671 11.9624Z" fill="#FF7F4B"/>
-              <path d="M19.6671 11.9624C19.6671 11.9624 18.698 13.386 16.6669 14.5911C16.6669 14.5911 17.9843 3.45528 10 0.432007V24.5284C15.5228 24.5284 20 20.0513 20 14.5284C20 13.6412 19.8839 12.7813 19.6671 11.9624Z" fill="#FD5219"/>
-              <path d="M14.3856 20.1427C14.3856 22.5648 12.4221 24.5283 9.99998 24.5283C7.57789 24.5283 5.61438 22.5648 5.61438 20.1427C5.61438 18.8463 6.17686 17.6813 7.07113 16.8784C8.76675 19.182 11.1831 15.6876 9.29996 13.1358C9.29996 13.1358 14.3856 13.7731 14.3856 20.1427Z" fill="#FBDA35"/>
-              <path d="M10 13.3043V24.5284C12.4221 24.5284 14.3856 22.5649 14.3856 20.1428C14.3856 15.2576 11.3943 13.7443 10 13.3043Z" fill="#F7BA35"/>
-            </svg>
-          </div>
+              <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.6671 11.9624C19.6671 11.9624 18.698 13.386 16.6669 14.5911C16.6669 14.5911 18.1379 2.1591 8.55351 0C11.0091 9.01236 5.42996 11.5539 3.39628 6.79256C0 11.327 2.57869 15.2831 2.57869 15.2831C1.18605 15.4837 0.0162866 13.9623 0.0162866 13.9623C0.00582374 14.1497 0 14.3384 0 14.5284C0 20.0513 4.47716 24.5285 10 24.5285C15.5228 24.5285 20 20.0513 20 14.5284C20 13.6413 19.8839 12.7814 19.6671 11.9624Z" fill="#FF7F4B"/>
+                <path d="M19.6671 11.9624C19.6671 11.9624 18.698 13.386 16.6669 14.5911C16.6669 14.5911 17.9843 3.45528 10 0.432007V24.5284C15.5228 24.5284 20 20.0513 20 14.5284C20 13.6412 19.8839 12.7813 19.6671 11.9624Z" fill="#FD5219"/>
+                <path d="M14.3856 20.1427C14.3856 22.5648 12.4221 24.5283 9.99998 24.5283C7.57789 24.5283 5.61438 22.5648 5.61438 20.1427C5.61438 18.8463 6.17686 17.6813 7.07113 16.8784C8.76675 19.182 11.1831 15.6876 9.29996 13.1358C9.29996 13.1358 14.3856 13.7731 14.3856 20.1427Z" fill="#FBDA35"/>
+                <path d="M10 13.3043V24.5284C12.4221 24.5284 14.3856 22.5649 14.3856 20.1428C14.3856 15.2576 11.3943 13.7443 10 13.3043Z" fill="#F7BA35"/>
+              </svg>
+            </div>
           )}
           <div className="item-block_title inter28-600">
             <span className="colored-title__first">{firstWord}</span>
@@ -78,9 +71,15 @@ const ItemsBlock: React.FC<ItemsBlockProps> = ({
         </div>
       </div>
       <div className="item-block_list" ref={listRef}>
-        {products.map((product) => (
-          <ItemCard product={product} key={product.id} />
-        ))}
+        {items.length > 0 ? (
+          items.map((product) => (
+            <ItemCard product={product} key={product.id} />
+          ))
+        ) : (
+          <div className="no-items-message inter14-400">
+            Товары не найдены
+          </div>
+        )}
       </div>
     </div>
   )
