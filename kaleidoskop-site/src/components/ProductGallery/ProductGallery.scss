@@ -18,7 +18,7 @@
 .product-gallery_img-src {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .product-gallery_main {
@@ -36,6 +36,10 @@
 .product-gallery_main-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
+}
+
+.img-empty {
+  object-fit: cover;
 }

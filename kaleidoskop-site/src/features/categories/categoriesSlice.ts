@@ -118,13 +118,13 @@ const categoriesSlice = createSlice({
       .addCase(fetchCategoryProducts.fulfilled, (state, action) => {
         state.productsLoading = false;
         state.products = action.payload.products;
-        state.currentCategory = action.payload.category || null;
+        //state.currentCategory = action.payload.category || null;
       })
       .addCase(fetchCategoryProducts.rejected, (state, action) => {
         state.productsLoading = false;
         state.productsError = action.payload as string;
         state.products = [];
-        state.currentCategory = null;
+        //state.currentCategory = null;
       })
       .addCase(fetchCategoryById.pending, (state) => {
         state.loading = true;

@@ -1,8 +1,8 @@
 import './Header.scss'
 import logo from './../../assets/logo.svg'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LoginModal from '../LoginModal/LoginModal';
 
 interface HeaderProps {
@@ -11,8 +11,43 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const queryParam = searchParams.get('q') || '';
+    
+    if (location.pathname === '/search') {
+      setSearchValue(queryParam);
+    } else if (queryParam !== searchValue) {
+      setSearchValue('');
+    }
+  }, [location.search, location.pathname]);
+
   const userName = useAppSelector((state) => state.user.user?.first_name);
   const token = useAppSelector(state => state.auth.token);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+      setSearchValue('');
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (searchValue.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+      setSearchValue('');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit(e);
+    }
+  };
 
   return (
     <header className='header'>
@@ -67,8 +102,18 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
           <p className="header-catalog_text inter14-500">Каталог</p>
         </button>
         <div className='header-search accent-border'>
-          <input type="text" className='header-search_input inter14-400' placeholder='Поиск' />
-          <button className='header-search_btn accent-btn'>
+          <input 
+              type="text" 
+              className='header-search_input inter14-400' 
+              placeholder='Поиск' 
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <button 
+              className='header-search_btn accent-btn'
+              onClick={handleSearchClick}
+            >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M6.41343 0C9.95547 0 12.8269 2.85342 12.8269 6.37329C12.8269 7.82769 12.2037 9.31328 11.3785 10.3858L15.717 14.6944C16.0256 15.024 16.0996 15.419 15.8502 15.751C15.6008 16.083 15.0071 16.083 14.6406 15.7512L10.301 11.4426C9.22245 12.2607 7.87504 12.7466 6.41343 12.7466C2.87139 12.7466 0 9.89316 0 6.37329C0 2.85342 2.87139 0 6.41343 0ZM6.41346 1.35591C3.52353 1.35591 1.33089 3.49956 1.33089 6.37329C1.33089 9.24702 3.29323 11.4426 6.41346 11.4426C9.5337 11.4426 11.5866 9.34453 11.5866 6.37329C11.5866 3.40205 9.30339 1.35591 6.41346 1.35591Z" fill="white"/>
             </svg>

@@ -37,7 +37,7 @@ const CategoryPage = () => {
       </div>
       <ListView 
         items={items}
-        title={category?.title ? `Категория: ${category.title}` : 'Категория'}
+        //title={category?.title ? `Категория: ${category.title}` : 'Категория'}
       />
     </div>
   )

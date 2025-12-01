@@ -18,7 +18,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
     <div className='product-gallery'>
       <div className='product-gallery_main'>
         <div className='product-gallery_main-container'>
-          <img className='product-gallery_main-img' src={selectedImage.source} alt='Selected' />
+          <img className={`product-gallery_main-img ${isUsingFallback ? 'img-empty' : ''}`} src={selectedImage.source} alt='Selected' />
         </div>
       </div>
       

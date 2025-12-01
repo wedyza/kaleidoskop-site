@@ -66,7 +66,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
         {item.item.images && item.item.images.length > 0 ? (
           <img src={item.item.images[0].source} alt="" />
         ) : (
-          <img src={itemImg} alt="" />
+          <img className='img-empty' src={itemImg} alt="" />
         )}
       </div>
       <div className="basket-card_info">

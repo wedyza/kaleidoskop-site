@@ -13,7 +13,11 @@ const ItemCard: React.FC<ItemCardProps> = ({product}) => {
   return (
     <Link to={`/product/${product.slug}`} className='item-card'>
       <div className="item-card_img">
-        <img src={itemImg} alt="" />
+        {product.images && product.images.length > 0 ? (
+          <img src={product.images[0].source} alt="" />
+        ) : (
+          <img className='img-empty' src={itemImg} alt="" />
+        )}
         <span className="item-card_discount inter13-500">
           - 25%
         </span>

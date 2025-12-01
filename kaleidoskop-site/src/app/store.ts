@@ -7,6 +7,7 @@ import wishlistReducer from '../features/wishlist/wishlistSlice'
 import basketReducer from '../features/basket/basketSlice'
 import categoriesReducer from '../features/categories/categoriesSlice'
 import ordersReducer from '../features/orders/ordersSlice'
+import searchReducer from '../features/search/searchSlice'
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     basket: basketReducer,
     categories: categoriesReducer,
     orders: ordersReducer,
+    search: searchReducer,
   },
 });
 

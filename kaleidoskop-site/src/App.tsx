@@ -16,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import CategoryPage from './pages/CategoryPage/CategoryPage';
 import MakeOrderPage from './pages/MakeOrderPage/MakeOrderPage';
+import SearchPage from './pages/SearchPage/SearchPage';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -46,6 +47,7 @@ function App() {
           <Route path="/make-order" element={<MakeOrderPage />} />
         </Route>
         <Route path="/" element={<MainPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/product/:slug" element={<ProductPage />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
       </Route>

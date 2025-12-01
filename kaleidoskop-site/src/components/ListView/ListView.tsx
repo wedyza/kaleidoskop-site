@@ -7,7 +7,7 @@ interface ListViewProps {
   title?: string;
 }
 
-const ListView: React.FC<ListViewProps> = ({ items, title }) => {
+const ListView: React.FC<ListViewProps> = ({ items }) => {
   return (
     <div className='list-container'>
       <div className='list-filters inter14-600'>
@@ -20,7 +20,7 @@ const ListView: React.FC<ListViewProps> = ({ items, title }) => {
             Сортировка
           </div>
           <div className='list-filters_list inter13-400'>
-            1
+            
           </div>
         </div>
 
