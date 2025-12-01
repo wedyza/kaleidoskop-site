@@ -82,8 +82,6 @@ const ProfilePage = () => {
 
   const handleEmailModalClose = () => {
     setIsEmailModalOpen(false);
-    // При закрытии модалки можно обновить данные пользователя
-    // если нужно отобразить новую почту после успешной смены
   };
 
   const renderEditableField = (fieldName: string, label: string, placeholder: string = 'Не указано') => {

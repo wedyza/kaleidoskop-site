@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -45,4 +47,15 @@
   position: absolute;
   top: 20px;
   right: 20px;
+}
+
+@media (max-width: common.$breakpoint-mobile) {
+  .modal-backdrop {
+    align-items: flex-end;
+  }
+  .modal-container {
+    height: 274px;
+    min-width: 100%;
+    padding: 35px 10px 60px 10px;
+  }
 }

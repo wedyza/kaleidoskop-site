@@ -1,0 +1,60 @@
+.makeorder-content {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr min(312px, 25%);
+  gap: 11px;
+  margin-top: 30px;
+}
+
+.makeorder-title {
+  margin-top: 30px;
+}
+
+.makeorder-section {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  padding: 30px 40px 50px 40px;
+}
+
+.makeorder-main {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.makeorder_user-info {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.makeorder_payment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.makeorder_payment-method {
+  display: flex;
+  align-items: center;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--grey200);
+  padding: 0 30px;
+  height: 54px;
+  gap: 20px;
+  /* пока неактивны */
+  color: var(--grey300);
+}
+
+.makeorder_payment-method__active {
+  color: var(--orange500);
+  border-color: var(--orange500);
+}
+
+.makeorder_payment-input {
+  display: flex;
+  align-items: center;
+}

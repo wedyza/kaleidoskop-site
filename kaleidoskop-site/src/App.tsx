@@ -15,6 +15,7 @@ import { fetchUserInfo } from './features/user/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import CategoryPage from './pages/CategoryPage/CategoryPage';
+import MakeOrderPage from './pages/MakeOrderPage/MakeOrderPage';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -42,6 +43,7 @@ function App() {
             <Route path="/comparison" element={<ComparisonPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
+          <Route path="/make-order" element={<MakeOrderPage />} />
         </Route>
         <Route path="/" element={<MainPage />} />
         <Route path="/product/:slug" element={<ProductPage />} />

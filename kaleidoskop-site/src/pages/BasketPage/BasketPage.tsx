@@ -1,11 +1,9 @@
-import { Link } from 'react-router-dom';
 import './BasketPage.scss'
 import BasketCard from '../../components/BasketCard/BasketCard';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useEffect } from 'react';
-import { clearSelectedItems, fetchBasket/*, clearSelectedItems, setSelectedItems*/ } from '../../features/basket/basketSlice';
-import { formatPrice } from '../../utils/formatPrice';
-import { moveToOrder } from '../../features/orders/ordersSlice';
+import { fetchBasket/*, clearSelectedItems, setSelectedItems*/ } from '../../features/basket/basketSlice';
+import OrderSummary from '../../components/OrderSummary/OrderSummary';
 
 function BasketPage () {
   const dispatch = useAppDispatch();
@@ -14,6 +12,14 @@ function BasketPage () {
   useEffect(() => {
     dispatch(fetchBasket());
   }, [dispatch]);
+
+  const selectedItems = items.filter(item => 
+    selectedIds.includes(parseInt(item.id))
+  );
+
+  const totalSum = selectedItems.reduce((sum, item) => {
+    return sum + (item.item.price * item.amount);
+  }, 0);
 
   // const toggleSelectAll = () => {
   //   if (selectedIds.length === items.length) {
@@ -50,31 +56,23 @@ function BasketPage () {
   //   }
   // }, [dispatch]);
 
-  const selectedItems = items.filter(item => 
-    selectedIds.includes(parseInt(item.id))
-  );
-
-  const totalSum = selectedItems.reduce((sum, item) => {
-    return sum + (item.item.price * item.amount);
-  }, 0);
-
-  const handleMoveToOrder = async () => {
-    if (selectedIds.length > 0) {
-      try {
-        const ids = selectedIds.map(id => id.toString());
+  // const handleMoveToOrder = async () => {
+  //   if (selectedIds.length > 0) {
+  //     try {
+  //       const ids = selectedIds.map(id => id.toString());
         
-        await dispatch(moveToOrder({ 
-          ids, 
-          enable: true 
-        })).unwrap();
+  //       await dispatch(moveToOrder({ 
+  //         ids, 
+  //         enable: true 
+  //       })).unwrap();
         
-        dispatch(clearSelectedItems());
-        localStorage.removeItem('selectedBasketIds');
+  //       dispatch(clearSelectedItems());
+  //       localStorage.removeItem('selectedBasketIds');
         
-      } catch (error) {
-      }
-    }
-  };
+  //     } catch (error) {
+  //     }
+  //   }
+  // };
 
   return (
     <div className="page-basket">
@@ -98,36 +96,7 @@ function BasketPage () {
         </div>
       </div>
 
-      <div className='basket-placement'>
-        <div className='basket-placement_content'>
-          <div className="basket-placement_list">
-            {selectedItems && selectedItems.length > 0 && selectedItems.map((item) => (
-              <div className="basket-placement_list-item">
-                <span className='basket-placement_list__label inter12-400'>
-                  {item.item.title}
-                </span>
-                <span className='basket-placement_list__value inter14-600'>
-                  {item.item.cart_count && formatPrice(item.item.price * item.item.cart_count)} ₽
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="basket-placement_sum">
-            <span className='basket-placement_content__label inter16-600'>Итого:</span>
-            <span className='basket-placement_content__value inter24-700'>
-              {formatPrice(totalSum)} ₽
-            </span>
-          </div>
-        </div>
-        <div className='basket-placement_actions'>
-          <Link to='' className='basket-placement_gift grey-btn'>
-            <span className='inter14-600'>Подарочный сертификат</span>
-          </Link>
-          <button onClick={handleMoveToOrder} className='basket-placement_link accent-btn'>
-            <span className='inter14-600'>Перейти к оформлению</span>
-          </button>
-        </div>
-      </div>
+      <OrderSummary selectedItems={selectedItems} />
     </div>
   )
 }

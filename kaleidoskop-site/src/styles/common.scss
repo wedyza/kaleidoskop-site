@@ -51,6 +51,10 @@
   --header-height: 149px;
 }
 
+$breakpoint-laptop: 1290px;
+$breakpoint-tablet: 780px;
+$breakpoint-mobile: 480px;
+
 body {
   font-family: 'Inter';
   font-weight: 400;

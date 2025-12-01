@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .header {
   padding: 20px var(--padding);
   display: flex;
@@ -153,4 +155,8 @@
   align-items: center;
   justify-content: center;
   margin-left: 10px;
+}
+
+@media (max-width: common.$breakpoint-tablet) {
+  
 }
