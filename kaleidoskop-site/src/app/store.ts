@@ -8,6 +8,7 @@ import basketReducer from '../features/basket/basketSlice'
 import categoriesReducer from '../features/categories/categoriesSlice'
 import ordersReducer from '../features/orders/ordersSlice'
 import searchReducer from '../features/search/searchSlice'
+import brandsReducer from '../features/brands/brandsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     categories: categoriesReducer,
     orders: ordersReducer,
     search: searchReducer,
+    brands: brandsReducer,
   },
 });
 

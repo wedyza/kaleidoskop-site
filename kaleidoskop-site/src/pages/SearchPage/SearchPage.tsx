@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import ListView from '../../components/ListView/ListView';
@@ -8,6 +8,7 @@ import { searchProducts } from '../../features/search/searchSlice';
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const dispatch = useAppDispatch();
+  const [filters, setFilters] = useState({});
   
   const query = searchParams.get('q') || '';
   const search = useAppSelector(state => state.search);
@@ -18,18 +19,26 @@ const SearchPage = () => {
 
   useEffect(() => {
     if (query.trim()) {
-      dispatch(searchProducts(query));
+      dispatch(searchProducts({ query, ...filters }));
     }
-  }, [dispatch, query]);
+  }, [dispatch, query, filters]);
+
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
+  };
 
   return (
     <div className='page-search'>
       <p className='inter16-400 search-title'>
         По запросу 
         <span className='inter16-600'> {currentQuery} </span>
-         найдено {count} товаров
+        найдено {count} товаров
       </p>
-      <ListView items={items} />
+      <ListView 
+        items={items} 
+        onFilterChange={handleFilterChange}
+        isSearch={true}
+      />
     </div>
   )
 }

@@ -9,11 +9,12 @@ const routeTitles: Record<string, string> = {
   '/orders': 'Мои заказы',
   '/comparison': 'Сравнение товаров',
   '/profile': 'Личные данные',
+  '/returns': 'Возврат товаров',
 };
 
 export const SectionLayout = () => {
   const { pathname } = useLocation();
-  const showNav = ['/wishlist', '/orders', '/profile'].includes(pathname);
+  const showNav = ['/wishlist', '/orders', '/profile', '/returns'].includes(pathname);
   const title = routeTitles[pathname] || '';
 
   const dispatch = useAppDispatch();
@@ -68,17 +69,17 @@ export const SectionLayout = () => {
               Сравнение
             </Link> */}
             <Link 
-              to={''}
-              className={`section-nav_item ${pathname === '' ? 'section-nav_item__active' : ''}`}
+              to={'/returns'}
+              className={`section-nav_item ${pathname === '/returns' ? 'section-nav_item__active' : ''}`}
             >
               Возврат товаров
             </Link>
-            <Link 
+            {/* <Link
               to={''}
               className={`section-nav_item ${pathname === '' ? 'section-nav_item__active' : ''}`}
             >
               Мои подарочные сертификаты
-            </Link>
+            </Link> */}
             <button
               onClick={handleLogout}
               className="section-nav_item section-nav_item__logout"

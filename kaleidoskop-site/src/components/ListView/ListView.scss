@@ -1,6 +1,7 @@
 .list-container {
   display: grid;
   grid-template-columns: 205px 1fr;
+  gap: 59px;
 }
 
 .list-head {
@@ -13,4 +14,61 @@
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
+}
+
+.list-sort {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.list-sort_icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list_price-inputs {
+  height: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.list_price-input {
+  min-width: 0;
+  background-color: var(--grey100);
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+.list-filters-section {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.list_brands-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.list_brand-item {
+  color: var(--grey800);
+  background-color: var(--grey100);
+  border-radius: var(--border-radius);
+  padding: 4px 9px;
+  border: 1px solid var(--grey100);
+}
+
+.list_brand-item__selected {
+  border-color: var(--orange500);
+  background-color: var(--orange200);
+  color: var(--orange800);
 }

@@ -48,9 +48,32 @@ export const fetchCategories = createAsyncThunk(
 
 export const fetchCategoryProducts = createAsyncThunk(
   'categories/fetchCategoryProducts',
-  async (categoryId: string, { rejectWithValue, getState }) => {
+  async ({ 
+    categoryId,
+    minPrice,
+    maxPrice,
+    brands 
+  }: { 
+    categoryId: string;
+    minPrice?: number;
+    maxPrice?: number;
+    brands?: string[];
+  }, { rejectWithValue, getState }) => {
     try {
-      const response = await api.get(`/categories/${categoryId}/items/`);
+      const params = new URLSearchParams();
+      
+      if (minPrice !== undefined) {
+        params.append('min_price', minPrice.toString());
+      }
+      if (maxPrice !== undefined) {
+        params.append('max_price', maxPrice.toString());
+      }
+      if (brands && brands.length > 0) {
+        params.append('brands', brands.join(','));
+      }
+      
+      const url = `/categories/${categoryId}/items/${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await api.get(url);
       
       const state = getState() as any;
       const category = state.categories.categories.find((cat: Category) => cat.id === categoryId);

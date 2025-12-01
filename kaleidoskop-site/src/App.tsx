@@ -17,6 +17,7 @@ import ProfilePage from './pages/ProfilePage/ProfilePage';
 import CategoryPage from './pages/CategoryPage/CategoryPage';
 import MakeOrderPage from './pages/MakeOrderPage/MakeOrderPage';
 import SearchPage from './pages/SearchPage/SearchPage';
+import ReturnsPage from './pages/ReturnsPage/ReturnsPage';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -43,6 +44,7 @@ function App() {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/comparison" element={<ComparisonPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/returns" element={<ReturnsPage />} />
           </Route>
           <Route path="/make-order" element={<MakeOrderPage />} />
         </Route>

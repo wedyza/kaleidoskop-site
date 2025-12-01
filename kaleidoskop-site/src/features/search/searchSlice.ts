@@ -21,9 +21,34 @@ const initialState: SearchState = {
 
 export const searchProducts = createAsyncThunk(
   'search/searchProducts',
-  async (query: string, { rejectWithValue }) => {
+  async ({ 
+    query, 
+    minPrice, 
+    maxPrice, 
+    brands 
+  }: { 
+    query: string;
+    minPrice?: number;
+    maxPrice?: number;
+    brands?: string[];
+  }, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/items/search/${encodeURIComponent(query)}/`);
+      const params = new URLSearchParams();
+      
+      if (minPrice !== undefined) {
+        params.append('min_price', minPrice.toString());
+      }
+      if (maxPrice !== undefined) {
+        params.append('max_price', maxPrice.toString());
+      }
+      if (brands && brands.length > 0) {
+        params.append('brands', brands.join(','));
+      }
+      
+      const queryString = params.toString();
+      const url = `/items/search/${encodeURIComponent(query)}/${queryString ? `?${queryString}` : ''}`;
+      
+      const response = await api.get(url);
       return {
         products: response.data.results || response.data,
         count: response.data.count || response.data.results?.length || 0,
@@ -45,7 +70,6 @@ const searchSlice = createSlice({
   reducers: {
     clearSearchResults: (state) => {
       state.results = [];
-      state.count = 0;
       state.currentQuery = '';
     },
     setSearchQuery: (state, action) => {
