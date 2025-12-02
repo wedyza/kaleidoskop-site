@@ -30,7 +30,14 @@ export const fetchContentBasedRecommendations = createAsyncThunk(
     }
     
     const response = await api.get(url);
-    return response.data.results || response.data;
+    const data = response.data.results || response.data;
+    
+    // Если элементы массива содержат поле 'item', извлекаем его
+    if (Array.isArray(data) && data.length > 0 && data[0].item) {
+      return data.map(item => item.item);
+    }
+    
+    return data; // Если структура уже правильная, возвращаем как есть
   }
 );
 

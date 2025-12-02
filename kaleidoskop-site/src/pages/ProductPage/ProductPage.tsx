@@ -165,9 +165,9 @@ function ProductPage() {
 
       <div className='product-recs'>
         <ItemsBlock
-            title="Похожие товары"
-            items={recommendations}
-          />
+          title="Похожие товары"
+          items={recommendations}
+        />
       </div>
     </div>
   )
