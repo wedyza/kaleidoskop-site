@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
 import type { Product } from '../products/productsSlice';
 import { addProductHandlers } from '../products/productMixin';
+import type { SortOption } from '../../components/ListView/ListView';
 
 interface SearchState {
   results: Product[];
@@ -25,12 +26,14 @@ export const searchProducts = createAsyncThunk(
     query, 
     minPrice, 
     maxPrice, 
-    brands 
+    brands,
+    ordering 
   }: { 
     query: string;
     minPrice?: number;
     maxPrice?: number;
     brands?: string[];
+    ordering?: SortOption;
   }, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams();
@@ -44,6 +47,9 @@ export const searchProducts = createAsyncThunk(
       if (brands && brands.length > 0) {
         params.append('brands', brands.join(','));
       }
+      if (ordering) {
+        params.append('ordering', ordering);
+      }
       
       const queryString = params.toString();
       const url = `/items/search/${encodeURIComponent(query)}/${queryString ? `?${queryString}` : ''}`;
@@ -52,7 +58,8 @@ export const searchProducts = createAsyncThunk(
       return {
         products: response.data.results || response.data,
         count: response.data.count || response.data.results?.length || 0,
-        query
+        query,
+        ordering
       };
     } catch (error: any) {
       return rejectWithValue(

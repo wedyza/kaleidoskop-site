@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import ListView from '../../components/ListView/ListView';
+import ListView, { type SortOption } from '../../components/ListView/ListView';
 import './CategoryPage.scss'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const dispatch = useAppDispatch();
   const [filters, setFilters] = useState({});
+  const [sortOption, setSortOption] = useState<SortOption>(null);
   
   const items = useAppSelector(state => state.categories.products)
   const category = useAppSelector(state => state.categories.currentCategory)
@@ -18,14 +19,19 @@ const CategoryPage = () => {
     if (categoryId) {
       dispatch(fetchCategoryProducts({ 
         categoryId,
-        ...filters 
+        ...filters,
+        ordering: sortOption 
       }));
       dispatch(fetchCategoryById(categoryId));
     }
-  }, [dispatch, categoryId, filters]);
+  }, [dispatch, categoryId, filters, sortOption]);
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
+  };
+
+  const handleSortChange = (sortOption: SortOption) => {
+    setSortOption(sortOption);
   };
 
   if (!slug) {
@@ -69,7 +75,7 @@ const CategoryPage = () => {
       <ListView 
         items={items}
         onFilterChange={handleFilterChange}
-        //title={category?.title ? `Категория: ${category.title}` : 'Категория'}
+        onSortChange={handleSortChange}
       />
     </div>
   )

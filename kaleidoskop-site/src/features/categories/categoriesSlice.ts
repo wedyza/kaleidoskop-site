@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
 import type { Product } from '../products/productsSlice';
 import { addProductHandlers } from '../products/productMixin';
+import type { SortOption } from '../../components/ListView/ListView';
 
 export interface Category {
   id: string;
@@ -52,12 +53,14 @@ export const fetchCategoryProducts = createAsyncThunk(
     categoryId,
     minPrice,
     maxPrice,
-    brands 
+    brands,
+    ordering 
   }: { 
     categoryId: string;
     minPrice?: number;
     maxPrice?: number;
     brands?: string[];
+    ordering?: SortOption;
   }, { rejectWithValue, getState }) => {
     try {
       const params = new URLSearchParams();
@@ -71,6 +74,9 @@ export const fetchCategoryProducts = createAsyncThunk(
       if (brands && brands.length > 0) {
         params.append('brands', brands.join(','));
       }
+      if (ordering) {
+        params.append('ordering', ordering);
+      }
       
       const url = `/categories/${categoryId}/items/${params.toString() ? `?${params.toString()}` : ''}`;
       const response = await api.get(url);
@@ -80,7 +86,8 @@ export const fetchCategoryProducts = createAsyncThunk(
       
       return {
         products: response.data.results || response.data,
-        category
+        category,
+        ordering
       };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка получения товаров категории');

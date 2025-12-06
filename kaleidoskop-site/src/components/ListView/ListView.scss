@@ -7,6 +7,7 @@
 .list-head {
   display: flex;
   gap: 22px;
+  position: relative;
 }
 
 .list-content {
@@ -71,4 +72,32 @@
   border-color: var(--orange500);
   background-color: var(--orange200);
   color: var(--orange800);
+}
+
+.list-sort_dropdown {
+  position: absolute;
+  background-color: var(--white);
+  border: 1px solid var(--grey300);
+  box-shadow: var(--shadow3);
+  border-radius: var(--border-radius);
+  padding: 25px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  top: calc(100% + 11px);
+  min-width: 220px;
+}
+
+.list-sort__active {
+  color: var(--orange500);
+
+  svg path {
+    fill: var(--orange500);
+  }
+}
+
+.list-sort,
+.list-sort_option {
+  cursor: pointer;
 }
