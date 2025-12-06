@@ -5,10 +5,14 @@ import './MakeOrderPage.scss'
 import { fetchBasket } from '../../features/basket/basketSlice';
 import { updateUserInfo } from '../../features/user/userSlice';
 
+export type DeliveryType = 'pickup' | 'courier';
+
 const MakeOrderPage = () => {
   const { items, selectedIds } = useAppSelector((state) => state.basket);
   const { user, loading } = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
+
+  const [activeTab, setActiveTab] = useState<DeliveryType>('pickup');
   
   const [editableField, setEditableField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -32,7 +36,7 @@ const MakeOrderPage = () => {
   }, [user]);
 
   const selectedItems = items.filter(item => 
-    selectedIds.includes(parseInt(item.id))
+    selectedIds.includes(item.id)
   );
 
   const handleEditClick = (fieldName: string) => {
@@ -151,13 +155,65 @@ const MakeOrderPage = () => {
               Способ получения
             </h2>
 
-            <h2 className='makeorder_section-title inter18-600'>
+            <div className='makeorder_del-type'>
+              <button 
+                className={`makeorder_del ${activeTab === 'pickup' ? 'makeorder_del__active' : ''}`}
+                onClick={() => setActiveTab('pickup')}
+              >
+                <div className='makeover_del-icon'>
+                  <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 0C4.5 0 0 4.31461 0 9.58802C0 16.0599 8.75 23.3708 9.125 23.7303C9.625 24.0899 10.25 24.0899 10.75 23.7303C11.25 23.3708 20 16.0599 20 9.58802C20 4.31461 15.5 0 10 0ZM10 14.382C7.25 14.382 5 12.2247 5 9.58802C5 6.95131 7.25 4.79401 10 4.79401C12.75 4.79401 15 6.95131 15 9.58802C15 12.2247 12.75 14.382 10 14.382Z" fill="#727271"/>
+                  </svg>
+                </div>
+                <div className='makeover_del-text'>
+                  <span className='makeover_del-title inter16-600'>
+                    Самовывоз
+                  </span>
+                  <span className='makeover_del-desc inter13-400'>
+                    бесплатно
+                  </span>
+                </div>
+              </button>
+              <button 
+                className={`makeorder_del ${activeTab === 'courier' ? 'makeorder_del__active' : ''}`}
+                onClick={() => setActiveTab('courier')}
+              >
+                <div className='makeover_del-icon'>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 15.75C7.30964 15.75 6.75 16.3096 6.75 17C6.75 17.6904 7.30964 18.25 8 18.25C8.69036 18.25 9.25 17.6904 9.25 17C9.25 16.3096 8.69036 15.75 8 15.75ZM5.25 17C5.25 15.4812 6.48122 14.25 8 14.25C9.51878 14.25 10.75 15.4812 10.75 17C10.75 18.5188 9.51878 19.75 8 19.75C6.48122 19.75 5.25 18.5188 5.25 17Z" fill="#727271"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M18 15.75C17.3096 15.75 16.75 16.3096 16.75 17C16.75 17.6904 17.3096 18.25 18 18.25C18.6904 18.25 19.25 17.6904 19.25 17C19.25 16.3096 18.6904 15.75 18 15.75ZM15.25 17C15.25 15.4812 16.4812 14.25 18 14.25C19.5188 14.25 20.75 15.4812 20.75 17C20.75 18.5188 19.5188 19.75 18 19.75C16.4812 19.75 15.25 18.5188 15.25 17Z" fill="#727271"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.25 6C0.25 5.58579 0.585786 5.25 1 5.25H14.4C15.1456 5.25 15.75 5.85442 15.75 6.6V17.75H10.05C9.63579 17.75 9.3 17.4142 9.3 17C9.3 16.5858 9.63579 16.25 10.05 16.25H14.25V6.75H1C0.585786 6.75 0.25 6.41421 0.25 6Z" fill="#727271"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3 10.75C3.41421 10.75 3.75 11.0858 3.75 11.5V16.25H5.65C6.06421 16.25 6.4 16.5858 6.4 17C6.4 17.4142 6.06421 17.75 5.65 17.75H3.6C2.85442 17.75 2.25 17.1456 2.25 16.4V11.5C2.25 11.0858 2.58579 10.75 3 10.75Z" fill="#727271"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M1.25 9C1.25 8.58579 1.58579 8.25 2 8.25H6C6.41421 8.25 6.75 8.58579 6.75 9C6.75 9.41421 6.41421 9.75 6 9.75H2C1.58579 9.75 1.25 9.41421 1.25 9Z" fill="#727271"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.25 9C14.25 8.58579 14.5858 8.25 15 8.25H20.6101C21.1436 8.25 21.627 8.56419 21.8437 9.05171L23.6336 13.079C23.7104 13.2517 23.75 13.4384 23.75 13.6273V16.4C23.75 17.1456 23.1456 17.75 22.4 17.75H20.5C20.0858 17.75 19.75 17.4142 19.75 17C19.75 16.5858 20.0858 16.25 20.5 16.25H22.25V13.6592L20.5126 9.75H15C14.5858 9.75 14.25 9.41421 14.25 9Z" fill="#727271"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.25 17C14.25 16.5858 14.5858 16.25 15 16.25H16C16.4142 16.25 16.75 16.5858 16.75 17C16.75 17.4142 16.4142 17.75 16 17.75H15C14.5858 17.75 14.25 17.4142 14.25 17Z" fill="#727271"/>
+                  </svg>
+                </div>
+                <div className='makeover_del-text'>
+                  <span className='makeover_del-title inter16-600'>
+                    Доставка
+                  </span>
+                  <span className='makeover_del-desc inter13-400'>
+                    Ближайшая: Завтра
+                  </span>
+                </div>
+              </button>
+            </div>
+
+            {activeTab === 'courier' ? (
+              <div></div>
+            ) : (
+              <div></div>
+            )}
+
+
+            {/* <h2 className='makeorder_section-title inter18-600'>
               Дата и время
             </h2>
 
             <h2 className='makeorder_section-title inter18-600'>
               Услуги
-            </h2>
+            </h2> */}
           </div>
           
           <div className='makeorder_payment makeorder-section'>

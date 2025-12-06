@@ -14,12 +14,12 @@ function BasketPage () {
   }, [dispatch]);
 
   const selectedItems = items.filter(item => 
-    selectedIds.includes(parseInt(item.id))
+    selectedIds.includes(item.id)
   );
 
-  const totalSum = selectedItems.reduce((sum, item) => {
-    return sum + (item.item.price * item.amount);
-  }, 0);
+  // const totalSum = selectedItems.reduce((sum, item) => {
+  //   return sum + (item.item.price * item.amount);
+  // }, 0);
 
   // const toggleSelectAll = () => {
   //   if (selectedIds.length === items.length) {

@@ -12,10 +12,10 @@ interface BasketState {
   items: BasketEntry[];
   loading: boolean;
   error: string | null;
-  selectedIds: number[];
+  selectedIds: string[];
 }
 
-const loadSelectedIds = (): number[] => {
+const loadSelectedIds = (): string[] => {
   try {
     const saved = localStorage.getItem('selectedBasketIds');
     return saved ? JSON.parse(saved) : [];

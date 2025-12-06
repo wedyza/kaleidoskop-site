@@ -87,6 +87,7 @@ const authSlice = createSlice({
       state.changeEmailStep = 'idle';
       state.newEmail = '';
       localStorage.removeItem('token');
+      localStorage.removeItem('selectedBasketIds');
     },
     setNewEmail(state, action) {
       state.newEmail = action.payload;

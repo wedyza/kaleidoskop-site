@@ -58,3 +58,49 @@
   display: flex;
   align-items: center;
 }
+
+.makeorder_del-type {
+  display: flex;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.makeorder_del {
+  width: 380px;
+  height: 82px;
+  background-color: var(--grey50);
+  border: 1px solid var(--grey100);
+  border-radius: var(--border-radius);
+  display: flex;
+  padding: 20px 30px;
+  gap: 15px;
+}
+
+.makeover_del-text {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.makeover_del-title {
+  color: var(--grey950);
+}
+
+.makeover_del-desc {
+  color: var(--grey800);
+}
+
+.makeorder_del__active {
+  background-color: var(--orange50);
+  border-color: var(--orange500);
+
+  .makeover_del-icon svg path {
+    fill: var(--orange600)
+  }
+
+  .makeover_del-title,
+  .makeover_del-desc {
+    color: var(--orange600);
+  }
+}

@@ -13,10 +13,10 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
   const dispatch = useAppDispatch();
   const { selectedIds } = useAppSelector((state) => state.basket);
   
-  const isChecked = selectedIds.includes(parseInt(item.id));
+  const isChecked = selectedIds.includes(item.id);
 
   const handleCheckboxChange = () => {
-    const itemId = parseInt(item.id);
+    const itemId = item.id;
     const newSelectedIds = isChecked 
       ? selectedIds.filter(id => id !== itemId)
       : [...selectedIds, itemId];
@@ -29,7 +29,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
   const handleRemoveFromBasket = async () => {
     await dispatch(toggleBasketItem({ id: item.item.id, enable: false }));
     
-    const itemId = parseInt(item.id);
+    const itemId = item.id;
     if (selectedIds.includes(itemId)) {
       const newSelectedIds = selectedIds.filter(id => id !== itemId);
       dispatch(setSelectedItems(newSelectedIds));
