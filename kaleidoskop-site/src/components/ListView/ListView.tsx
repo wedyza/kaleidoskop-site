@@ -16,6 +16,9 @@ interface ListViewProps {
     brands?: string[];
   }) => void;
   onSortChange?: (sortOption: SortOption) => void;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
   isSearch?: boolean;
 }
 
@@ -23,6 +26,9 @@ const ListView: React.FC<ListViewProps> = ({
   items, 
   onFilterChange,
   onSortChange,
+  onLoadMore,
+  hasMore = false,
+  isLoadingMore = false,
 }) => {
   const dispatch = useAppDispatch();
   const { brands, loading: brandsLoading } = useAppSelector(state => state.brands);
@@ -35,6 +41,9 @@ const ListView: React.FC<ListViewProps> = ({
   const prevFiltersRef = useRef<any>({});
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const sortButtonRef = useRef<HTMLDivElement>(null);
+  const observerTarget = useRef<HTMLDivElement>(null);
+  const lastItemRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     dispatch(fetchBrands());
@@ -58,6 +67,43 @@ const ListView: React.FC<ListViewProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showSortOptions]);
+
+  const isLoadingRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasMore || isLoadingMore || items.length === 0 || !onLoadMore) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          console.log('Observer сработал, загружаем...');
+          isLoadingRef.current = true;
+          onLoadMore();
+          
+          setTimeout(() => {
+            isLoadingRef.current = false;
+          }, 1000);
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+      }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMore, isLoadingMore, onLoadMore, items.length]);
 
   const applyFilters = useCallback((filtersToApply: {
     minPrice?: number;
@@ -163,7 +209,7 @@ const ListView: React.FC<ListViewProps> = ({
   };
 
   return (
-    <div className='list-container'>
+    <div className='list-container' ref={containerRef}>
       <div className='list-filters-section'>
 
         <div className='list_filter-group'>
@@ -269,9 +315,22 @@ const ListView: React.FC<ListViewProps> = ({
             </div>
           ) : (
             <>
-              {items.map(item => (
-                <ItemCardBig key={item.id} product={item} />
+              {items.map((item, index) => (
+                <div 
+                  key={item.id} 
+                  ref={index === items.length - 1 ? lastItemRef : null}
+                >
+                  <ItemCardBig product={item} />
+                </div>
               ))}
+              
+              <div ref={observerTarget} className="infinite-scroll-observer">
+                {isLoadingMore && (
+                  <div className="loading-more">
+                    <span>Загрузка...</span>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

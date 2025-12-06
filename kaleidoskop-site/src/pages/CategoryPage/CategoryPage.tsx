@@ -3,7 +3,11 @@ import ListView, { type SortOption } from '../../components/ListView/ListView';
 import './CategoryPage.scss'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useEffect, useState } from 'react';
-import { fetchCategoryById, fetchCategoryProducts } from '../../features/categories/categoriesSlice';
+import { 
+  fetchCategoryById, 
+  fetchCategoryProducts,
+  loadMoreCategoryProducts 
+} from '../../features/categories/categoriesSlice';
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -11,8 +15,12 @@ const CategoryPage = () => {
   const [filters, setFilters] = useState({});
   const [sortOption, setSortOption] = useState<SortOption>(null);
   
-  const items = useAppSelector(state => state.categories.products)
-  const category = useAppSelector(state => state.categories.currentCategory)
+  const categories = useAppSelector(state => state.categories);
+  const items = categories.products;
+  const category = categories.currentCategory;
+  const hasMore = categories.hasMore;
+  const next = categories.next;
+  const loading = categories.loading;
   const categoryId = slug ? slug.split('--')[1] : null;
 
   useEffect(() => {
@@ -20,7 +28,7 @@ const CategoryPage = () => {
       dispatch(fetchCategoryProducts({ 
         categoryId,
         ...filters,
-        ordering: sortOption 
+        ordering: sortOption
       }));
       dispatch(fetchCategoryById(categoryId));
     }
@@ -32,6 +40,12 @@ const CategoryPage = () => {
 
   const handleSortChange = (sortOption: SortOption) => {
     setSortOption(sortOption);
+  };
+
+  const handleLoadMore = () => {
+    if (hasMore && next && !loading) {
+      dispatch(loadMoreCategoryProducts(next));
+    }
   };
 
   if (!slug) {
@@ -76,6 +90,9 @@ const CategoryPage = () => {
         items={items}
         onFilterChange={handleFilterChange}
         onSortChange={handleSortChange}
+        onLoadMore={handleLoadMore}
+        hasMore={hasMore}
+        isLoadingMore={loading}
       />
     </div>
   )
