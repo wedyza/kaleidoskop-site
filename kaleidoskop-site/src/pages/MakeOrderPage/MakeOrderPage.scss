@@ -104,3 +104,21 @@
     color: var(--orange600);
   }
 }
+
+.change-address-btn {
+  height: 45px;
+  padding: 0 20px;
+  width: fit-content;
+  margin-left: auto;
+}
+
+.delivery-address-selected {
+  display: grid;
+  margin-top: 50px;
+  gap: 10px;
+  grid-template-columns: 380px 380px;
+}
+
+.select-address-btn {
+  margin-top: 50px;
+}

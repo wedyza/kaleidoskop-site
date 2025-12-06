@@ -4,6 +4,8 @@ import OrderSummary from '../../components/OrderSummary/OrderSummary';
 import './MakeOrderPage.scss'
 import { fetchBasket } from '../../features/basket/basketSlice';
 import { updateUserInfo } from '../../features/user/userSlice';
+import AddressPicker from '../../components/AddressPicker/AddressPicker';
+import Modal from '../../components/Modal/Modal'; // Импорт модалки
 
 export type DeliveryType = 'pickup' | 'courier';
 
@@ -13,6 +15,15 @@ const MakeOrderPage = () => {
   const dispatch = useAppDispatch();
 
   const [activeTab, setActiveTab] = useState<DeliveryType>('pickup');
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [deliveryCoords, setDeliveryCoords] = useState<[number, number] | null>(null);
+  const [addressDetails, setAddressDetails] = useState({
+    apartment: '',
+    entrance: '',
+    floor: '',
+    intercom: '',
+  });
   
   const [editableField, setEditableField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -38,6 +49,11 @@ const MakeOrderPage = () => {
   const selectedItems = items.filter(item => 
     selectedIds.includes(item.id)
   );
+
+  const handleAddressChange = (address: string, coords: [number, number]) => {
+    setDeliveryAddress(address);
+    setDeliveryCoords(coords);
+  };
 
   const handleEditClick = (fieldName: string) => {
     setEditableField(fieldName);
@@ -201,11 +217,54 @@ const MakeOrderPage = () => {
             </div>
 
             {activeTab === 'courier' ? (
-              <div></div>
+              <div className='makeover_del-courier'>
+                {deliveryAddress ? (
+                  <div className="delivery-address-selected">
+                    <span className="selected-address-value inter14-400">{deliveryAddress}</span>
+                    <button 
+                      className="change-address-btn inter14-600 grey-btn"
+                      onClick={() => setShowAddressModal(true)}
+                    >
+                      Изменить адрес доставки
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    className="change-address-btn select-address-btn inter14-600 grey-btn"
+                    onClick={() => setShowAddressModal(true)}
+                  >
+                    Выбрать адрес на карте
+                  </button>
+                )}
+              </div>
             ) : (
-              <div></div>
+              <div className='makeover_del-pickup'>
+              </div>
             )}
 
+            <Modal 
+              isOpen={showAddressModal} 
+              onClose={() => setShowAddressModal(false)}
+              className="address-modal"
+            >
+              <div className="address-modal-content">
+                <h3 className="modal-title inter18-600">Адрес доставки</h3>
+                
+                <AddressPicker 
+                  value={deliveryAddress}
+                  onChange={handleAddressChange}
+                  addressDetails={addressDetails}
+                  onDetailsChange={setAddressDetails}
+                  isOpen={showAddressModal}
+                  onSave={() => {
+                    if (deliveryAddress && deliveryCoords) {
+                      console.log('Выбран адрес:', deliveryAddress, deliveryCoords);
+                      setShowAddressModal(false);
+                    }
+                  }}
+                />
+              </div>
+            </Modal>
 
             {/* <h2 className='makeorder_section-title inter18-600'>
               Дата и время
