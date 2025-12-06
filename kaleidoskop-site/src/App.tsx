@@ -18,6 +18,7 @@ import CategoryPage from './pages/CategoryPage/CategoryPage';
 import MakeOrderPage from './pages/MakeOrderPage/MakeOrderPage';
 import SearchPage from './pages/SearchPage/SearchPage';
 import ReturnsPage from './pages/ReturnsPage/ReturnsPage';
+import Page404 from './pages/Page404/Page404';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -52,6 +53,7 @@ function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/product/:slug" element={<ProductPage />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
+        <Route path="*" element={<Page404 />} />
       </Route>
     </Routes>
   );
