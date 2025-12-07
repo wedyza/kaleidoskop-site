@@ -6,28 +6,17 @@ export interface BasketEntry {
   id: string;
   amount: number;
   item: Product;
+  marked_for_order?: boolean;
 }
 
 interface BasketState {
   items: BasketEntry[];
   loading: boolean;
   error: string | null;
-  selectedIds: string[];
 }
-
-const loadSelectedIds = (): string[] => {
-  try {
-    const saved = localStorage.getItem('selectedBasketIds');
-    return saved ? JSON.parse(saved) : [];
-  } catch (e) {
-    console.error('Ошибка чтения selectedBasketIds из localStorage:', e);
-    return [];
-  }
-};
 
 const initialState: BasketState = {
   items: [],
-  selectedIds: loadSelectedIds(),
   loading: false,
   error: null,
 };
@@ -77,15 +66,27 @@ export const updateBasketItemAmount = createAsyncThunk<
   }
 );
 
+export const moveToOrder = createAsyncThunk<
+  void,
+  { ids: string[]; enable: boolean },
+  { rejectValue: string }
+>(
+  'cart/moveToOrder',
+  async ({ ids, enable }, { rejectWithValue }) => {
+    try {
+      await api.post('/cart_items/switch_to_order/', { ids, enable });
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Ошибка перемещения в заказ');
+    }
+  }
+);
+
 const basketSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    setSelectedItems(state, action) {
-      state.selectedIds = action.payload;
-    },
-    clearSelectedItems(state) {
-      state.selectedIds = [];
+    clearBasketError(state) {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -101,9 +102,7 @@ const basketSlice = createSlice({
       .addCase(fetchBasket.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
-
-    builder
+      })
       .addCase(toggleBasketItem.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -144,9 +143,27 @@ const basketSlice = createSlice({
       .addCase(updateBasketItemAmount.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(moveToOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(moveToOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        
+        const { ids, enable } = action.meta.arg;
+        state.items.forEach(item => {
+          if (ids.includes(item.id)) {
+            item.marked_for_order = enable;
+          }
+        });
+      })
+      .addCase(moveToOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { setSelectedItems, clearSelectedItems } = basketSlice.actions;
+export const { clearBasketError } = basketSlice.actions;
 export default basketSlice.reducer;

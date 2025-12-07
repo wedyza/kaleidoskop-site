@@ -12,7 +12,7 @@ import { clearCurrentOrder, createOrder } from '../../features/orders/ordersSlic
 export type DeliveryType = 'pickup' | 'courier';
 
 const MakeOrderPage = () => {
-  const { items, selectedIds } = useAppSelector((state) => state.basket);
+  const { items } = useAppSelector((state) => state.basket);
   const { user, loading: userLoading } = useAppSelector(state => state.user);
   const { currentOrder } = useAppSelector(state => state.orders);
   const dispatch = useAppDispatch();
@@ -58,9 +58,7 @@ const MakeOrderPage = () => {
     }
   }, [currentOrder, navigate]);
 
-  const selectedItems = items.filter(item => 
-    selectedIds.includes(item.id)
-  );
+  const selectedItems = items.filter(item => item.marked_for_order);
 
   const handleAddressChange = (address: string, coords: [number, number]) => {
     setDeliveryAddress(address);

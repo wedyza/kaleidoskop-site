@@ -22,6 +22,8 @@ interface Order {
   payment_method: PaymentMethod;
   code: string | null;
   user: number;
+  created_at?: string;
+  total_price?: number;
 }
 
 interface CreateOrderRequest {
@@ -92,6 +94,7 @@ export const createOrder = createAsyncThunk<
         orderData.address = address;
       }
 
+      // Сервер сам возьмет только товары с marked_for_order = true
       const response = await api.post('/orders/', orderData);
       return response.data;
     } catch (err: any) {
@@ -101,21 +104,6 @@ export const createOrder = createAsyncThunk<
         err.message || 
         'Ошибка создания заказа'
       );
-    }
-  }
-);
-
-export const moveToOrder = createAsyncThunk<
-  void,
-  { ids: string[]; enable: boolean },
-  { rejectValue: string }
->(
-  'order/moveToOrder',
-  async ({ ids, enable }, { rejectWithValue }) => {
-    try {
-      await api.post('/cart_items/switch_to_order/', { ids, enable });
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Ошибка перемещения в заказ');
     }
   }
 );
@@ -145,17 +133,6 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
         state.currentOrder = null;
-      })
-      .addCase(moveToOrder.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(moveToOrder.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(moveToOrder.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
       });
   },
 });
