@@ -7,11 +7,21 @@ import type { BasketEntry } from '../../features/basket/basketSlice';
 interface OrderSummaryProps {
   variant?: 'basket' | 'checkout';
   selectedItems: BasketEntry[];
+  onCreateOrder?: () => void;
+  // isLoading?: boolean;
+  // error?: string | null;
+  // deliveryType?: 'pickup' | 'courier';
+  // address?: string;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({ 
     variant = 'basket',
-    selectedItems
+    selectedItems,
+    onCreateOrder,
+    // isLoading = false,
+    // error = null,
+    // deliveryType = 'pickup',
+    // address = '',
   }) => {
   const isCheckoutVariant = variant === 'checkout';
 
@@ -50,6 +60,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             <button 
               className='basket-placement_link accent-btn'
               type="button"
+              onClick={onCreateOrder}
             >
               <span className='inter14-600'>Оформить заказ</span>
             </button>

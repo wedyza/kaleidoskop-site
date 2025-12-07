@@ -5,14 +5,18 @@ import './MakeOrderPage.scss'
 import { fetchBasket } from '../../features/basket/basketSlice';
 import { updateUserInfo } from '../../features/user/userSlice';
 import AddressPicker from '../../components/AddressPicker/AddressPicker';
-import Modal from '../../components/Modal/Modal'; // Импорт модалки
+import Modal from '../../components/Modal/Modal';
+import { useNavigate } from 'react-router-dom';
+import { clearCurrentOrder, createOrder } from '../../features/orders/ordersSlice';
 
 export type DeliveryType = 'pickup' | 'courier';
 
 const MakeOrderPage = () => {
   const { items, selectedIds } = useAppSelector((state) => state.basket);
-  const { user, loading } = useAppSelector(state => state.user);
+  const { user, loading: userLoading } = useAppSelector(state => state.user);
+  const { currentOrder } = useAppSelector(state => state.orders);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<DeliveryType>('pickup');
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -24,6 +28,7 @@ const MakeOrderPage = () => {
     floor: '',
     intercom: '',
   });
+  const [selectedPayment, setSelectedPayment] = useState<'В магазине' | 'Картой онлайн' | 'Через СБП'>('В магазине');
   
   const [editableField, setEditableField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -34,6 +39,7 @@ const MakeOrderPage = () => {
 
   useEffect(() => {
     dispatch(fetchBasket());
+    dispatch(clearCurrentOrder());
   }, [dispatch]);
 
   useEffect(() => {
@@ -46,6 +52,12 @@ const MakeOrderPage = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (currentOrder) {
+      navigate(`/orders`);
+    }
+  }, [currentOrder, navigate]);
+
   const selectedItems = items.filter(item => 
     selectedIds.includes(item.id)
   );
@@ -53,6 +65,29 @@ const MakeOrderPage = () => {
   const handleAddressChange = (address: string, coords: [number, number]) => {
     setDeliveryAddress(address);
     setDeliveryCoords(coords);
+  };
+
+  const handleCreateOrder = async () => {
+    if (selectedItems.length === 0) {
+      alert('Выберите товары для заказа');
+      return;
+    }
+
+    if (activeTab === 'courier' && !deliveryAddress) {
+      alert('Выберите адрес доставки');
+      return;
+    }
+
+    try {
+      await dispatch(createOrder({
+        delivery_method: activeTab === 'courier' ? 'Доставка' : 'Самовывоз',
+        payment_method: 'Наличными',
+        addressString: activeTab === 'courier' ? deliveryAddress : undefined,
+        addressDetails: activeTab === 'courier' ? addressDetails : undefined,
+      })).unwrap();
+    } catch (error) {
+      console.error('Ошибка создания заказа:', error);
+    }
   };
 
   const handleEditClick = (fieldName: string) => {
@@ -121,7 +156,7 @@ const MakeOrderPage = () => {
               onBlur={() => handleInputBlur(fieldName)}
               onKeyDown={(e) => handleInputKeyDown(e, fieldName)}
               autoFocus
-              disabled={loading}
+              disabled={userLoading}
             />
           ) : (
             <React.Fragment>
@@ -132,7 +167,7 @@ const MakeOrderPage = () => {
                 className='profile-item_edit'
                 onClick={() => handleEditClick(fieldName)}
                 type="button"
-                disabled={loading}
+                disabled={userLoading}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9.43349 2.3334L10.4311 1.33577C11.2122 0.554723 12.4785 0.554723 13.2595 1.33577L13.9666 2.04288C14.7477 2.82393 14.7477 4.09026 13.9666 4.87131L12.969 5.86893M9.43349 2.3334L1.50611 10.2608C1.17404 10.5928 0.969411 11.0312 0.928086 11.499L0.754518 13.4638C0.699746 14.0838 1.21862 14.6027 1.83864 14.5479L3.80343 14.3743C4.27123 14.333 4.70957 14.1284 5.04165 13.7963L12.969 5.86893M9.43349 2.3334L12.969 5.86893" stroke="#AAB0B6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -143,6 +178,10 @@ const MakeOrderPage = () => {
         </div>
       </div>
     );
+  };
+
+  const handlePaymentSelect = (payment: 'В магазине' | 'Картой онлайн' | 'Через СБП') => {
+    setSelectedPayment(payment);
   };
 
   return (
@@ -239,6 +278,10 @@ const MakeOrderPage = () => {
               </div>
             ) : (
               <div className='makeover_del-pickup'>
+                {/* Контент для самовывоза */}
+                <div className="pickup-info inter14-400">
+                  Вы сможете забрать заказ в ближайшем магазине после подтверждения
+                </div>
               </div>
             )}
 
@@ -265,14 +308,6 @@ const MakeOrderPage = () => {
                 />
               </div>
             </Modal>
-
-            {/* <h2 className='makeorder_section-title inter18-600'>
-              Дата и время
-            </h2>
-
-            <h2 className='makeorder_section-title inter18-600'>
-              Услуги
-            </h2> */}
           </div>
           
           <div className='makeorder_payment makeorder-section'>
@@ -280,32 +315,61 @@ const MakeOrderPage = () => {
               Оплата
             </h2>
             <div className='makeorder_payment-list'>
-              <div className='makeorder_payment-method makeorder_payment-method__active'>
+              <div 
+                className={`makeorder_payment-method ${selectedPayment === 'В магазине' ? 'makeorder_payment-method__active' : ''}`}
+                onClick={() => handlePaymentSelect('В магазине')}
+              >
                 <div className='makeorder_payment-input'>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20.1818C7.5 20.1818 3.81818 16.5 3.81818 12C3.81818 7.5 7.5 3.81818 12 3.81818C16.5 3.81818 20.1818 7.5 20.1818 12C20.1818 16.5 16.5 20.1818 12 20.1818Z" fill="#EA5B21"/>
-                    <circle cx="12" cy="12" r="5" fill="#DC451A"/>
-                  </svg>
+                  {selectedPayment === 'В магазине' ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20.1818C7.5 20.1818 3.81818 16.5 3.81818 12C3.81818 7.5 7.5 3.81818 12 3.81818C16.5 3.81818 20.1818 7.5 20.1818 12C20.1818 16.5 16.5 20.1818 12 20.1818Z" fill="#EA5B21"/>
+                      <circle cx="12" cy="12" r="5" fill="#DC451A"/>
+                    </svg>
+                  ) : (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" fill="#E7E7E6"/>
+                    </svg>
+                  )}
                 </div>
                 <span className='makeorder_payment-label inter16-400'>
                   В магазине
                 </span>
               </div>
-              <div className='makeorder_payment-method'>
+              <div 
+                className={`makeorder_payment-method ${selectedPayment === 'Картой онлайн' ? 'makeorder_payment-method__active' : ''}`}
+                onClick={() => handlePaymentSelect('Картой онлайн')}
+              >
                 <div className='makeorder_payment-input'>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" fill="#E7E7E6"/>
-                  </svg>
+                  {selectedPayment === 'Картой онлайн' ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20.1818C7.5 20.1818 3.81818 16.5 3.81818 12C3.81818 7.5 7.5 3.81818 12 3.81818C16.5 3.81818 20.1818 7.5 20.1818 12C20.1818 16.5 16.5 20.1818 12 20.1818Z" fill="#EA5B21"/>
+                      <circle cx="12" cy="12" r="5" fill="#DC451A"/>
+                    </svg>
+                  ) : (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" fill="#E7E7E6"/>
+                    </svg>
+                  )}
                 </div>
                 <span className='makeorder_payment-label inter16-400'>
                   Картой онлайн
                 </span>
               </div>
-              <div className='makeorder_payment-method'>
+              <div 
+                className={`makeorder_payment-method ${selectedPayment === 'Через СБП' ? 'makeorder_payment-method__active' : ''}`}
+                onClick={() => handlePaymentSelect('Через СБП')}
+              >
                 <div className='makeorder_payment-input'>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" fill="#E7E7E6"/>
-                  </svg>
+                  {selectedPayment === 'Через СБП' ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20.1818C7.5 20.1818 3.81818 16.5 3.81818 12C3.81818 7.5 7.5 3.81818 12 3.81818C16.5 3.81818 20.1818 7.5 20.1818 12C20.1818 16.5 16.5 20.1818 12 20.1818Z" fill="#EA5B21"/>
+                      <circle cx="12" cy="12" r="5" fill="#DC451A"/>
+                    </svg>
+                  ) : (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" fill="#E7E7E6"/>
+                    </svg>
+                  )}
                 </div>
                 <span className='makeorder_payment-label inter16-400'>
                   Через СБП
@@ -314,7 +378,11 @@ const MakeOrderPage = () => {
             </div>
           </div>
         </div>
-        <OrderSummary variant={'checkout'} selectedItems={selectedItems} />
+        <OrderSummary 
+          variant={'checkout'} 
+          selectedItems={selectedItems}
+          onCreateOrder={handleCreateOrder}
+        />
       </div>
     </div>
   )
