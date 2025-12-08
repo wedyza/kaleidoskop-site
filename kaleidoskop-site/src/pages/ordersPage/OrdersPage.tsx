@@ -1,11 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './OrdersPage.scss'
 import OrderCard from '../../components/OrderCard/OrderCard';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { getOrders } from '../../features/orders/ordersSlice';
 
 type OrderType = 'all' | 'legal' | 'individual';
 
 function OrdersPage () {
   const [activeTab, setActiveTab] = useState<OrderType>('all');
+  const dispatch = useAppDispatch();
+  const orders = useAppSelector(state => state.orders.orders);
+
+  useEffect(() => {
+    dispatch(getOrders())
+  }, [dispatch])
 
   return(
     <div className='page-orders'>
@@ -42,8 +50,9 @@ function OrdersPage () {
       </div>
 
       <div className='orders-list'>
-        <OrderCard />
-        <OrderCard />
+        {orders.map((order) => (
+          <OrderCard order={order} />
+        ))}
       </div>
     </div>
   )

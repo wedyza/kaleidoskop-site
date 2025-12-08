@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
 import { parseAddressWithYandex } from './addressParser';
+import type { Product } from '../products/productsSlice';
 
 export type DeliveryMethod = 'Самовывоз' | 'Доставка';
 export type PaymentMethod = 'Наличными' | 'Картой' | 'Онлайн';
@@ -14,7 +15,17 @@ interface Address {
   apartment?: number | null;
 }
 
-interface Order {
+interface CartItem {
+  id: string;
+  amount: number;
+  item: Product;
+}
+
+interface OrderCart {
+  items: CartItem[];
+}
+
+export interface Order {
   id: string;
   address: Address;
   status: string;
@@ -22,8 +33,16 @@ interface Order {
   payment_method: PaymentMethod;
   code: string | null;
   user: number;
-  created_at?: string;
+  created_at: string;
   total_price?: number;
+  cart: OrderCart;
+}
+
+interface OrdersResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Order[];
 }
 
 interface CreateOrderRequest {
@@ -36,12 +55,24 @@ interface OrderState {
   loading: boolean;
   error: string | null;
   currentOrder: Order | null;
+  orders: Order[];
+  ordersLoading: boolean;
+  ordersError: string | null;
+  totalOrdersCount: number;
+  nextPage: string | null;
+  previousPage: string | null;
 }
 
 const initialState: OrderState = {
   loading: false,
   error: null,
   currentOrder: null,
+  orders: [],
+  ordersLoading: false,
+  ordersError: null,
+  totalOrdersCount: 0,
+  nextPage: null,
+  previousPage: null,
 };
 
 export const createOrder = createAsyncThunk<
@@ -94,7 +125,6 @@ export const createOrder = createAsyncThunk<
         orderData.address = address;
       }
 
-      // Сервер сам возьмет только товары с marked_for_order = true
       const response = await api.post('/orders/', orderData);
       return response.data;
     } catch (err: any) {
@@ -103,6 +133,34 @@ export const createOrder = createAsyncThunk<
         err.response?.data?.detail || 
         err.message || 
         'Ошибка создания заказа'
+      );
+    }
+  }
+);
+
+export const getOrders = createAsyncThunk<
+  OrdersResponse,
+  { page?: number; pageSize?: number } | void,
+  { rejectValue: string }
+>(
+  'order/getOrders',
+  async (params, { rejectWithValue }) => {
+    try {
+      const config = params ? {
+        params: {
+          page: params.page,
+          page_size: params.pageSize
+        }
+      } : {};
+      
+      const response = await api.get('/orders/', config);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || 
+        err.response?.data?.detail || 
+        err.message || 
+        'Ошибка получения заказов'
       );
     }
   }
@@ -118,6 +176,15 @@ const orderSlice = createSlice({
     clearCurrentOrder: (state) => {
       state.currentOrder = null;
     },
+    clearOrdersError: (state) => {
+      state.ordersError = null;
+    },
+    clearOrders: (state) => {
+      state.orders = [];
+      state.totalOrdersCount = 0;
+      state.nextPage = null;
+      state.previousPage = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -128,14 +195,39 @@ const orderSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
         state.currentOrder = action.payload;
+        // Добавляем новый заказ в начало списка
+        state.orders.unshift(action.payload);
+        state.totalOrdersCount += 1;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
         state.currentOrder = null;
+      })
+      
+      .addCase(getOrders.pending, (state) => {
+        state.ordersLoading = true;
+        state.ordersError = null;
+      })
+      .addCase(getOrders.fulfilled, (state, action) => {
+        state.ordersLoading = false;
+        state.orders = action.payload.results;
+        state.totalOrdersCount = action.payload.count;
+        state.nextPage = action.payload.next;
+        state.previousPage = action.payload.previous;
+      })
+      .addCase(getOrders.rejected, (state, action) => {
+        state.ordersLoading = false;
+        state.ordersError = action.payload as string;
       });
   },
 });
 
-export const { clearOrderError, clearCurrentOrder } = orderSlice.actions;
+export const { 
+  clearOrderError, 
+  clearCurrentOrder, 
+  clearOrdersError, 
+  clearOrders 
+} = orderSlice.actions;
+
 export default orderSlice.reducer;

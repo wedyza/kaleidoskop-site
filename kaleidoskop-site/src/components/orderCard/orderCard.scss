@@ -62,11 +62,26 @@
 
 .order-card_item {
   width: 155px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .order-card_item-img {
   width: 117px;
   height: 117px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .img-empty {
+    object-fit: cover;
+  }
 }
 
 .order-card_item-name {

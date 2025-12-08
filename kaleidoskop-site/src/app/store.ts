@@ -10,6 +10,7 @@ import ordersReducer from '../features/orders/ordersSlice'
 import searchReducer from '../features/search/searchSlice'
 import brandsReducer from '../features/brands/brandsSlice'
 import recommendationsReducer from '../features/recommendations/recommendationsSlice'
+import shopsReducer from '../features/shops/shopsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     search: searchReducer,
     brands: brandsReducer,
     recommendations: recommendationsReducer,
+    shops: shopsReducer,
   },
 });
 

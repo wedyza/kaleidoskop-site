@@ -1,18 +1,40 @@
 import './OrderCard.scss'
-import temp from '../../assets/item.png'
+import empty from '../../assets/empty_imgs.jpg'
 import { useScrollableContainer } from '../../hooks/useScrollableContainer';
+import type { Order } from '../../features/orders/ordersSlice';
+import type React from 'react';
+import { formatDate } from '../../utils/dateUtils';
+import { formatPrice } from '../../utils/formatPrice';
 
-function OrderCard () {
+interface OrderCardProps {
+  order: Order;
+}
+
+const OrderCard:React.FC<OrderCardProps> = ({ order }) => {
   const { containerRef, showLeftArrow, showRightArrow, scroll } = useScrollableContainer();
+
+  const calculateTotal = () => {
+    if (!order.cart || !order.cart.items || order.cart.items.length === 0) {
+      return 0;
+    }
+    
+    return order.cart.items.reduce((total, item) => {
+      const itemPrice = item.item.price || 0;
+      return total + (itemPrice * item.amount);
+    }, 0);
+  };
+  
+  const totalAmount = calculateTotal();
+
   return (
     <div className='order-card'>
       <span className='order-card_status inter12-400'>
-        Скоро начнем собирать
+        {order.status}
       </span>
       <div className='order-card_info'>
         <div className='order-card_main'>
           <span className='order-card_id inter14-400'>
-            №140925 от 14 сентября 2025
+            №{order.code} от {formatDate(order.created_at)}
           </span>
           {showLeftArrow && (
             <button 
@@ -38,59 +60,25 @@ function OrderCard () {
             className={`order-card_items ${showLeftArrow ? 'order-card_items__left' : showRightArrow ? 'order-card_items__right' : ''}`}
             ref={containerRef}
           >
-            <div className='order-card_item'>
-              <div className='order-card_item-img'>
-                <img src={temp} alt="" />
-              </div>
-              <span className='order-card_item-name inter14-400'>
-                Тачка садовая одноколесная 90кг объем 85л
-              </span>
-            </div>
-            <div className='order-card_item'>
-              <div className='order-card_item-img'>
-                <img src={temp} alt="" />
-              </div>
-              <span className='order-card_item-name inter14-400'>
-                Тачка садовая одноколесная 90кг объем 85л
-              </span>
-            </div>
-            <div className='order-card_item'>
-              <div className='order-card_item-img'>
-                <img src={temp} alt="" />
-              </div>
-              <span className='order-card_item-name inter14-400'>
-                Тачка садовая одноколесная 90кг объем 85л
-              </span>
-            </div>
-            <div className='order-card_item'>
-              <div className='order-card_item-img'>
-                <img src={temp} alt="" />
-              </div>
-              <span className='order-card_item-name inter14-400'>
-                Тачка садовая одноколесная 90кг объем 85л
-              </span>
-            </div>
-            <div className='order-card_item'>
-              <div className='order-card_item-img'>
-                <img src={temp} alt="" />
-              </div>
-              <span className='order-card_item-name inter14-400'>
-                Тачка садовая одноколесная 90кг объем 85л
-              </span>
-            </div>
-            <div className='order-card_item'>
-              <div className='order-card_item-img'>
-                <img src={temp} alt="" />
-              </div>
-              <span className='order-card_item-name inter14-400'>
-                Тачка садовая одноколесная 90кг объем 85л
-              </span>
-            </div>
+              {order.cart && order.cart.items.length > 0 && order.cart.items.map((item) => (
+                <div className='order-card_item'>
+                  <div className='order-card_item-img'>
+                    {item.item.images && item.item.images.length > 0 ? (
+                      <img src={item.item.images[0].source} alt={item.item.title} />
+                    ) : (
+                      <img className='img-empty' src={empty} alt={item.item.title} />
+                    )}
+                  </div>
+                  <span className='order-card_item-name inter14-400'>
+                    {item.item.title}
+                  </span>
+                </div>
+              ))}
           </div>
         </div>
         <div className='order-card_sum'>
           <span className='order-card_sum-label inter14-400'>сумма</span>
-          <span className='order-card_sum-value inter20-600'>18 190 ₽</span>
+          <span className='order-card_sum-value inter20-600'>{formatPrice(totalAmount)} ₽</span>
         </div>
       </div>
     </div>
