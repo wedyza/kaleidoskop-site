@@ -58,9 +58,6 @@ class Category(UUIDModel):
         through='NomenclatureCategory',
         related_name='nomenclatures'
     )
-    # code = models.CharField("Код", max_length=20, unique=True, null=False)
-    # parent_code = models.CharField("Код родителя", max_length=20, null=True)
-    # img = imagefield
 
     
     class Meta:
@@ -69,7 +66,7 @@ class Category(UUIDModel):
 
     @property
     def slug(self):
-        return slugify(self.title)
+        return f'{slugify(self.title)}--{self.id}'
     
 
     def __str__(self):
@@ -95,6 +92,15 @@ class NomenclatureCategory(UUIDModel):
 
 
 class Item(UUIDModel):
+    class PriceGroup(models.TextChoices):
+        NOTHING = 'Без скидки'
+        FIRST = 'Ценовая группа 1%'
+        SECOND = 'Ценовая группа 2%'
+        THIRD = 'Ценовая группа 3%'
+        FOURTH = 'Ценовая группа 4%'
+        FIFTH = 'Ценовая группа 5%'
+
+
     title = models.CharField("Название", max_length=100)
     nomenclature = models.ForeignKey(
         Nomenclature,
@@ -120,11 +126,15 @@ class Item(UUIDModel):
     parent_code = models.CharField("Код родителя", max_length=20, null=True)
     country = models.CharField("Страна-производитель", max_length=25, null=True)
     public = models.BooleanField("Доступен публично", default=False, null=False)
+    okdp = models.CharField('ОКДП', max_length=50, null=True, blank=True)
+    price_group = models.CharField('Ценновая группа', max_length=100, default=PriceGroup.NOTHING, choices=PriceGroup.choices)
+    barcode = models.CharField('Штрихкод', max_length=100, unique=True, null=False, blank=False)
 
-    parameters = models.ManyToManyField(
-        'Parameter',
+    brand = models.ForeignKey(
+        'Brand',
+        on_delete=models.CASCADE,
         related_name='items',
-        verbose_name='Параметры',
+        verbose_name='Брэнд',
         null=True,
         blank=True
     )
@@ -136,7 +146,7 @@ class Item(UUIDModel):
         
     @property
     def slug(self):
-        return slugify(self.title) + "--" + self.article
+        return f"{slugify(self.title)}--{self.id}"
     
     
     def __str__(self):
@@ -147,9 +157,16 @@ class Cart(UUIDModel):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=False, verbose_name="Пользователь"
     )
-    bought = models.BooleanField("Оплаченная корзина", default=False)
+    # bought = models.BooleanField("Оплаченная корзина", default=False)
     current_cart = models.BooleanField("Текущая корзина", default=True)
-
+    order = models.OneToOneField(
+        'Order',
+        on_delete=models.CASCADE,
+        verbose_name="Заказ",
+        related_name="cart",
+        null=True,
+        blank=True
+    )
     
     class Meta:
         verbose_name = 'Корзина'
@@ -164,10 +181,12 @@ class PaymentStatusChoices(Enum):
 
 class Order(UUIDModel):
     class OrderStatus(models.TextChoices):
+        SENDED = 'Отправлен'
         ON_APPROVE = "На согласовании"
         APPROVED = 'Согласован'
         ON_REALISATION = 'На реализации'
         REALISED = 'Реализован'
+        CANCELED = 'Отменен'
 
     class DeliveryMethods(models.TextChoices):
         SELF_PICKUP = 'Самовывоз'
@@ -178,18 +197,18 @@ class Order(UUIDModel):
         CREDIT_CARD = 'Картой'
         ONLINE = 'Онлайн' # СБП / Онлайн банкинг
 
-    address = models.CharField("Адрес", null=True, max_length=100) # Если будет возможно, то сделать дробление (Зависит от Яндекс карт) и мб вернуть длину и ширину тогда
+    # address = models.CharField("Адрес", null=True, max_length=200) # Если будет возможно, то сделать дробление (Зависит от Яндекс карт) и мб вернуть длину и ширину тогда
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=False, verbose_name="Пользователь"
     )
     total_price = models.IntegerField("Цена", null=False)
-    cart = models.OneToOneField(
-        Cart, null=False, on_delete=models.DO_NOTHING, verbose_name="Корзина", 
-    )
+    # cart = models.OneToOneField(
+    #     Cart, null=False, on_delete=models.DO_NOTHING, verbose_name="Корзина", 
+    # )
     status = models.TextField(
         "Статус",
         choices=OrderStatus.choices,
-        default=OrderStatus.ON_APPROVE,
+        default=OrderStatus.SENDED,
     )
     delivery_method = models.TextField(
         'Способ доставки',
@@ -204,6 +223,7 @@ class Order(UUIDModel):
         null=False
     )
     code = models.CharField('Код', null=True, unique=True, max_length=20) # Для 1С
+    created_at = models.DateTimeField("Дата создания", auto_now_add=True)
 
     
     class Meta:
@@ -323,28 +343,54 @@ class ItemImage(UUIDModel):
         on_delete=models.CASCADE
     )
 
+    def delete(self, *args, **kwargs):
+        self.source.delete()
+        super(ItemImage, self).delete(*args, **kwargs)
+
+
+class ParameterItem(UUIDModel):
+    value = models.TextField("Значение", max_length=200, null=False, blank=False)
+    item = models.ForeignKey(
+        Item,
+        on_delete=models.CASCADE,
+        verbose_name='Предмет',
+        related_name='parameters'
+    )
+    parameter = models.ForeignKey(
+        'Parameter',
+        on_delete=models.CASCADE,
+        verbose_name='Параметр',
+        related_name='values'
+    )
+
 
 class Parameter(UUIDModel):
     title = models.CharField("Название", max_length=100, null=False, blank=False)
     unit = models.CharField("Единица измерения", max_length=25, blank=True, null=True)
-    value = models.TextField("Значение", max_length=200, null=False, blank=False)
+    # value = models.TextField("Значение", max_length=200, null=False, blank=False)
 
 
-# class SiteSettings(models.Model):
-#     pass
+class Brand(UUIDModel):
+    title = models.CharField("Название", max_length=100, null=False)
 
+class Shop(UUIDModel):
+    title = models.CharField("Название магазина", max_length=100, null=False)
+    longtitude = models.DecimalField(
+        'Долгота',
+        max_digits=9,
+        decimal_places=6,
+        null=False
+    )
+    latitude = models.DecimalField(
+        'Широта',
+        max_digits=9,
+        decimal_places=6,
+        null=False
+    )
+    city = models.CharField("Город", max_length=20, null=False)
+    street = models.CharField("Улица", max_length=50, null=False)
+    house = models.IntegerField("Дом", validators=[MinValueValidator(0)])
 
-# class CommentReply(models.Model):
-#     pass
-
-
-# class Document(models.Model):
-#     pass
-
-
-# class ItemMedia(models.Model):
-#     pass
-
-
-# class Media(models.Model):
-# pass
+# class Banner(UUIDModel):
+#     source = models.ImageField(upload_to='banners', max_length=255)
+#     title = ?

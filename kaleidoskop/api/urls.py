@@ -5,17 +5,19 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions, routers
 from .views import (
+    BrandViewSet,
     CartItemViewSet,
     ItemViewSet,
     CommentViewSet,
     OrderViewSet,
+    ShopViewSet,
     WishlistViewSet,
     CategoryViewSet,
     UsersViewSet,
     AdminNomenclaturesViewSet,
     CartItemView
 )
-from recomendation_system.views import TestView
+# from recomendation_system.views import TestView
 
 
 router = routers.DefaultRouter()
@@ -29,14 +31,17 @@ router.register("admin/nomenclatures", AdminNomenclaturesViewSet, basename='nome
 router.register("orders", OrderViewSet, basename='orders')
 # router.register("users/me/cart", CartViewSet, basename='cart')
 router.register("cart_items", CartItemViewSet, basename="cart")
+router.register("brands", BrandViewSet, basename='brands')
+router.register("shops", ShopViewSet, basename='shops')
 
 urlpatterns = [
+    path("cart_items/switch_to_order/", CartItemView.as_view()),
     path("", include(router.urls)),
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
-    path("test", TestView.as_view()),
-    path("cart_items/switch_to_order/", CartItemView.as_view()),
-    path("admin_panel/", include("admin_panel.urls"))
+    # path("test", TestView.as_view()),
+    path("admin_panel/", include("admin_panel.urls")),
+    path('recomendations/', include('recomendation_system.urls'))
     # path("admin/nomenclatures", AdminNomenclaturesView)
     # path("search/", include("search.urls"))
 ]
@@ -50,7 +55,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="wedyza@mail.ru"),
         license=openapi.License(name="BSD License"),
     ),
-    url="http://188.68.80.72:8000" if settings.CONTAINER_LAUNCHER else "http://localhost:8000",
+    # url="https://188.68.80.72" ,
     public=True,
     permission_classes=(permissions.AllowAny,),
 )

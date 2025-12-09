@@ -1,4 +1,4 @@
-from api.models import Category, Item, Nomenclature, Remains, Warehouse
+from api.models import Category, Item, Nomenclature, Order, Remains, Warehouse
 from api.serializers import ItemSerializer
 from django.db.models import Q
 
@@ -79,3 +79,16 @@ def create_new_nomenclatures(data:list) -> bool:
     new_nomenclatures = [Nomenclature(**nomenclature) for nomenclature in data]
     created = Nomenclature.objects.bulk_create(new_nomenclatures, ignore_conflicts=True)
     return len(created) != 0
+
+def update_order_status(order: Order, status, agreed):
+    if status == 'Закрыт':
+        order.status = Order.OrderStatus.REALISED
+    elif status == 'На согласовании':
+        order.status = Order.OrderStatus.ON_APPROVE
+    elif status == 'К выполнению / В резерве':
+        order.status = Order.OrderStatus.ON_REALISATION
+    elif status == 'Отменен':
+        order.status = Order.OrderStatus.CANCELED
+    else:
+        order.status = Order.OrderStatus.APPROVED   
+    order.save()

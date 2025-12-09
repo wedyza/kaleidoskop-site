@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from django.utils.timezone import timedelta
 import django
 from django.utils.encoding import force_str
+import zoneinfo 
 import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -34,8 +35,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "188.68.80.72"]
+SERVER_ENDPOINT = "188.68.80.72" # сюда потом .env
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", SERVER_ENDPOINT]
 
 CONTAINER_LAUNCHER = os.getenv("CONTAINER_LAUNCH", False)
 
@@ -158,7 +159,8 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "users.authenticate.CookieJWTAuthentication"
     ],
 }
 
@@ -168,7 +170,7 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 AWS_STORAGE_BUCKET_NAME = "local"
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_S3_ENDPOINT_URL = "http://localhost:9000"
+AWS_S3_ENDPOINT_URL = "http://localhost:9000" if not CONTAINER_LAUNCHER else f"https://{SERVER_ENDPOINT}/media"
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq//"  # Когда пакуешь в контейнер поменять localhost->rabbitmq
 BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq:5672//" # Когда пакуешь в контейнер поменять localhost->rabbitmq
@@ -177,7 +179,7 @@ BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not C
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
 USER_1C = os.getenv("USER_1C")
 PASSWORD_1C = os.getenv("PASSWORD_1C")
-SERVER_1C = "http://localhost/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else "http://188.68.80.72/demohttp/hs/apiv1"
+SERVER_1C = "http://localhost/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else "http://host.docker.internal/demohttp/hs/apiv1"
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -189,13 +191,21 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+
+    "REFRESH_COOKIE": 'refresh_token',
+    'AUTH_COOKIE': 'access_token',
+    'AUTH_COOKIE_SECURE': False,
+    'AUTH_COOKIE_HTTP_ONLY': True,
+    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'REFRESH_COOKIE_SAMESITE': 'Lax',
+    'REFRESH_COOKE_SECURE': False
 }
 
 ELASTICSEARCH_DSL = {
     "default": {
-        "hosts": "https://localhost:9200" if not CONTAINER_LAUNCHER else "https://elasticsearch:9200",
+        "hosts": "http://localhost:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
         "http_auth": ("elastic", "MyPassword"),
         "verify_certs": False,
         "ca_certs": None,
@@ -225,12 +235,17 @@ RABBIT_MQ_HOST = "localhost" if not CONTAINER_LAUNCHER else "rabbitmq"
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r"^/.*$"
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") #only prod
+SECURE_SSL_REDIRECT = False
+
 CSRF_TRUSTED_ORIGINS = [
-    "http://188.68.80.72:8000",
-    "http://188.68.80.72",
+    f"https://{SERVER_ENDPOINT}:8000",
+    f"https://{SERVER_ENDPOINT}",
     "http://localhost:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]# костыль
+CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "Bearer": {
@@ -240,6 +255,10 @@ SWAGGER_SETTINGS = {
             "description": "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
         }
     },
-    "DEFAULT_INFO": "your_project.urls.api_info",
+    "DEFAULT_INFO": "api.urls.api_info",
     # другие опции...
 }
+LOCAL_TZ = zoneinfo.ZoneInfo('Asia/Yekaterinburg')
+RECOMENDATIONS_URL = f"localhost:8082" if not CONTAINER_LAUNCHER else "recommendation_system:8000"
+
+CORS_ALLOW_CREDENTIALS = True

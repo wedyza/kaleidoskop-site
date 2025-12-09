@@ -9,12 +9,13 @@ import json
 from .serializers import (
     NomenclatureCreateSerializer,
     ItemCreateSerializer,
+    OrderReceiveSerializer,
     RemainsReceiveSerializer,
 )
-from .functions import fillup_nomenclatures_with_parents, create_new_nomenclatures, fillup_items_with_parents, create_new_items
+from .functions import fillup_nomenclatures_with_parents, create_new_nomenclatures, fillup_items_with_parents, create_new_items, update_order_status
 from django_elasticsearch_dsl.registries import registry
 from search.documents import ItemDocument
-from api.models import Item
+from api.models import Item, Order
 from drf_yasg.utils import swagger_auto_schema
 from users.tasks import sync_items, sync_nomenclatures, sync_remains
 from .permissions import ContainsAPIKey
@@ -47,7 +48,7 @@ class ReceiveItemsView(APIView):
         created = create_new_items(data)
         if created:
             fillup_items_with_parents()
-            ItemDocument().update(Item.objects.all())
+            # ItemDocument().update(Item.objects.all())
         return Response()
     
     # Тут надо будет понять, что именно меняется на приемке и менять
@@ -72,6 +73,20 @@ class ReceiveRemainsView(APIView):
     # Тут надо будет понять, что именно меняется на приемке и менять
     def put(self, request):
         return Response()
+
+
+class ReceiveOrderView(APIView):
+    permission_classes = (ContainsAPIKey, )
+
+    def post(self, request):
+        order = Order.objects.filter(code=request.data['code']).first()
+        print(request.data)
+        if order is None:
+            return Response('error')
+        
+        update_order_status(order, request.data['status'], request.data['agreed'])
+        return Response()
+
 
 class ReceiveTestView(APIView):
     def post(self, request):

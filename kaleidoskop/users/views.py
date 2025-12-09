@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -7,47 +8,53 @@ from .Serializers import (
     UserLoginOTPSerializer,
 )
 from django.contrib.auth import get_user_model
-from .utils import generate_otp
-from .tasks import send_otp_email, link_with_1c
-from rest_framework.authtoken.models import Token
+from .utils import enforce_csrf, generate_otp, set_jwt_cookies
+from .tasks import send_otp_email
 from drf_yasg.utils import swagger_auto_schema
+from django.middleware.csrf import get_token
 from rest_framework import permissions
-from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from rest_framework import permissions
+from django.utils.decorators import method_decorator
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 # Create your views here.
 
 User = get_user_model()
 
 
-class RegisterView(APIView): # Пока что разделим эту логику, но скорее всего позже совместим, чтобы сделать единой с логином. Просто добавим обработку в except
-    permission_classes = (permissions.AllowAny,)
+# class RegisterView(APIView): # Пока что разделим эту логику, но скорее всего позже совместим, чтобы сделать единой с логином. Просто добавим обработку в except
+#     permission_classes = (permissions.AllowAny,)
 
-    @swagger_auto_schema(request_body=UserCreateSerializer)
-    def post(self, request):
-        new_user = UserCreateSerializer(data=request.data)
-        if not new_user.is_valid():
-            return Response(new_user.errors, status=status.HTTP_400_BAD_REQUEST)
-        user = new_user.save()
+#     @swagger_auto_schema(request_body=UserCreateSerializer)
+#     def post(self, request):
+#         new_user = UserCreateSerializer(data=request.data)
+#         if not new_user.is_valid():
+#             return Response(new_user.errors, status=status.HTTP_400_BAD_REQUEST)
+#         user = new_user.save()
 
-        otp = generate_otp()
-        user.otp = otp
-        user.otp_expires = timezone.now() + timezone.timedelta(minutes=15)
-        user.save()
+#         otp = generate_otp()
+#         user.otp = otp
+#         user.otp_expires = timezone.now() + timezone.timedelta(minutes=15)
+#         user.save()
         
-        # link_with_1c(user.id)
-        send_otp_email(user.email, otp)
+#         # link_with_1c(user.id)
+#         send_otp_email(user.email, otp)
 
-        return Response(  # pragma: no cover
-            {
-                "message": "Письмо с одноразовым кодом отправлено вам на почту. Он действителен в течении 15 минут"
-            },
-            status=status.HTTP_200_OK,
-        )
+#         return Response(  # pragma: no cover
+#             {
+#                 "message": "Письмо с одноразовым кодом отправлено вам на почту. Он действителен в течении 15 минут"
+#             },
+#             status=status.HTTP_200_OK,
+#         )
 
 
-class LoginView(APIView):
+class LoginOrRegisterView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(request_body=UserLoginSerializer)
@@ -58,9 +65,7 @@ class LoginView(APIView):
         try:
             user = User.objects.get(email=email.data["email"])
         except User.DoesNotExist as e:
-            return Response(
-                {"error": "User is not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            user = User.objects.create(email=email.data["email"])
 
         otp = generate_otp()
         user.otp = otp
@@ -108,12 +113,17 @@ class ValidateOTPView(APIView):
 
             refresh = RefreshToken.for_user(user)
 
-            refresh.payload.update({"user_id": user.pk, "email": user.email})
-
-            return Response(
-                {"refresh": str(refresh), "access": str(refresh.access_token)},
+            response = Response(
+                {"access": str(refresh.access_token)},
                 status=status.HTTP_200_OK,
             )
+            refresh.payload.update({"user_id": user.pk, "email": user.email})
+            response = set_jwt_cookies(response, refresh.access_token, refresh)
+
+            print(response.headers)
+            print(response.cookies)
+
+            return response
         else:
             return Response(
                 {"error": "Неправильный код."}, status=status.HTTP_400_BAD_REQUEST
@@ -176,3 +186,32 @@ class ValidateChangeEmailOTPView(APIView):
             return Response({"detail": "Успешно"})
         else:
             return Response({"detail": "Неверный код"}, status=status.HTTP_400_BAD_REQUEST)
+    
+class CookieTokenRefreshView(JWTAuthentication, TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        raw_refresh_token = request.COOKIES.get(settings.SIMPLE_JWT['REFRESH_COOKIE']) or None
+        raw_acces_token = request.COOKIES.get(settings.SIMPLE_JWT['AUTH_COOKIE']) or None
+        data = {'access': raw_acces_token, 'refresh': raw_refresh_token}
+        serializer = self.get_serializer(data=data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        response = Response(serializer.validated_data, status=status.HTTP_200_OK)
+        
+        access_token = response.data.get('access')
+        refresh_token = response.data.get('refresh')
+
+        if access_token and refresh_token:
+            response = set_jwt_cookies(response, access_token, refresh_token)
+            
+            del response.data['access']
+            # del response.data['refresh']
+
+        return response
+    
+def get_csrf(request) -> Response:
+    response = JsonResponse({'detail': 'CSRF cookie set!!!'})
+    response['X-CSRFToken'] = get_token(request)
+    return response

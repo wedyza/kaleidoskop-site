@@ -81,10 +81,11 @@ class CustomAbstractUser(AbstractUser):
     last_name = models.CharField("Фамилия", max_length=30, null=True)
     middle_name = models.CharField("Отчество", max_length=30, null=True)
     code = models.CharField("Код", max_length=15, null=True)
-
+    okdp = models.CharField('ОКДП', max_length=40, null=True)
     email_to_change = models.EmailField(null=True, blank=True)
     otp_expires_change_email = models.DateTimeField("Время жизни otp", null=True, blank=True)
     otp_change_email = models.CharField(max_length=6, null=True, blank=True)
+    previously_existed = models.BooleanField('Существовал ли пользователь ранее', default=False)
 
     def __str__(self):
         return self.email

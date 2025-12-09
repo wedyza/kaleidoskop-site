@@ -131,3 +131,9 @@ class UpdateRemainsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Remains
         fields = '__all__'
+
+
+class OrderReceiveSerializer(serializers.Serializer):
+    code = serializers.CharField()
+    status = serializers.CharField()
+    agreed = serializers.CharField()
