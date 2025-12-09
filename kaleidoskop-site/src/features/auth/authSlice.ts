@@ -7,8 +7,8 @@ interface AuthState {
   step: 'email' | 'otp' | 'authenticated';
   loading: boolean;
   error: string | null;
-  changeEmailStep: 'idle' | 'requested' | 'validated'; // состояние смены почты
-  newEmail: string; // новая почта для смены
+  changeEmailStep: 'idle' | 'requested' | 'validated';
+  newEmail: string;
 }
 
 const initialState: AuthState = {
