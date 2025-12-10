@@ -7,15 +7,15 @@ import { createOtp, validateOtp, changeEmail, validateChangeEmail } from "../../
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mode?: 'login' | 'change-email'; // Режим работы модалки
-  currentEmail?: string; // Текущая почта для режима смены
+  mode?: 'login' | 'change-email';
+  currentEmail?: string;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ 
   isOpen, 
   onClose, 
   mode = 'login',
-  currentEmail = '' 
+  //currentEmail = '' 
 }) => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -24,12 +24,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const { step, changeEmailStep } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
 
-  // Определяем текущий шаг в зависимости от режима
   const currentStep = mode === 'login' ? step : 
     changeEmailStep === 'idle' ? 'email' : 
     changeEmailStep === 'requested' ? 'otp' : 'authenticated';
-
-  console.log(currentStep);
 
   const handleRequestOtp = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,17 +97,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
   const handleBack = () => {
     if (mode === 'login') {
-      // Для логина сбрасываем шаг
-      // dispatch(resetStep()); // если есть такой action
     } else {
-      // Для смены почты сбрасываем состояние
-      // dispatch(resetChangeEmailState()); // если есть такой action
     }
     setEmail('');
     setCode('');
   };
 
-  // Заголовки в зависимости от режима
   const getTitles = () => {
     if (mode === 'login') {
       return {

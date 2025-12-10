@@ -276,7 +276,6 @@ const MakeOrderPage = () => {
               </div>
             ) : (
               <div className='makeover_del-pickup'>
-                {/* Контент для самовывоза */}
                 <div className="pickup-info inter14-400">
                   Вы сможете забрать заказ в ближайшем магазине после подтверждения
                 </div>

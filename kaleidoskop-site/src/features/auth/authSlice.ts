@@ -73,6 +73,18 @@ export const validateChangeEmail = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      await api.post('/auth/logout/');
+      return { success: true };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка при выходе');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -80,14 +92,13 @@ const authSlice = createSlice({
     setEmail(state, action) {
       state.email = action.payload;
     },
-    logout(state) {
+    logoutLocal(state) {
       state.token = null;
       state.step = 'email';
       state.email = '';
       state.changeEmailStep = 'idle';
       state.newEmail = '';
       localStorage.removeItem('token');
-      localStorage.removeItem('selectedBasketIds');
     },
     setNewEmail(state, action) {
       state.newEmail = action.payload;
@@ -161,13 +172,36 @@ const authSlice = createSlice({
       .addCase(validateChangeEmail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.token = null;
+        state.step = 'email';
+        state.email = '';
+        state.changeEmailStep = 'idle';
+        state.newEmail = '';
+        localStorage.removeItem('token');
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        state.token = null;
+        state.step = 'email';
+        state.email = '';
+        state.changeEmailStep = 'idle';
+        state.newEmail = '';
+        localStorage.removeItem('token');
       });
   },
 });
 
 export const { 
   setEmail, 
-  logout, 
+  logoutLocal, 
   setNewEmail, 
   resetChangeEmailState, 
   clearError 

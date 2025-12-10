@@ -125,7 +125,7 @@ const userSlice = createSlice({
       //   }
       //   state.loading = false;
       // })
-      .addCase(logout, (state) => {
+      .addCase(logout.fulfilled, (state) => {
         state.user = null;
       })
       .addCase(validateChangeEmail.fulfilled, (state, action) => {
