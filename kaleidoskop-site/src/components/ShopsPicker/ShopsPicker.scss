@@ -1,0 +1,59 @@
+.store-modal {
+  min-width: 80vw;
+}
+
+.store-picker {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.store-list {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.store-card {
+  padding: 12px;
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.store-title {
+  color: var(--grey500);
+}
+
+.store-card.active {
+  border-color: #ff5000;
+  background: #fff3ea;
+}
+
+.store-select-btn {
+  margin-top: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.store-map {
+  flex: 1;
+}
+
+.store-map__container {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.address-map__container > ymaps,
+.address-map__container > .ymaps-2-1-79-map,
+.address-map__container > .ymaps-2-1-79-inner-panes {
+  height: 100% !important;
+  width: 100% !important;
+}

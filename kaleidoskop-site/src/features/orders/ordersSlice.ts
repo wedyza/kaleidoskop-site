@@ -45,10 +45,11 @@ interface OrdersResponse {
   results: Order[];
 }
 
-interface CreateOrderRequest {
+export interface CreateOrderRequest {
   delivery_method: DeliveryMethod;
   payment_method: PaymentMethod;
   address?: Address;
+  shop?: string;
 }
 
 interface OrderState {
@@ -85,12 +86,20 @@ export const createOrder = createAsyncThunk<
       apartment?: string;
       entrance?: string;
       floor?: string;
+      intercom?: string;
     };
+    shop?: string;
   },
   { rejectValue: string }
 >(
   'order/createOrder',
-  async ({ delivery_method, payment_method, addressString, addressDetails }, { rejectWithValue }) => {
+  async ({ 
+    delivery_method, 
+    payment_method, 
+    addressString, 
+    addressDetails,
+    shop 
+  }, { rejectWithValue }) => {
     try {
       const orderData: CreateOrderRequest = {
         delivery_method,
@@ -123,6 +132,11 @@ export const createOrder = createAsyncThunk<
         }
 
         orderData.address = address;
+      } else if (delivery_method === 'Самовывоз') {
+        if (!shop) {
+          return rejectWithValue('Для самовывоза требуется выбрать магазин');
+        }
+        orderData.shop = shop;
       }
 
       const response = await api.post('/orders/', orderData);

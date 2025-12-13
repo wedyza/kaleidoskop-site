@@ -40,6 +40,9 @@ export const validateOtp = createAsyncThunk(
   async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/validate-otp/', { email, otp });
+      if (response.data.access) {
+        localStorage.setItem('token', response.data.access);
+      }
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка при проверке кода');
@@ -66,6 +69,9 @@ export const validateChangeEmail = createAsyncThunk(
   async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/change-email/validate', { email, otp });
+      if (response.data.access) {
+        localStorage.setItem('token', response.data.access);
+      }
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка при подтверждении смены почты');
@@ -134,7 +140,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.access;
         state.step = 'authenticated';
-        localStorage.setItem('token', action.payload.access);
       })
       .addCase(validateOtp.rejected, (state, action) => {
         state.loading = false;
@@ -163,10 +168,8 @@ const authSlice = createSlice({
         state.changeEmailStep = 'validated';
         state.email = state.newEmail;
         state.newEmail = '';
-        
         if (action.payload.access) {
           state.token = action.payload.access;
-          localStorage.setItem('token', action.payload.access);
         }
       })
       .addCase(validateChangeEmail.rejected, (state, action) => {

@@ -10,7 +10,6 @@ export const api = axios.create({
 let isRefreshing = false;
 let pendingRequests: ((token?: string) => void)[] = [];
 
-
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
 
@@ -53,6 +52,7 @@ api.interceptors.response.use(
 
       return api(originalRequest);
     } catch (refreshError) {
+      localStorage.removeItem('token');
       pendingRequests = [];
       return Promise.reject(refreshError);
     } finally {

@@ -15,10 +15,6 @@ function MainPage () {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  const hotOffers = products.slice(0, 6);
-  const popularProducts = products.slice(6, 12);
-  const newProducts = products.slice(12, 18);
-
   return (
     <div className="page-main">
       <Services />
@@ -29,17 +25,17 @@ function MainPage () {
         <>
           <ItemsBlock 
             title={'Горячие предложения'}
-            items={hotOffers}
+            items={products}
             icon
             dates={'01.07 - 16.07'}
           />
           <ItemsBlock 
             title={'Популярные товары'}
-            items={popularProducts}
+            items={products}
           />
           <ItemsBlock 
             title={'Новинки'}
-            items={newProducts}
+            items={products}
           />
         </>
       )}

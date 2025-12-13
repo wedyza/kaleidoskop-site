@@ -97,7 +97,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     if (!mapRef.current || mapInstance.current || !isOpen) return;
 
     mapInstance.current = new window.ymaps.Map(mapRef.current, {
-      center: [55.751574, 37.573856],
+      center: [58.632513, 59.818630],
       zoom: 13,
       controls: ['zoomControl', 'fullscreenControl']
     });

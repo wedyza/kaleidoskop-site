@@ -8,6 +8,8 @@ import AddressPicker from '../../components/AddressPicker/AddressPicker';
 import Modal from '../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import { clearCurrentOrder, createOrder } from '../../features/orders/ordersSlice';
+import ShopsPicker from '../../components/ShopsPicker/ShopsPicker';
+import { fetchShops, type Shop } from '../../features/shops/shopsSlice';
 
 export type DeliveryType = 'pickup' | 'courier';
 
@@ -20,6 +22,7 @@ const MakeOrderPage = () => {
 
   const [activeTab, setActiveTab] = useState<DeliveryType>('pickup');
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [showStoreModal, setShowStoreModal] = useState(false);
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [deliveryCoords, setDeliveryCoords] = useState<[number, number] | null>(null);
   const [addressDetails, setAddressDetails] = useState({
@@ -28,6 +31,7 @@ const MakeOrderPage = () => {
     floor: '',
     intercom: '',
   });
+  const [selectedStore, setSelectedStore] = useState<Shop | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<'В магазине' | 'Картой онлайн' | 'Через СБП'>('В магазине');
   
   const [editableField, setEditableField] = useState<string | null>(null);
@@ -40,6 +44,10 @@ const MakeOrderPage = () => {
   useEffect(() => {
     dispatch(fetchBasket());
     dispatch(clearCurrentOrder());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchShops());
   }, [dispatch]);
 
   useEffect(() => {
@@ -65,6 +73,10 @@ const MakeOrderPage = () => {
     setDeliveryCoords(coords);
   };
 
+  const handleStoreSelect = (store: Shop) => {
+    setSelectedStore(store);
+  };
+
   const handleCreateOrder = async () => {
     if (selectedItems.length === 0) {
       alert('Выберите товары для заказа');
@@ -76,12 +88,18 @@ const MakeOrderPage = () => {
       return;
     }
 
+    if (activeTab === 'pickup' && !selectedStore) {
+      alert('Выберите магазин для самовывоза');
+      return;
+    }
+
     try {
       await dispatch(createOrder({
         delivery_method: activeTab === 'courier' ? 'Доставка' : 'Самовывоз',
         payment_method: 'Наличными',
         addressString: activeTab === 'courier' ? deliveryAddress : undefined,
         addressDetails: activeTab === 'courier' ? addressDetails : undefined,
+        shop: activeTab === 'pickup' && selectedStore ? selectedStore.id : undefined,
       })).unwrap();
     } catch (error) {
       console.error('Ошибка создания заказа:', error);
@@ -259,7 +277,7 @@ const MakeOrderPage = () => {
                   <div className="delivery-address-selected">
                     <span className="selected-address-value inter14-400">{deliveryAddress}</span>
                     <button 
-                      className="change-address-btn inter14-600 grey-btn"
+                      className="change-address_btn inter14-600 grey-btn"
                       onClick={() => setShowAddressModal(true)}
                     >
                       Изменить адрес доставки
@@ -267,7 +285,7 @@ const MakeOrderPage = () => {
                   </div>
                 ) : (
                   <button 
-                    className="change-address-btn select-address-btn inter14-600 grey-btn"
+                    className="change-address_btn select-address_btn inter14-600 grey-btn"
                     onClick={() => setShowAddressModal(true)}
                   >
                     Выбрать адрес на карте
@@ -276,11 +294,46 @@ const MakeOrderPage = () => {
               </div>
             ) : (
               <div className='makeover_del-pickup'>
-                <div className="pickup-info inter14-400">
-                  Вы сможете забрать заказ в ближайшем магазине после подтверждения
-                </div>
+                {selectedStore ? (
+                  <div className="pickup-store-selected">
+                    <div className="selected-store-info">
+                      <span className="store-name inter14-600">{selectedStore.title}</span>
+                      <span className="store-address inter14-400">
+                        {selectedStore.city}, {selectedStore.street}, {selectedStore.house}
+                      </span>
+                    </div>
+                    <button 
+                      className="change-store-btn inter14-600 grey-btn"
+                      onClick={() => setShowStoreModal(true)}
+                    >
+                      Изменить магазин
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    className="select-store_btn inter14-600 accent-btn"
+                    onClick={() => setShowStoreModal(true)}
+                  >
+                    Выбрать магазин
+                  </button>
+                )}
               </div>
             )}
+            <Modal 
+              isOpen={showStoreModal} 
+              onClose={() => setShowStoreModal(false)}
+              className="store-modal"
+            >
+              <div className="store-modal-content">
+                <h3 className="modal-title inter18-600">Выберите магазин</h3>
+                <ShopsPicker 
+                  onSelectStore={(store) => {
+                    handleStoreSelect(store);
+                  }}
+                  selectedStoreId={selectedStore?.id}
+                />
+              </div>
+            </Modal>
 
             <Modal 
               isOpen={showAddressModal} 
