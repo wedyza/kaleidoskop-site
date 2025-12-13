@@ -1,0 +1,45 @@
+.admin-content {
+  margin-left: var(--nav-width);
+  padding: 30px 20px;
+}
+
+.admin-nav {
+  position: fixed;
+  width: var(--nav-width);
+  background-color: var(--white);
+  box-shadow: var(--shadow3);
+  height: 100vh;
+  padding: 20px 5px 30px 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-nav_list {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-nav_logo {
+  padding-left: 15px;
+}
+
+.admin-nav_item {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  gap: 10px;
+}
+
+.admin-nav_icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-logout {
+  margin-top: auto;
+}

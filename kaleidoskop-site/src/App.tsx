@@ -19,10 +19,13 @@ import MakeOrderPage from './pages/MakeOrderPage/MakeOrderPage';
 import SearchPage from './pages/SearchPage/SearchPage';
 import ReturnsPage from './pages/ReturnsPage/ReturnsPage';
 import Page404 from './pages/Page404/Page404';
+import { AdminLayout } from './layouts/AdminLayout';
+import AdminMain from './pages/AdminMain/AdminMain';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
   const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.user.user)
 
   useEffect(() => {
     if (token) {
@@ -30,31 +33,36 @@ function App() {
     }
   }, [token])
 
+  const isAdmin = user?.is_superuser === true;
+
   return (
     <Routes>
-      {/* <Route element={<ProtectedRoute allowedFor='guest' />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/registration" element={<RegisterPage />} />
-      </Route> */}
-
-      <Route element={<AppLayout />}>
-        <Route element={<ProtectedRoute allowedFor='auth' />}>
-          <Route element={<SectionLayout />}>
-            <Route path="/wishlist" element={<WishlistPage />} />
-            <Route path="/basket" element={<BasketPage />} />
-            <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/comparison" element={<ComparisonPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/returns" element={<ReturnsPage />} />
+      {isAdmin ? (
+        <Route element={<AdminLayout />}>
+          <Route element={<ProtectedRoute allowedFor='admin' />}> 
+            <Route path="/" element={<AdminMain />} />
           </Route>
-          <Route path="/make-order" element={<MakeOrderPage />} />
         </Route>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/product/:slug" element={<ProductPage />} />
-        <Route path="/category/:slug" element={<CategoryPage />} />
-        <Route path="*" element={<Page404 />} />
-      </Route>
+      ) : (
+        <Route element={<AppLayout />}>
+          <Route element={<ProtectedRoute allowedFor='auth' />}>
+            <Route element={<SectionLayout />}>
+              <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/basket" element={<BasketPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/comparison" element={<ComparisonPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/returns" element={<ReturnsPage />} />
+            </Route>
+            <Route path="/make-order" element={<MakeOrderPage />} />
+          </Route>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/product/:slug" element={<ProductPage />} />
+          <Route path="/category/:slug" element={<CategoryPage />} />
+          <Route path="*" element={<Page404 />} />
+        </Route>
+      )}
     </Routes>
   );
 }
