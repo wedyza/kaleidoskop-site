@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Brand, Category, Item, Cart, CartItem, ItemImage, Like, Comment, NomenclatureCategory, Order, Parameter, ParameterItem, Remains, Nomenclature, Shop
+from .models import Banner, Brand, Category, Item, Cart, CartItem, ItemImage, Like, Comment, NomenclatureCategory, Order, Parameter, ParameterItem, Remains, Nomenclature, Shop
 from django.contrib.auth import get_user_model
 from .functions import get_daughter_nomenclatures
 
@@ -156,25 +156,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "first_name", "last_name", "email", "sex", "avatar", "is_superuser", "phone_number", "middle_name")  # avatar
         read_only_fields = ('id', 'is_superuser')
 
-
-class NomenclatureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Nomenclature
-        fields = '__all__'
-
-
-# class NomenclatureIDSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Nomenclature
-#         fields = ('id',)
-
-
-class NomenclatureCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NomenclatureCategory
-        exclude = ('id',)
-
-
 class AddressSerializer(serializers.Serializer):
     city = serializers.CharField(required=True)
     street = serializers.CharField(required=True)
@@ -264,3 +245,9 @@ class ShopSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Brand
 #         fields = '__all__'
+
+
+class PublicBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banner
+        fields = ('source', )

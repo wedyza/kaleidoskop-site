@@ -10,11 +10,11 @@ from .views import (
     ItemViewSet,
     CommentViewSet,
     OrderViewSet,
+    PublicBannerViewSet,
     ShopViewSet,
     WishlistViewSet,
     CategoryViewSet,
     UsersViewSet,
-    AdminNomenclaturesViewSet,
     CartItemView
 )
 # from recomendation_system.views import TestView
@@ -27,12 +27,12 @@ router.register("comments", CommentViewSet, basename="comments")
 router.register("users/me/wishlist", WishlistViewSet, basename="wishlist")
 router.register("categories", CategoryViewSet)
 router.register("users", UsersViewSet, basename="users")
-router.register("admin/nomenclatures", AdminNomenclaturesViewSet, basename='nomenclantures')
 router.register("orders", OrderViewSet, basename='orders')
 # router.register("users/me/cart", CartViewSet, basename='cart')
 router.register("cart_items", CartItemViewSet, basename="cart")
 router.register("brands", BrandViewSet, basename='brands')
 router.register("shops", ShopViewSet, basename='shops')
+router.register("banners", PublicBannerViewSet, basename='banners')
 
 urlpatterns = [
     path("cart_items/switch_to_order/", CartItemView.as_view()),
@@ -55,10 +55,12 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="wedyza@mail.ru"),
         license=openapi.License(name="BSD License"),
     ),
-    # url="https://188.68.80.72" ,
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
+
+# admin_schema = schema_view(urlpatterns=[path('admin_panel/', include('admin_panel.urls'))])
+# public_schema = schema_view(urlpatterns=[path('api/', include('api.urls'))])
 
 if settings.DEBUG:
     urlpatterns += [

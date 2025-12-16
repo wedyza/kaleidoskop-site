@@ -191,16 +191,16 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
 
     "REFRESH_COOKIE": 'refresh_token',
     'AUTH_COOKIE': 'access_token',
-    'AUTH_COOKIE_SECURE': False,
+    'AUTH_COOKIE_SECURE': True,
     'AUTH_COOKIE_HTTP_ONLY': True,
-    'AUTH_COOKIE_SAMESITE': 'Lax',
-    'REFRESH_COOKIE_SAMESITE': 'Lax',
-    'REFRESH_COOKE_SECURE': False
+    'AUTH_COOKIE_SAMESITE': 'None',
+    'REFRESH_COOKIE_SAMESITE': 'None',
+    'REFRESH_COOKE_SECURE': True
 }
 
 ELASTICSEARCH_DSL = {
@@ -256,6 +256,7 @@ SWAGGER_SETTINGS = {
         }
     },
     "DEFAULT_INFO": "api.urls.api_info",
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'api.swagger.UrlBasedTagsSchema'
     # другие опции...
 }
 LOCAL_TZ = zoneinfo.ZoneInfo('Asia/Yekaterinburg')

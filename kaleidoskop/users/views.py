@@ -22,37 +22,7 @@ from rest_framework import permissions
 from django.utils.decorators import method_decorator
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-
-# Create your views here.
-
 User = get_user_model()
-
-
-# class RegisterView(APIView): # Пока что разделим эту логику, но скорее всего позже совместим, чтобы сделать единой с логином. Просто добавим обработку в except
-#     permission_classes = (permissions.AllowAny,)
-
-#     @swagger_auto_schema(request_body=UserCreateSerializer)
-#     def post(self, request):
-#         new_user = UserCreateSerializer(data=request.data)
-#         if not new_user.is_valid():
-#             return Response(new_user.errors, status=status.HTTP_400_BAD_REQUEST)
-#         user = new_user.save()
-
-#         otp = generate_otp()
-#         user.otp = otp
-#         user.otp_expires = timezone.now() + timezone.timedelta(minutes=15)
-#         user.save()
-        
-#         # link_with_1c(user.id)
-#         send_otp_email(user.email, otp)
-
-#         return Response(  # pragma: no cover
-#             {
-#                 "message": "Письмо с одноразовым кодом отправлено вам на почту. Он действителен в течении 15 минут"
-#             },
-#             status=status.HTTP_200_OK,
-#         )
-
 
 class LoginOrRegisterView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -112,16 +82,13 @@ class ValidateOTPView(APIView):
             user.save()
 
             refresh = RefreshToken.for_user(user)
+            refresh.payload.update({"user_id": user.pk, "email": user.email})
 
             response = Response(
                 {"access": str(refresh.access_token)},
                 status=status.HTTP_200_OK,
             )
-            refresh.payload.update({"user_id": user.pk, "email": user.email})
-            response = set_jwt_cookies(response, refresh.access_token, refresh)
-
-            print(response.headers)
-            print(response.cookies)
+            response = set_jwt_cookies(response, refresh)
 
             return response
         else:
@@ -190,7 +157,8 @@ class ValidateChangeEmailOTPView(APIView):
 class CookieTokenRefreshView(JWTAuthentication, TokenRefreshView):
     def post(self, request, *args, **kwargs):
         raw_refresh_token = request.COOKIES.get(settings.SIMPLE_JWT['REFRESH_COOKIE']) or None
-        raw_acces_token = request.COOKIES.get(settings.SIMPLE_JWT['AUTH_COOKIE']) or None
+        # raw_acces_token = request.COOKIES.get(settings.SIMPLE_JWT['AUTH_COOKIE']) or None
+        raw_acces_token = None
         data = {'access': raw_acces_token, 'refresh': raw_refresh_token}
         serializer = self.get_serializer(data=data)
         try:
@@ -204,13 +172,19 @@ class CookieTokenRefreshView(JWTAuthentication, TokenRefreshView):
         refresh_token = response.data.get('refresh')
 
         if access_token and refresh_token:
-            response = set_jwt_cookies(response, access_token, refresh_token)
-            
-            del response.data['access']
-            # del response.data['refresh']
+            response = set_jwt_cookies(response, refresh_token)
 
+        response.data = {'access': access_token}
         return response
     
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response({"detail": "success"})
+        response.delete_cookie('refresh_token', path='/')
+        return response
+
+
 def get_csrf(request) -> Response:
     response = JsonResponse({'detail': 'CSRF cookie set!!!'})
     response['X-CSRFToken'] = get_token(request)

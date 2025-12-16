@@ -40,9 +40,6 @@ class Nomenclature(UUIDModel):
         return self.title
     
 
-
-
-# Create your models here.
 class Category(UUIDModel):
     title = models.CharField("Название", max_length=100)
     parent = models.ForeignKey(
@@ -58,7 +55,8 @@ class Category(UUIDModel):
         through='NomenclatureCategory',
         related_name='nomenclatures'
     )
-
+    active = models.BooleanField("Активно", default=False)
+    image = models.ImageField("Картинка", null=True, upload_to="categories")
     
     class Meta:
         verbose_name = 'Категория'
@@ -391,6 +389,16 @@ class Shop(UUIDModel):
     street = models.CharField("Улица", max_length=50, null=False)
     house = models.IntegerField("Дом", validators=[MinValueValidator(0)])
 
-# class Banner(UUIDModel):
-#     source = models.ImageField(upload_to='banners', max_length=255)
-#     title = ?
+class Banner(UUIDModel):
+    class BannerGroupType(models.TextChoices):
+        FIRST = "FIRST"
+        SECOND = "SECOND"
+    
+    source = models.ImageField(upload_to='banners', max_length=255, null=False, blank=False)
+    created_at = models.DateTimeField("Создано", auto_now_add=True)
+    active = models.BooleanField("Активен", default=True, blank=False)
+    group_type = models.TextField("Группа банера", choices=BannerGroupType.choices, null=False)
+    queue = models.IntegerField("Порядок", validators=[MinValueValidator(1)], null=False, blank=False)
+
+    # class Meta:
+    #     unique_together = ('order', 'group_type')

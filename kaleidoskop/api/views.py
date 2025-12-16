@@ -15,15 +15,14 @@ from .serializers import (
     LikeSerializer,
     CommentSerializer,
     ListCartItemSerializer,
-    NomenclatureCategorySerializer,
-    NomenclatureSerializer,
     OrderSerializer,
+    PublicBannerSerializer,
     ShopSerializer,
     SwitchSerializer,
     UserSerializer,
     CartTo1CSerializer
 )
-from .models import Brand, Cart, Category, Item, Like, Comment, CartItem, Nomenclature, NomenclatureCategory, Order, Shop
+from .models import Banner, Brand, Cart, Category, Item, Like, Comment, CartItem, Order, Shop
 from search.views import PaginatedElasticSearchAPIView
 from search.documents import ItemDocument
 from elasticsearch_dsl import Q
@@ -43,8 +42,8 @@ from django.db import transaction
 
 User = get_user_model()
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
+class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Category.objects.filter(active=True).all()
     serializer_class = CategorySerializer
     pagination_class = CustomPagination
     permissions = (permissions.AllowAny, )
@@ -308,45 +307,6 @@ class UsersViewSet(
         return Response(serializer.data)
 
 
-class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
-    serializer_class = NomenclatureSerializer
-    queryset = Nomenclature.objects.all()
-    permission_classes = (permissions.AllowAny,) #only admin
-    pagination_class = CustomPagination
-
-    @swagger_auto_schema(manual_parameters=[
-            openapi.Parameter('level_of_nesting', openapi.IN_QUERY, description='Уровень вложенности, дефолт = 0', type=openapi.TYPE_INTEGER),
-            openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
-            openapi.Parameter("page", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
-        ])
-    def list(self, request):
-        level_of_nesting = int(request.GET['level_of_nesting']) if 'level_of_nesting' in request.GET else 0
-        nomenclatures = get_nomenclatures(level_of_nesting)
-        page = self.paginate_queryset(nomenclatures)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(nomenclatures, many=True)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(
-        request_body=NomenclatureCategorySerializer(many=True),
-        responses={201: NomenclatureCategorySerializer(many=True)}
-    )        
-    @action(methods=['POST'], url_path='add_to_category', detail=False, serializer_class=NomenclatureCategorySerializer)
-    def add_nomenclature_to_category(self, request):
-        """
-        Связывает номенклатуру с категорий. В этом роуте можно добавлять сразу много номенклатур/категорий, чтобы не делать много запросов и оптимизировать все запросы к БД. Просто передаешь их через массив
-        """
-        serializer = self.get_serializer(data=request.data, many=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class CartItemViewSet(viewsets.GenericViewSet,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin):
@@ -494,3 +454,26 @@ class ShopViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+class PublicBannerViewSet(viewsets.GenericViewSet):
+    serializer_class = PublicBannerSerializer
+    permission_classes = (permissions.AllowAny, )
+
+    def get_queryset(self):
+        if self.action == 'first_group':
+            return Banner.objects.filter(group_type=Banner.BannerGroupType.FIRST).filter(active=True).order_by('queue').all()
+        return Banner.objects.filter(group_type=Banner.BannerGroupType.SECOND).filter(active=True).order_by('queue').all()
+
+    @action(detail=False, methods=['GET'], url_path='first_group')
+    def first_group(self, request):
+        return Response(self.get_serializer(instance=self.get_queryset(), many=True).data)
+    
+    @action(detail=False, methods=['GET'], url_path='second_group')
+    def second_group(self, request):
+        return Response(self.get_serializer(instance=self.get_queryset(), many=True).data)
+    
+
+class PublicCompilationViewSet(viewsets.GenericViewSet):
+    # serializer_class тут тоже доделать все
+    ...

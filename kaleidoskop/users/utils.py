@@ -23,24 +23,24 @@ def enforce_csrf(func):
         return func(request, *args, **kwargs)
     return wrapped_view
 
-def set_jwt_cookies(response: response.Response, access_token: str, refresh_token: str) -> response.Response:
-    response.set_cookie(
-        'access_token',
-        access_token,
-        # max_age=5 * 60,  # 4 минуты
-        max_age=10,  # 4 минуты
-        httponly=True,    # Защита от XSS
-        secure=False,      # Включить для продакшн режима
-        samesite='Lax', # Защита от CSRFб
+def set_jwt_cookies(response: response.Response, refresh_token: str) -> response.Response:
+    # response.set_cookie(
+    #     'access_token',
+    #     access_token,
+    #     max_age=4 * 60,  # 4 минуты
+    #     # max_age=10,  # 4 минуты
+    #     httponly=True,    # Защита от XSS
+    #     secure=True,      # Включить для продакшн режима
+    #     samesite='None', # Защита от CSRFб
         
-    )
+    # )
     response.set_cookie(
         'refresh_token',
         refresh_token,
         # max_age=24 * 60 * 60,  # 1 день
         max_age=100 * 60,  # 1 день
         httponly=True,
-        secure=False,
-        samesite='Lax'
+        secure=True,
+        samesite='None'
     )
     return response
