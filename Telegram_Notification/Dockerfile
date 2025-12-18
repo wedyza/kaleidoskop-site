@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD ["bin/bash/", "-c", "python bot.py"]
+# CMD ["bin/bash/", "-c", "python bot.py"]

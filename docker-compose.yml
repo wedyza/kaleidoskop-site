@@ -41,8 +41,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
     restart: always
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:15672"]
-        interval: 30s
+        test: rabbitmq-diagnostics -q ping
+        interval: 10s
         timeout: 10s
         retries: 5
     # network_mode: "host"
@@ -53,11 +53,18 @@ services:
     # ports:
     #   - 8080:8000
     depends_on:
-      - db
+      redis:
+        condition: service_started
+      db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     environment:
       - CONTAINER_LAUNCH=true
     volumes:
       - static:/static/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   celery:
     build: ./kaleidoskop/
@@ -65,11 +72,14 @@ services:
     restart: always
     environment:
       - CONTAINER_LAUNCH=true
-    # network_mode: "host"
     depends_on:
-      - app
-      - rabbitmq
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     command: celery -A kaleidoskop worker -l INFO
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   elasticsearch:
     image: elasticsearch:8.17.10
@@ -79,8 +89,9 @@ services:
     environment:
       - discovery.type=single-node
       - ELASTIC_PASSWORD=MyPassword
-
-  #recommendation system:
+      - ES_JAVA_OPTS=-Xms2g
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
 
   redis:
     image: redis
@@ -100,7 +111,8 @@ services:
     build: ./nginx
     container_name: nginx
     ports:
-      - 8080:80
+      - 443:443
+      - 8080:8080
     depends_on:
       - app
     volumes:
@@ -110,19 +122,29 @@ services:
     build: ./Telegram_Notification
     container_name: telegram
     depends_on:
-      - redis
-      - rabbitmq
-    profiles: [donotstart]
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    command: python bot.py
+    # profiles: [donotstart]
   
   recommendation_system:
     build: ./AI_Feature
     container_name: ai_web_app
     ports:
       - 8082:8000
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    profiles: [donotstart]
+    command: uvicorn app.main_hybrid:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - indexes:/code/indexes/
+      - cache:/root/.cache/
+    # command: python main_hybrid.py
+    # profiles: [donotstart]
   
 volumes:
  pg_data:
  minio-storage:
  static:
+ indexes:
+ cache:
+ es-data:

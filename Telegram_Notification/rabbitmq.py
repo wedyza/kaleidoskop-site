@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class RabbitMQ:
-    def __init__(self):
+    def __init__(self, host):
         self.user = os.getenv('RABBITMQ_USER', 'guest')
         self.password = os.getenv('RABBITMQ_PASSWORD', 'guest')
-        self.host = "rabbitmq"
+        self.host = host
         self.port = 5672
         self.connection = None
         self.channel = None

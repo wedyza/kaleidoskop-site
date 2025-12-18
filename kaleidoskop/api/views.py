@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from .paginators import CustomPagination
+from admin_panel.models import Compilation
 from django.core.exceptions import ValidationError
 from .serializers import (
     BrandSerializer,
@@ -17,6 +18,7 @@ from .serializers import (
     ListCartItemSerializer,
     OrderSerializer,
     PublicBannerSerializer,
+    PublicCompilationSerializer,
     ShopSerializer,
     SwitchSerializer,
     UserSerializer,
@@ -28,17 +30,13 @@ from search.documents import ItemDocument
 from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from .functions import get_daughter_nomenclatures, get_nomenclatures
+from .functions import get_daughter_nomenclatures
 from django.db.models import F, Sum
-from django.db.models import Q as Query
 from users.tasks import delete_order_1c, update_user_1c, create_order_1c, produce_tg_notification
 import httpx
 from .filters import ItemFilter
 from django.utils import timezone
 from django.conf import settings
-from django.db import transaction
-# from 
-
 
 User = get_user_model()
 
@@ -373,14 +371,11 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
             return Response({'detail': 'Невозможно создать заказ, если мы не знаем вашего номера или даже имени!'}, status=status.HTTP_400_BAD_REQUEST)
 
         cart = Cart.objects.filter(order=None).filter(current_cart=True).filter(user=self.request.user).first()
-        # added = CartItem.objects.create(cart=cart, item=Item.objects.get(id="71380a57-9a9e-4805-8868-ae73342907e8"), amount=2, marked_for_order=True)
         if cart is None:
             return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
         
         items_for_order = cart.items.filter(marked_for_order=True)
         
-        # print(items_for_order)
-        # return Response()
         total_sum = items_for_order.aggregate(total=Sum(F("item__price") * F("amount")))["total"]
         if total_sum == 0 or total_sum == None:
             return Response({"detail": "Невозможно создать заказ с пустой корзиной!"}, status=status.HTTP_400_BAD_REQUEST)
@@ -475,5 +470,35 @@ class PublicBannerViewSet(viewsets.GenericViewSet):
     
 
 class PublicCompilationViewSet(viewsets.GenericViewSet):
-    # serializer_class тут тоже доделать все
-    ...
+    serializer_class = PublicCompilationSerializer
+    permission_classes = permissions.AllowAny
+
+    def get_queryset(self):
+        today = timezone.now()
+        queryset = Compilation.objects.filter(active=True).filter(Q(end_time=None) | Q(end_time__lte=today)).order_by('-queue')
+        return queryset
+
+    @action(methods=['GET'], url_path='first', detail=False)
+    def get_first(self, request):
+        qs = self.get_queryset()
+        if qs.count() > 0:
+            return qs[0]
+    
+    @action(methods=['GET'], url_path='second', detail=False)
+    def get_second(self, request):
+        qs = self.get_queryset()
+        if qs.count() > 1:
+            return qs[1]
+    
+    @action(methods=['GET'], url_path='third', detail=False)
+    def get_third(self, request):
+        qs = self.get_queryset()
+        if qs.count > 2:
+            return qs[2]
+    
+    @action(methods=['GET'], url_path='fourth', detail=False)
+    def get_fourth(self, request):
+        qs = self.get_queryset()
+        if qs.count > 3:
+            return qs[3]
+    

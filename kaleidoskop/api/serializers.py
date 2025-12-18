@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Banner, Brand, Category, Item, Cart, CartItem, ItemImage, Like, Comment, NomenclatureCategory, Order, Parameter, ParameterItem, Remains, Nomenclature, Shop
 from django.contrib.auth import get_user_model
 from .functions import get_daughter_nomenclatures
+from admin_panel.models import Compilation
 
 User = get_user_model()
 
@@ -251,3 +252,18 @@ class PublicBannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banner
         fields = ('source', )
+
+
+class PublicCompilationSerializer(serializers.ModelSerializer):
+    items = serializers.SerializerMethodField('get_items')
+    public_queue = serializers.SerializerMethodField('get_public_queue')
+    class Meta:
+        model = Compilation
+        fields = ('items', 'title', 'public_queue', 'start_time', 'end_time')
+        read_only_fields = ['items', 'title', 'public_queue', 'start_time', 'end_time']
+
+    def get_items(self, obj):
+        ...
+
+    def get_public_queue(self, obj):
+        ...

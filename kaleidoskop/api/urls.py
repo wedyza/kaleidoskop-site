@@ -11,6 +11,7 @@ from .views import (
     CommentViewSet,
     OrderViewSet,
     PublicBannerViewSet,
+    PublicCompilationViewSet,
     ShopViewSet,
     WishlistViewSet,
     CategoryViewSet,
@@ -28,22 +29,19 @@ router.register("users/me/wishlist", WishlistViewSet, basename="wishlist")
 router.register("categories", CategoryViewSet)
 router.register("users", UsersViewSet, basename="users")
 router.register("orders", OrderViewSet, basename='orders')
-# router.register("users/me/cart", CartViewSet, basename='cart')
 router.register("cart_items", CartItemViewSet, basename="cart")
 router.register("brands", BrandViewSet, basename='brands')
 router.register("shops", ShopViewSet, basename='shops')
 router.register("banners", PublicBannerViewSet, basename='banners')
+router.register("compilations", PublicCompilationViewSet, basename='compilations')
 
 urlpatterns = [
     path("cart_items/switch_to_order/", CartItemView.as_view()),
     path("", include(router.urls)),
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
-    # path("test", TestView.as_view()),
     path("admin_panel/", include("admin_panel.urls")),
     path('recomendations/', include('recomendation_system.urls'))
-    # path("admin/nomenclatures", AdminNomenclaturesView)
-    # path("search/", include("search.urls"))
 ]
 
 schema_view = get_schema_view(
@@ -58,9 +56,6 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
-
-# admin_schema = schema_view(urlpatterns=[path('admin_panel/', include('admin_panel.urls'))])
-# public_schema = schema_view(urlpatterns=[path('api/', include('api.urls'))])
 
 if settings.DEBUG:
     urlpatterns += [

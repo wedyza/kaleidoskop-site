@@ -30,7 +30,7 @@ class HybridRecommendationSystem:
         self.collaborative_weight = collaborative_weight
 
         # Content-based компоненты
-        self.sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
+        self.sentence_model = SentenceTransformer('all-MiniLM-L6-v2', cache_folder='/root/.cache/')
         self.product_vectors = None
         self.products_df = None
         self.faiss_index = None
@@ -314,8 +314,11 @@ class HybridRecommendationSystem:
 
     def load_model(self, filepath):
         """Загрузка модели"""
+        print(f"Start loading inside, filepath: {filepath}")
         with open(filepath, 'rb') as f:
             model_data = pickle.load(f)
+        print("End loading inside")
+        
 
         self.content_weight = model_data['content_weight']
         self.collaborative_weight = model_data['collaborative_weight']

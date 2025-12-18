@@ -3,16 +3,13 @@ import logging
 import sys
 from os import getenv
 from dotenv import load_dotenv
-
 from aiogram import Bot, Dispatcher, html, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-
 import redis
-import pika
 import random
 import string
 import json
@@ -23,8 +20,18 @@ load_dotenv()
 
 TOKEN = getenv("BOT_TOKEN")
 
+
 characters = string.digits
 dp = Dispatcher()
+
+loop = asyncio.get_event_loop()
+
+def _done(f: asyncio.Future):
+    try:
+        f.result()
+    except Exception as e:
+        print("ERROR IN new_order_notification:", repr(e))
+
 
 def read_session():
     with open('config.json', 'r') as f:
@@ -49,12 +56,17 @@ def remove_session(chat_id):
     write_session(session)
 
 
+async def new_order_notification(chat_id, data): # Потом доделать
+    global bot
+    body = f"Поступил новый заказ! \nЕго номер: {html.code(data["code"])}, дата и время создания: {data["created_at"]}\n\nФИО контрагента: {data["user"]["last_name"]} {data["user"]["first_name"]} {data["user"]["middle_name"] if not data["user"]["middle_name"] is None else ""} \nВид доставки: {data["delivery_type"]}.\n\n Можно уже проверять заказ прямо в 1С! Код: {html.code(data["code"])}"
+    await bot.send_message(chat_id, body)
+
+
 r = redis.StrictRedis(
         host='localhost',  # из Endpoint
         port=6379,  # из Endpoint
         decode_responses=True
     )
-
 
 def callback(ch, method, properties, body):
     body_json = json.loads(body.decode())
@@ -63,13 +75,22 @@ def callback(ch, method, properties, body):
     if action == "new_session":
         paste_session(body_json["message"])
     elif action == "new_order":
-        print("тут мы отправляем сообщение с заказом пользователям")
+        session = read_session()
+        for chat_id in session["session"]:
+            fut = asyncio.run_coroutine_threadsafe(
+                new_order_notification(chat_id, json.loads(body_json["message"])),
+                loop
+            )
+            fut.add_done_callback(_done)
+
+        # print("тут мы отправляем сообщение с заказом пользователям")
 
 @dp.message(Command('disable'))
 async def dysable_notifications(message: Message) -> None:
     try:
         remove_session(message.chat.id)
     except:
+        # await message.answer("")
         pass
     await message.answer("Успешно удалили вас, больше вы не будете получать уведомления")
 
@@ -95,16 +116,16 @@ async def session_create_event(callback_query: CallbackQuery):
     await callback_query.message.answer(f"Код сессии: {html.code(session_code)} | Действителен в течении 5 минут")
 
 def launch_consumer():
-    rabbitmq = RabbitMQ()
+    rabbitmq = RabbitMQ('rabbitmq')
     rabbitmq.consume("notifications", callback=callback)
 
+bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
 
 async def main() -> None:
-    # Initialize Bot instance with default bot properties which will be passed to all API calls
-    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-
-    # And the run events dispatching
+    global bot, loop
+    loop = asyncio.get_running_loop()
+    print("MAIN LOOP:", loop)
     threading.Thread(target=launch_consumer, daemon=True).start()
     await dp.start_polling(bot)
 

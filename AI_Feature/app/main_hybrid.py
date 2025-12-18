@@ -1,15 +1,19 @@
 
 # API для гибридной рекомендательной системы
 
+import asyncio
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
 import pandas as pd
 from contextlib import asynccontextmanager
-from hybrid_model import HybridRecommendationSystem
+from .hybrid_model import HybridRecommendationSystem
 from uuid import UUID
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent  # AI_Feature
+INDEX_DIR = BASE_DIR / "indexes"
 
 # Глобальная переменная для модели
 hybrid_recommender = None
@@ -44,23 +48,28 @@ class RecommendationResponse(BaseModel):
 async def startup_event():
     """Функция инициализации при запуске"""
     global hybrid_recommender
+    print('Инициализация')
     try:
         print("Инициализация гибридной рекомендательной системы...")
         hybrid_recommender = HybridRecommendationSystem()
 
         # Попытка загрузить существующую модель
         try:
-            hybrid_recommender.load_model('hybrid_recommendation_model.pkl')
+            hybrid_recommender.load_model(f'{INDEX_DIR}/hybrid_recommendation_model.pkl')
             print("Модель загружена из файла!")
         except:
             print("Модель не найдена - требуется обучение")
 
     except Exception as e:
         print(f"Ошибка при инициализации: {e}")
+    
+    await asyncio.sleep(0)
 
 async def shutdown_event():
     """Функция очистки при выключении"""
-    print("Выключение API...")
+    global hybrid_recommender
+    print("Выключение API, сохраняем модель...")
+    hybrid_recommender.save_model('hybrid_recommendation_model.pkl')
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -139,7 +148,7 @@ async def get_content_recommendations(request: RecommendationContentRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/recommendations/collaborative")
-async def get_collaborative_recommendations(user_id: UUID, n_recommendations: int = 10):
+async def get_collaborative_recommendations(user_id: int, n_recommendations: int = 10):
     """Получение только collaborative рекомендаций"""
     global hybrid_recommender
     if hybrid_recommender is None:
@@ -176,4 +185,4 @@ async def save_model():
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8081)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

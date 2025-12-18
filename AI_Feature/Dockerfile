@@ -9,4 +9,4 @@ RUN apt-get update \
 
 RUN pip install -r /code/requirements.txt
 
-COPY . /code/app
+COPY ./app /code/app
