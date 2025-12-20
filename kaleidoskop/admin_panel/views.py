@@ -3,12 +3,11 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.decorators import action
 import redis
-from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureCategorySerializer, NomenclatureSerializer
+from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureCategorySerializer, NomenclatureSerializer, AdminCategorySerializer
 from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef
 from .rabbitmq import RabbitMQ
 from django.conf import settings
-from api.serializers import CategorySerializer
 from api.models import Banner, Category, Nomenclature, NomenclatureCategory
 from .models import Compilation
 from drf_yasg import openapi
@@ -115,7 +114,8 @@ class BannerViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin, mixins.Des
 
 class AdminCategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = AdminCategorySerializer
+    parser_classes = [MultiPartParser]
     permission_classes = [permissions.IsAdminUser]
 
 

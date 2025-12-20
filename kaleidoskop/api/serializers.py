@@ -13,7 +13,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('title', 'id', 'parent', 'slug', 'items_count')
+        fields = ('title', 'id', 'parent', 'image', 'slug', 'items_count')
         read_only_fields = ('id', 'slug', 'items_count')
 
     def get_items_count(self, obj):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Banner, Item, NomenclatureCategory, Nomenclature
+from api.models import Banner, Category, Item, NomenclatureCategory, Nomenclature
 from .models import Compilation
 from django.db.models import Q
 from api.functions import get_daughter_nomenclatures
@@ -91,3 +91,10 @@ class DetailSerializer(serializers.Serializer):
 class CompilationQueueSerializer(serializers.Serializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Compilation.objects.all())
     queue = serializers.IntegerField()
+
+
+class AdminCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        read_only_fields = ['id']

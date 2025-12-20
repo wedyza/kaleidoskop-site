@@ -164,14 +164,19 @@ r = redis.StrictRedis(
         decode_responses=True
     )
 
-rq = RabbitMQ()
 
 
 @multitasker    
 @shared_task
 def produce_tg_notification(order_data):
-    rq.publish(action="new_order", message=json.dumps(order_data, ensure_ascii=False))
-    print("Published new order message")
+    rq = RabbitMQ()
+    try:
+        rq.publish(action="new_order", message=json.dumps(order_data, ensure_ascii=False))
+        print("Published new order message")
+    except Exception as e:
+        print('Ошибка отрпавки уведомления')
+    finally:
+        rq.close()
 
 @multitasker
 @shared_task
