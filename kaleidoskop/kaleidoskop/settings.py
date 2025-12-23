@@ -35,7 +35,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-SERVER_ENDPOINT = "188.68.80.72" # сюда потом .env
+SERVER_ENDPOINT = os.getenv("SERVER_ENDPOINT")
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", SERVER_ENDPOINT]
 
 CONTAINER_LAUNCHER = os.getenv("CONTAINER_LAUNCH", False)
@@ -106,7 +106,7 @@ DATABASES = {
         "NAME": os.getenv("POSTGRES_DB"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": "localhost" if not CONTAINER_LAUNCHER else "db",
+        "HOST": os.getenv("DB_HOST") if not CONTAINER_LAUNCHER else 'db',
         "PORT": os.getenv("DB_PORT"),
     }
 }
@@ -166,11 +166,13 @@ REST_FRAMEWORK = {
 
 # File Storage
 
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+DEFAULT_FILE_STORAGE = "kaleidoskop.storage.MinioDualStorage"
+
 AWS_STORAGE_BUCKET_NAME = "local"
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_S3_ENDPOINT_URL = "http://localhost:9000" if not CONTAINER_LAUNCHER else f"https://{SERVER_ENDPOINT}/media"
+AWS_S3_ADDRESSING_STYLE = "path"
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq//"  # Когда пакуешь в контейнер поменять localhost->rabbitmq
 BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq:5672//" # Когда пакуешь в контейнер поменять localhost->rabbitmq
@@ -179,7 +181,7 @@ BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not C
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
 USER_1C = os.getenv("USER_1C")
 PASSWORD_1C = os.getenv("PASSWORD_1C")
-SERVER_1C = "http://192.168.0.106/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else "http://host.docker.internal/demohttp/hs/apiv1"
+SERVER_1C = "http://localhost/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else "http://192.168.0.106/demohttp/hs/apiv1"
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")

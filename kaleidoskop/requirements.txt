@@ -25,6 +25,7 @@ Django==4.2.7
 django-cors-headers==3.7.0
 django-elasticsearch-dsl==7.4
 django-enum==2.2.2
+numpy<2
 django-filter==23.1
 django-rest-elasticsearch==0.4.2
 django-storages==1.14.6

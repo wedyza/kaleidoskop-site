@@ -16,17 +16,19 @@ from api.functions import get_nomenclatures
 from api.paginators import CustomPagination
 import django
 
-r = redis.StrictRedis(
-        host=settings.REDIS_HOST,  # из Endpoint
-        port=6379,  # из Endpoint
-        decode_responses=True
-    )
-
-rq = RabbitMQ()
 
 class LinkTelegrammView(views.APIView):
     @swagger_auto_schema(request_body=SessionCodeSerializer)
     def post(self, request):
+        
+        r = redis.StrictRedis(
+                host=settings.REDIS_HOST,  # из Endpoint
+                port=6379,  # из Endpoint
+                decode_responses=True
+            )
+
+        rq = RabbitMQ()
+
         code = SessionCodeSerializer(data=request.data)
         if not code.is_valid():
             raise ValidationError(code.errors)
