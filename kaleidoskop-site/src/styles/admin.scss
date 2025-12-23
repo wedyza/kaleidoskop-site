@@ -32,6 +32,16 @@
   gap: 10px;
 }
 
+.admin-nav_item__active,
+.admin-nav_item__active:visited {
+  background-color: var(--orange50);
+  color: var(--orange500);
+
+  svg path {
+    fill: var(--orange500)
+  }
+}
+
 .admin-nav_icon {
   width: 24px;
   height: 24px;

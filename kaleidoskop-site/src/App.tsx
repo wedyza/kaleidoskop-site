@@ -21,6 +21,7 @@ import ReturnsPage from './pages/ReturnsPage/ReturnsPage';
 import Page404 from './pages/Page404/Page404';
 import { AdminLayout } from './layouts/AdminLayout';
 import AdminMain from './pages/AdminMain/AdminMain';
+import AdminCategories from './pages/AdminCategories/AdminCategories';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -41,6 +42,7 @@ function App() {
         <Route element={<AdminLayout />}>
           <Route element={<ProtectedRoute allowedFor='admin' />}> 
             <Route path="/" element={<AdminMain />} />
+            <Route path="/categories" element={<AdminCategories />} />
           </Route>
         </Route>
       ) : (

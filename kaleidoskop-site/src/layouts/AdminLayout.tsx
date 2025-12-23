@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import '../styles/admin.scss'
 import logo from '../assets/logo.svg'
 import { useAppDispatch } from "../app/hooks";
@@ -6,15 +6,16 @@ import { logout } from "../features/auth/authSlice";
 
 export const AdminLayout = () => {
   const dispatch = useAppDispatch();
+  const { pathname } = useLocation();
 
   return (
     <div className="page-admin">
       <nav className="admin-nav">
-        <div className="admin-nav_logo">
+        <Link to={'/'} className="admin-nav_logo">
           <img src={logo} alt="" />
-        </div>
+        </Link>
         <div className="admin-nav_list inter14-600">
-          <Link to={''} className="admin-nav_item">
+          {/* <Link to={''} className="admin-nav_item">
             <div className="admin-nav_icon">
               <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M16.6154 1.52476L11.5385 4.50034V11.2504L16.6154 14.226V1.52476ZM10.1538 10.9524V4.79835H4.38462C2.72776 4.79835 1.38462 6.17598 1.38462 7.87537C1.38462 9.57477 2.72776 10.9524 4.38462 10.9524H10.1538ZM10.6623 3.37818L16.1356 0.170294C16.9663 -0.316613 18 0.298646 18 1.28004V14.4707C18 15.4521 16.9663 16.0674 16.1356 15.5805L10.6623 12.3726H4.38462C1.96306 12.3726 0 10.3591 0 7.87537C0 5.39164 1.96306 3.37818 4.38462 3.37818H10.6623Z" fill="#161616"/>
@@ -24,8 +25,11 @@ export const AdminLayout = () => {
             <div className="admin-nav_name">
               Сезонные предложения
             </div>
-          </Link>
-          <Link to={''} className="admin-nav_item">
+          </Link> */}
+          <Link 
+            to={'/categories'} 
+            className={`admin-nav_item ${pathname === '/categories' ? 'admin-nav_item__active' : ''}`}
+          >
             <div className="admin-nav_icon">
               <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M13.3496 9.71429C13.752 9.71429 14.0782 10.0405 14.0782 10.4429V12.6286H16.2639C16.6663 12.6286 16.9925 12.9548 16.9925 13.3572C16.9925 13.7595 16.6663 14.0857 16.2639 14.0857H14.0782V16.2714C14.0782 16.6738 13.752 17 13.3496 17C12.9473 17 12.6211 16.6738 12.6211 16.2714V14.0857H10.4354C10.033 14.0857 9.70679 13.7595 9.70679 13.3572C9.70679 12.9548 10.033 12.6286 10.4354 12.6286H12.6211V10.4429C12.6211 10.0405 12.9473 9.71429 13.3496 9.71429Z" fill="#161616"/>
@@ -40,7 +44,7 @@ export const AdminLayout = () => {
           </Link>
           <Link to={''} className="admin-nav_item">
             <div className="admin-nav_icon">
-              <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="16" height="16" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M-6.90748e-08 0.937501C-3.09258e-08 0.419734 0.397969 4.12811e-08 0.888889 9.22038e-08L15.1111 1.56747e-06C15.602 1.61839e-06 16 0.419735 16 0.937503C16 1.45527 15.602 1.875 15.1111 1.875L0.888889 1.875C0.397969 1.875 -1.07224e-07 1.45527 -6.90748e-08 0.937501Z" fill="#161616"/>
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M-6.90748e-08 7.5C-3.09258e-08 6.98223 0.397969 6.5625 0.888889 6.5625L15.1111 6.5625C15.602 6.5625 16 6.98224 16 7.5C16 8.01777 15.602 8.4375 15.1111 8.4375L0.888889 8.4375C0.397969 8.4375 -1.07224e-07 8.01777 -6.90748e-08 7.5Z" fill="#161616"/>
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M-6.90748e-08 14.0625C-3.09258e-08 13.5447 0.397969 13.125 0.888889 13.125L15.1111 13.125C15.602 13.125 16 13.5447 16 14.0625C16 14.5803 15.602 15 15.1111 15L0.888889 15C0.397969 15 -1.07224e-07 14.5803 -6.90748e-08 14.0625Z" fill="#161616"/>
