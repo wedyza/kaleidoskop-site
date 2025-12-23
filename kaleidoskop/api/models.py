@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from enum import Enum
 import uuid
+from django.forms import ValidationError
 from .utils import slugify
 
 User = get_user_model()
@@ -38,7 +39,15 @@ class Nomenclature(UUIDModel):
 
     def __str__(self):
         return self.title
-    
+
+def validate_svg(file):
+    """
+    Validate that the uploaded file is an SVG.
+    """
+    # Check file extension
+    if not file.name.lower().endswith('.svg'):
+        raise ValidationError("Only SVG files are allowed.")
+    return file
 
 class Category(UUIDModel):
     title = models.CharField("Название", max_length=100)
@@ -56,7 +65,7 @@ class Category(UUIDModel):
         related_name='nomenclatures'
     )
     active = models.BooleanField("Активно", default=False)
-    image = models.ImageField("Картинка", null=True, upload_to="categories")
+    image = models.FileField("Картинка", null=True, upload_to="categories")
     
     class Meta:
         verbose_name = 'Категория'
