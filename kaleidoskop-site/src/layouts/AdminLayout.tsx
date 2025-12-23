@@ -27,7 +27,7 @@ export const AdminLayout = () => {
             </div>
           </Link> */}
           <Link 
-            to={'/categories'} 
+            to={'/admin/categories'} 
             className={`admin-nav_item ${pathname === '/categories' ? 'admin-nav_item__active' : ''}`}
           >
             <div className="admin-nav_icon">

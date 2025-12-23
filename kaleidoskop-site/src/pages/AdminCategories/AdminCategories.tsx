@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import './AdminCategories.scss'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchAdminCategories } from '../../features/admin/adminCategoriesSlice';
+import { Link } from 'react-router-dom';
 
 const AdminCategories = () => {
   const [activeTab, setActivetab] = useState<'cat' | 'subcat'>('cat');
@@ -63,13 +64,13 @@ const AdminCategories = () => {
             className={`admin-cat_tab inter13-600 ${activeTab === 'cat' ? 'admin-cat_tab__active' : ''}`}
             onClick={() => setActivetab('cat')}
           >
-            Категории ({categoriesList.length})
+            Категории
           </button>
           <button 
             className={`admin-cat_tab inter13-600 ${activeTab === 'subcat' ? 'admin-cat_tab__active' : ''}`}
             onClick={() => setActivetab('subcat')}
           >
-            Подкатегории ({subcategoriesList.length})
+            Подкатегории
           </button>
         </div>
 
@@ -89,22 +90,22 @@ const AdminCategories = () => {
         </div>
 
         <div className='admin-cat_add inter12-600'>
-          <div className='admin-cat_add-cat admin-cat_add-item'>
+          <Link to="/admin/categories/create" className='admin-cat_add-cat admin-cat_add-item'>
             <div className='admin-cat_add-icon'>
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5.41667 0.75V10.0833M0.75 5.41667H10.0833" stroke="#3D3D3C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <span>Категория</span>
-          </div>
-          <div className='admin-cat_add-subcat admin-cat_add-item'>
+          </Link>
+          <Link to="/admin/subcategories/create" className='admin-cat_add-subcat admin-cat_add-item'>
             <div className='admin-cat_add-icon'>
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5.41667 0.75V10.0833M0.75 5.41667H10.0833" stroke="#3D3D3C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <span>Подкатегория</span>
-          </div>
+          </Link>
         </div>
       </div>
 
@@ -136,7 +137,7 @@ const AdminCategories = () => {
               ) : (
                 filteredCategories.map(cat => (
                   <div className='admin-cat_table-row admin-cat_table-item' key={cat.id}>
-                    <div className='admin-cat_table-cell'>
+                    <div className='admin-cat_table-cell admin-cat_table-icon'>
                       {cat.image ? (
                         <img src={cat.image} alt={cat.title} className="category-icon" />
                       ) : (
@@ -152,14 +153,14 @@ const AdminCategories = () => {
                     <div className={`admin-cat_table-cell inter12-600 admin-cat_table-status ${cat.active ? 'active' : 'inactive'}`}>
                       {cat.active ? 'Активная' : 'Отключена'}
                     </div>
-                    <div className='admin-cat_table-cell inter12-600 admin-cat_table-act'>
+                    <Link to={`/admin/categories/${cat.id}/edit`} className='admin-cat_table-cell inter12-600 admin-cat_table-act'>
                       <span>Редактировать</span>
                       <div className='admin-cat_table-act_img'>
                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M7.6757 1.85104L8.19095 1.33579C8.972 0.554738 10.2383 0.554738 11.0194 1.33579C11.8004 2.11683 11.8004 3.38316 11.0194 4.16421L10.5041 4.67947M7.6757 1.85104L1.43661 8.09013C1.10453 8.42221 0.899906 8.86055 0.85858 9.32835L0.753531 10.5175C0.698759 11.1375 1.21763 11.6564 1.83765 11.6016L3.02681 11.4966C3.49462 11.4553 3.93296 11.2506 4.26504 10.9186L10.5041 4.67947M7.6757 1.85104L10.5041 4.67947" stroke="#4F4F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 ))
               )}
@@ -196,14 +197,14 @@ const AdminCategories = () => {
                     <div className={`admin-cat_table-cell inter12-600 admin-cat_table-status ${subcat.active ? 'active' : 'inactive'}`}>
                       {subcat.active ? 'Активная' : 'Отключена'}
                     </div>
-                    <div className='admin-cat_table-cell inter12-600 admin-cat_table-act'>
+                    <Link to={`/admin/subcategories/${subcat.id}/edit`} className='admin-cat_table-cell inter12-600 admin-cat_table-act'>
                       <span>Редактировать</span>
                       <div className='admin-cat_table-act_img'>
                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M7.6757 1.85104L8.19095 1.33579C8.972 0.554738 10.2383 0.554738 11.0194 1.33579C11.8004 2.11683 11.8004 3.38316 11.0194 4.16421L10.5041 4.67947M7.6757 1.85104L1.43661 8.09013C1.10453 8.42221 0.899906 8.86055 0.85858 9.32835L0.753531 10.5175C0.698759 11.1375 1.21763 11.6564 1.83765 11.6016L3.02681 11.4966C3.49462 11.4553 3.93296 11.2506 4.26504 10.9186L10.5041 4.67947M7.6757 1.85104L10.5041 4.67947" stroke="#4F4F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 ))
               )}

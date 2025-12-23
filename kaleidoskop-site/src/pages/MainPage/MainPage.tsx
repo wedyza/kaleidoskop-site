@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import ItemsBlock from '../../components/ItemsBlock/ItemsBlock';
-import News from '../../components/News/News';
 import Services from '../../components/Services/Services';
 import './MainPage.scss';
 import { fetchProducts } from '../../features/products/productsSlice';
