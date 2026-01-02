@@ -26,6 +26,7 @@ import AdminCategoryCreate from './pages/AdminCategoryCreate/AdminCategoryCreate
 import AdminCategoryEdit from './pages/AdminCategoryEdit/AdminCategoryEdit';
 import AdminSubcategoryCreate from './pages/AdminSubcategoryCreate/AdminSubcategoryCreate';
 import AdminSubcategoryEdit from './pages/AdminSubcategoryEdit/AdminSubcategoryEdit';
+import AdminNomenclatures from './pages/AdminNomenclatures/AdminNomenclatures';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -47,6 +48,7 @@ function App() {
           <Route element={<ProtectedRoute allowedFor='admin' />}> 
             <Route path="/" element={<AdminMain />} />
             <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/nomenclatures" element={<AdminNomenclatures />} />
   
             <Route path="/admin/categories/create" element={<AdminCategoryCreate />} />
             <Route path="/admin/categories/:id/edit" element={<AdminCategoryEdit />} />

@@ -12,6 +12,7 @@ import brandsReducer from '../features/brands/brandsSlice'
 import recommendationsReducer from '../features/recommendations/recommendationsSlice'
 import shopsReducer from '../features/shops/shopsSlice'
 import adminCategoriesReducer from '../features/admin/adminCategoriesSlice'
+import nomenclaturesReducer from '../features/admin/nomenclaturesSlice'
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     recommendations: recommendationsReducer,
     shops: shopsReducer,
     adminCategories: adminCategoriesReducer,
+    nomenclatures: nomenclaturesReducer,
   },
 });
 

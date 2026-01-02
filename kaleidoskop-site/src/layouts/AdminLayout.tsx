@@ -28,7 +28,7 @@ export const AdminLayout = () => {
           </Link> */}
           <Link 
             to={'/admin/categories'} 
-            className={`admin-nav_item ${pathname === '/categories' ? 'admin-nav_item__active' : ''}`}
+            className={`admin-nav_item ${pathname.startsWith('/admin/categories') || pathname.startsWith('/admin/subcategories') ? 'admin-nav_item__active' : ''}`}
           >
             <div className="admin-nav_icon">
               <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,7 +42,10 @@ export const AdminLayout = () => {
               Управление категориями
             </div>
           </Link>
-          <Link to={''} className="admin-nav_item">
+          <Link 
+            to={'/admin/nomenclatures'} 
+            className={`admin-nav_item ${pathname === '/admin/nomenclatures' ? 'admin-nav_item__active' : ''}`}
+          >
             <div className="admin-nav_icon">
               <svg width="16" height="16" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M-6.90748e-08 0.937501C-3.09258e-08 0.419734 0.397969 4.12811e-08 0.888889 9.22038e-08L15.1111 1.56747e-06C15.602 1.61839e-06 16 0.419735 16 0.937503C16 1.45527 15.602 1.875 15.1111 1.875L0.888889 1.875C0.397969 1.875 -1.07224e-07 1.45527 -6.90748e-08 0.937501Z" fill="#161616"/>

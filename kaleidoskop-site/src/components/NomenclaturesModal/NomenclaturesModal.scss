@@ -1,0 +1,84 @@
+.admin-nom_modal {
+  width: 50%;
+}
+
+.admin-nom_modal-title {
+  display: flex;
+  gap: 5px;
+}
+
+.admin-nom_modal-search {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 0 15px;
+  height: 40px;
+  border: 1px solid var(--grey200);
+  background-color: var(--grey50);
+  border-radius: var(--border-radius);
+  margin-top: 25px;
+  width: 60%;
+}
+
+.admin-nom_modal-search-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-nom_cats-list {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.admin-nom_cat {
+  height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-nom_cat-select.grey-btn {
+  height: 100%;
+  width: 161px;
+  border-radius: 7px;
+}
+
+.admin-nom_cat-selected {
+  display: flex;
+  gap: 3px;
+}
+
+.admin-nom_cat-selected-label {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--orange600);
+  background-color: var(--orange50);
+  border-radius: 7px;
+  color: var(--orange600);
+  gap: 5px;
+  padding-left: 10px;
+  padding-right: 15px;
+}
+
+.admin-nom_cat-selected-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-nom_cat-cancel {
+  width: 29px;
+  height: 29px;
+  border-radius: 7px;
+  border: 1px solid var(--grey500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

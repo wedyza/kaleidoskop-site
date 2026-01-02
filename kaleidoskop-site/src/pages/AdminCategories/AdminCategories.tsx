@@ -150,7 +150,7 @@ const AdminCategories = () => {
                     <div className='admin-cat_table-cell admin-cat_table-count'>
                       {cat.daughter_count}
                     </div>
-                    <div className={`admin-cat_table-cell inter12-600 admin-cat_table-status ${cat.active ? 'active' : 'inactive'}`}>
+                    <div className={`admin-cat_table-cell inter12-600 admin-cat_table-status ${cat.active ? '' : 'admin-cat_table-status__inactive'}`}>
                       {cat.active ? 'Активная' : 'Отключена'}
                     </div>
                     <Link to={`/admin/categories/${cat.id}/edit`} className='admin-cat_table-cell inter12-600 admin-cat_table-act'>

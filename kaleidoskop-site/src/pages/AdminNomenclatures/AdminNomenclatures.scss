@@ -1,0 +1,131 @@
+.admin-nom_to-links {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  border: 1px solid var(--grey300);
+  border-radius: 5px;
+  padding: 0 10px;
+  gap: 5px;
+  height: 24px;
+}
+
+.admin-nom_to-links-icon {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-nom_head {
+  display: grid;
+  grid-template-columns: 1fr auto 29.6%;
+  height: 50px;
+  margin-top: 15px;
+}
+
+.admin-nom_search input {
+  width: 100%;
+}
+
+.admin-nom_search.admin-cat_search {
+  border-radius: 15px;
+}
+
+.admin-nom_head-info {
+  background-color: var(--white);
+  border-radius: 15px 0 0 15px;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  box-shadow: var(--shadow3);
+  color: var(--black-g);
+}
+
+.admin-nom_head-set {
+  display: flex;
+  align-items: center;
+  border-radius: 0 15px 15px 0;
+  background-color: var(--white);
+  border-left: 1px solid var(--grey100);
+  padding: 0 30px 0 20px;
+  box-shadow: var(--shadow3);
+}
+
+.admin-nom_content {
+  background-color: var(--white);
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: var(--shadow3);
+}
+
+.admin-nom_table {
+  border: 1px solid var(--grey100);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.admin-nom_row {
+  display: grid;
+  grid-template-columns: 21.5% 1fr 18% auto;
+  gap: 10px;
+  padding: 0 20px;
+  align-items: center;
+}
+
+.admin-nom_table-head {
+  height: 50px;
+  background-color: var(--grey50);
+  border-bottom: 1px solid var(--grey100);
+}
+
+.admin-nom_row-content {
+  padding: 15px 0;
+  border-top: 1px solid var(--grey100);
+}
+
+.admin-nom_row-content:first-child {
+  border: none;
+}
+
+.admin-nom_table-content {
+  padding: 0 20px;
+}
+
+.admin-nom_cell-acts {
+  width: calc(209px + 15px + 173px);
+}
+
+.admin-nom_cell-actslinks {
+  display: flex;
+  gap: 15px;
+}
+
+.admin-nom_table-link {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.admin-nom_table-link-childs {
+  color: var(--grey900);
+  width: 209px;
+}
+
+.admin-nom_table-link-childs:hover {
+  svg path {
+    stroke: var(--white)
+  }
+}
+
+.admin-nom_table-link-subcat {
+  width: 173px;
+}
+
+.grey-btn.admin-nom_table-link-childs,
+.accent-btn.admin-nom_table-link-subcat {
+  border-radius: 5px;
+}
