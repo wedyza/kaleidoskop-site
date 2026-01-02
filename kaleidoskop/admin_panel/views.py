@@ -1,4 +1,4 @@
-from rest_framework import views, status, viewsets, permissions, mixins
+from rest_framework import views, status, viewsets, permissions, mixins, filters
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -126,6 +126,9 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
     queryset = Nomenclature.objects.all()
     permission_classes = [permissions.IsAdminUser]
     pagination_class = CustomPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'code']
+
 
     @swagger_auto_schema(manual_parameters=[
             openapi.Parameter('level_of_nesting', openapi.IN_QUERY, description='Уровень вложенности, дефолт = 0', type=openapi.TYPE_INTEGER),
