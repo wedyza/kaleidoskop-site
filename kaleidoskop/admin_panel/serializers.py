@@ -8,6 +8,13 @@ from django.utils import timezone
 class SessionCodeSerializer(serializers.Serializer):
     code = serializers.CharField()
 
+
+class AdminCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        read_only_fields = ['id']
+
 class BannerSerializer(serializers.ModelSerializer):
     public_queue = serializers.SerializerMethodField('get_public_queue')
     class Meta:
@@ -35,9 +42,16 @@ class BannerQueueSerializer(serializers.Serializer):
     
 
 class NomenclatureSerializer(serializers.ModelSerializer):
+    categories = AdminCategorySerializer(many=True)
+    daughter = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Nomenclature
         fields = '__all__'
+
+    def get_daughter(self, obj):
+        children = obj.daughter.all()
+        return NomenclatureSerializer(children, many=True).data
 
 
 class NomenclatureCategorySerializer(serializers.ModelSerializer):
@@ -91,10 +105,3 @@ class DetailSerializer(serializers.Serializer):
 class CompilationQueueSerializer(serializers.Serializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Compilation.objects.all())
     queue = serializers.IntegerField()
-
-
-class AdminCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
-        read_only_fields = ['id']

@@ -130,6 +130,30 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
     search_fields = ['title', 'code']
 
 
+    @action(methods=['GET'], detail=False, url_path='assigned')
+    def list_assigned(self, request):
+        qs = Nomenclature.objects.exclude(categories=None)
+        page = self.paginate_queryset(qs)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['GET'], detail=False, url_path='unassigned')
+    def list_unassigned(self, request):
+        qs = Nomenclature.objects.filter(categories=None)
+        page = self.paginate_queryset(qs)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
     @swagger_auto_schema(manual_parameters=[
             openapi.Parameter('level_of_nesting', openapi.IN_QUERY, description='Уровень вложенности, дефолт = 0', type=openapi.TYPE_INTEGER),
             openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
