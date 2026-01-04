@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
-import type { Category } from '../categories/categoriesSlice';
+import type { AdminCategory } from './adminCategoriesSlice';
 
 export interface Nomenclature {
   id: string;
@@ -8,7 +8,7 @@ export interface Nomenclature {
   code: string;
   parent_code: string | null;
   parent: string | null;
-  categories: Category[];
+  categories: AdminCategory[];
 }
 
 interface NomenclaturesResponse {
@@ -55,10 +55,10 @@ export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse>(
 
 export const addAdminNomenclatureToCategory = createAsyncThunk(
   'admin/nomenclatures/addToCategory',
-  async (data: NomenclatureCategory[], { rejectWithValue }) => {
+  async (data: { category: AdminCategory; request: NomenclatureCategory[] }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/admin_panel/nomenclatures/add_to_category/', data);
-      return response.data;
+      const response = await api.post('/admin_panel/nomenclatures/add_to_category/', data.request);
+      return { category: data.category, request: data.request };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка привязки к категории');
     }
@@ -98,8 +98,23 @@ const adminNomenclaturesSlice = createSlice({
         state.addToCategoryLoading = true;
         state.addToCategoryError = null;
       })
-      .addCase(addAdminNomenclatureToCategory.fulfilled, (state) => {
+      .addCase(addAdminNomenclatureToCategory.fulfilled, (state, action) => {
         state.addToCategoryLoading = false;
+        
+        if (action.payload.request && action.payload.request.length > 0) {
+          const { category: categoryId, nomenclature: nomId } = action.payload.request[0];
+          const categoryToAdd = action.payload.category;
+          
+          if (categoryToAdd) {
+            const nomIndex = state.nomenclatures.findIndex(n => n.id === nomId);
+            if (nomIndex !== -1) {
+              const nom = state.nomenclatures[nomIndex];
+              if (!nom.categories.some(cat => cat.id === categoryId)) {
+                state.nomenclatures[nomIndex].categories.push(categoryToAdd);
+              }
+            }
+          }
+        }
       })
       .addCase(addAdminNomenclatureToCategory.rejected, (state, action) => {
         state.addToCategoryLoading = false;

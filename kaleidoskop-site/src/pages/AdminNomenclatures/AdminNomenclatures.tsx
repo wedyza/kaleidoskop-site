@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import './AdminNomenclatures.scss'
 import { fetchAdminNomenclatures, type Nomenclature } from '../../features/admin/nomenclaturesSlice';
@@ -13,6 +13,15 @@ const AdminNomenclatures = () => {
   useEffect(() => {
     dispatch(fetchAdminNomenclatures());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedNom?.id) {
+      const updatedNom = nomenclatures.find(n => n.id === selectedNom.id);
+      if (updatedNom) {
+        setSelectedNom(updatedNom);
+      }
+    }
+  }, [nomenclatures, selectedNom?.id]);
 
   return (
     <div className='admin-nom'>
@@ -75,7 +84,20 @@ const AdminNomenclatures = () => {
                 <div className='admin-nom_cell'>{nom.code}</div>
                 <div className='admin-nom_cell'>{nom.title}</div>
                 <div className='admin-nom_cell'>
-                  {nom.categories.length > 0 ? nom.categories.join(', ') : '- нет'}
+                  {nom.categories.length > 0 ? (
+                    <div className="admin-nom_categories">
+                      {nom.categories.map((cat, index) => (
+                        <React.Fragment key={cat.id}>
+                          <span className="category-tag">
+                            {cat.title}
+                          </span>
+                          {index < nom.categories.length - 1 && ', '}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="admin-nom_categories__empty">- нет</span>
+                  )}
                 </div>
                 <div className='admin-nom_cell admin-nom_cell-actslinks inter11-600'>
                   <div className='admin-nom_table-link admin-nom_table-link-childs grey-btn'>

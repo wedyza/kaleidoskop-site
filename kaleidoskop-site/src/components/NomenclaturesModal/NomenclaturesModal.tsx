@@ -27,10 +27,16 @@ const NomenclaturesModal: React.FC<NomenclaturesModalProps> = ({ isModalOpen, se
   }, [categories]);
 
   const handleAddToCategory = (categoryId: string) => {
-    dispatch(addAdminNomenclatureToCategory([{
-      category: categoryId,
-      nomenclature: selectedNom.id
-    }]));
+    const category = categories.find(cat => cat.id === categoryId);
+    if (category) {
+      dispatch(addAdminNomenclatureToCategory({
+        category,
+        request: [{
+          category: categoryId,
+          nomenclature: selectedNom.id
+        }]
+      }));
+    }
   };
 
   const isCategorySelected = (categoryId: string) => {
@@ -40,6 +46,8 @@ const NomenclaturesModal: React.FC<NomenclaturesModalProps> = ({ isModalOpen, se
   const filteredCategories = subcategoriesList.filter(cat =>
     cat.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  console.log(selectedNom.categories);
 
   return(
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} className='admin-nom_modal'>
