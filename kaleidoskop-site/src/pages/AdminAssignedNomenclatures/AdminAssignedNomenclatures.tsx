@@ -10,6 +10,7 @@ const AdminAssignedNomenclatures = () => {
   const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedNom, setSelectedNom] = useState<Nomenclature | null>(null);
+  const [search, setSearch] = useState('');
   
   useEffect(() => {
     if (selectedNom?.id) {
@@ -22,7 +23,21 @@ const AdminAssignedNomenclatures = () => {
 
   useEffect(() => {
     dispatch(fetchAssignedNomenclatures());
-  }, [dispatch])
+  }, [dispatch]);
+
+  const handleSearch = () => {
+    if (search.trim()) {
+      dispatch(fetchAssignedNomenclatures({ search: search.trim() }));
+    } else {
+      dispatch(fetchAssignedNomenclatures());
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <div className='admin-links'>
@@ -54,15 +69,18 @@ const AdminAssignedNomenclatures = () => {
       <div className='admin-links_content'>
         <div className='admin-links_set admin-links_card'>
           <div className='admin-links_search'>
-            <div className='admin-links_search-icon'>
+            <button className='admin-links_search-icon' onClick={handleSearch}>
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M4.27562 0C6.63698 0 8.55124 1.90228 8.55124 4.24886C8.55124 5.21846 8.13579 6.20885 7.58565 6.92388L10.478 9.79628C10.6837 10.016 10.7331 10.2793 10.5668 10.5006C10.4005 10.722 10.0047 10.722 9.76042 10.5008L6.86736 7.62842C6.1483 8.1738 5.25003 8.49772 4.27562 8.49772C1.91426 8.49772 0 6.59544 0 4.24886C0 1.90228 1.91426 0 4.27562 0ZM4.2751 0.903931C2.34848 0.903931 0.886719 2.33303 0.886719 4.24885C0.886719 6.16467 2.19494 7.62841 4.2751 7.62841C6.35525 7.62841 7.72387 6.22968 7.72387 4.24885C7.72387 2.26802 6.20172 0.903931 4.2751 0.903931Z" fill="#727271"/>
               </svg>
-            </div>
+            </button>
             <input 
               type="text"
               className='admin-links_search-input inter11-400'
               placeholder='Номенклатура'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
           </div>
 

@@ -47,11 +47,16 @@ const initialState: AdminNomenclaturesState = {
   assignedError: null,
 };
 
-export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse>(
+export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse, { search?: string } | void>(
   'admin/nomenclatures/fetch',
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get('/admin_panel/nomenclatures/');
+      const search = params?.search;
+      const url = search 
+        ? `/admin_panel/nomenclatures/?search=${encodeURIComponent(search)}`
+        : '/admin_panel/nomenclatures/';
+      
+      const response = await api.get(url);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки номенклатур');
@@ -59,11 +64,16 @@ export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse>(
   }
 );
 
-export const fetchAssignedNomenclatures = createAsyncThunk<NomenclaturesResponse>(
+export const fetchAssignedNomenclatures = createAsyncThunk<NomenclaturesResponse, { search?: string } | void>(
   'admin/nomenclatures/fetchAssigned',
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get('/admin_panel/nomenclatures/assigned/');
+      const search = params?.search;
+      const url = search 
+        ? `/admin_panel/nomenclatures/assigned/?search=${encodeURIComponent(search)}`
+        : '/admin_panel/nomenclatures/assigned/';
+      
+      const response = await api.get(url);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки назначенных номенклатур');

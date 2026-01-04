@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 const AdminNomenclatures = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedNom, setSelectedNom] = useState<Nomenclature | null>(null);
+  const [search, setSearch] = useState('');
+  
   const nomenclatures = useAppSelector(state => state.nomenclatures.nomenclatures);
   const dispatch = useAppDispatch();
 
@@ -23,6 +25,20 @@ const AdminNomenclatures = () => {
       }
     }
   }, [nomenclatures, selectedNom?.id]);
+
+  const handleSearch = () => {
+    if (search.trim()) {
+      dispatch(fetchAdminNomenclatures({ search: search.trim() }));
+    } else {
+      dispatch(fetchAdminNomenclatures());
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <div className='admin-nom'>
@@ -62,12 +78,15 @@ const AdminNomenclatures = () => {
             type='text' 
             className='admin-nom_search-input inter13-400'
             placeholder='Номенклатура'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
-          <div className='admin-cat_search-icon'>
+          <button className='admin-cat_search-icon' onClick={handleSearch}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M5.51154 0C8.55548 0 11.0231 2.45216 11.0231 5.47704C11.0231 6.72692 10.4875 8.0036 9.77837 8.92532L13.5068 12.628C13.772 12.9112 13.8356 13.2507 13.6213 13.536C13.4069 13.8213 12.8967 13.8213 12.5818 13.5362L8.85245 9.83351C7.92555 10.5365 6.76761 10.9541 5.51154 10.9541C2.4676 10.9541 0 8.50193 0 5.47704C0 2.45216 2.4676 0 5.51154 0ZM5.51041 1.16522C3.02688 1.16522 1.14258 3.00742 1.14258 5.47703C1.14258 7.94664 2.82896 9.8335 5.51041 9.8335C8.19186 9.8335 9.95609 8.03044 9.95609 5.47703C9.95609 2.92362 7.99395 1.16522 5.51041 1.16522Z" fill="#727271"/>
             </svg>
-          </div>
+          </button>
         </div>
       </div>
 
