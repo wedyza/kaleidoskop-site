@@ -1,0 +1,80 @@
+.admin-tg_info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 40px;
+  max-width: 390px;
+  margin-left: 20px;
+}
+
+.admin-tg_desc {
+  color: var(--grey700);
+}
+
+.admin-tg_content {
+  display: flex;
+  margin-top: 30px;
+  margin-left: 20px;
+  gap: 10px;
+}
+
+.admin-tg_card {
+  width: 352px;
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow3);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-tg_card-desc {
+  margin-top: 20px;
+  color: var(--grey600);
+}
+
+.admin-tg_card__strong {
+  color: var(--grey950);
+}
+
+.admin-tg_card-address {
+  display: flex;
+  margin-top: 10px;
+  gap: 5px;
+  align-items: center;
+}
+
+.admin-tg_card-address-btn {
+  height: 16px;
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-tg_card-qr {
+  margin-top: 25px;
+  height: 280px;
+  width: 287px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.admin-tg_card-input {
+  margin-top: 27px;
+  height: 50px;
+  border-radius: 10px;
+  border: 1px solid var(--grey200);
+  padding: 0 20px;
+}
+
+.admin-tg_card-btn.accent-btn {
+  margin-top: 20px;
+  width: 196px;
+  height: 50px;
+  border-radius: 15px;
+}

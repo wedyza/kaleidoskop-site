@@ -24,9 +24,9 @@ const AdminNomenclatures = () => {
             <path fill-rule="evenodd" clip-rule="evenodd" d="M-4.60499e-08 9.375C-2.06172e-08 9.02982 0.265313 8.75 0.592593 8.75L10.0741 8.75C10.4014 8.75 10.6667 9.02982 10.6667 9.375C10.6667 9.72018 10.4014 10 10.0741 10L0.592593 10C0.265313 10 -7.14825e-08 9.72018 -4.60499e-08 9.375Z" fill="#454545"/>
           </svg>
         </div>
-        <div className='admin-head_title inter16-600'>
+        <h1 className='admin-head_title inter16-600'>
           Номенклатуры и категории
-        </div>
+        </h1>
 
         <div className='admin-nom_to-links'>
           <span className='inter12-600'>К существующим связям</span>

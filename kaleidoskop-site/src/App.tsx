@@ -27,6 +27,7 @@ import AdminCategoryEdit from './pages/AdminCategoryEdit/AdminCategoryEdit';
 import AdminSubcategoryCreate from './pages/AdminSubcategoryCreate/AdminSubcategoryCreate';
 import AdminSubcategoryEdit from './pages/AdminSubcategoryEdit/AdminSubcategoryEdit';
 import AdminNomenclatures from './pages/AdminNomenclatures/AdminNomenclatures';
+import AdminTelegram from './pages/AdminTelegram/AdminTelegram';
 
 function App() {
   const token = useAppSelector(state => state.auth.token)
@@ -49,6 +50,7 @@ function App() {
             <Route path="/" element={<AdminMain />} />
             <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/nomenclatures" element={<AdminNomenclatures />} />
+            <Route path="/admin/telegram" element={<AdminTelegram />} />
   
             <Route path="/admin/categories/create" element={<AdminCategoryCreate />} />
             <Route path="/admin/categories/:id/edit" element={<AdminCategoryEdit />} />

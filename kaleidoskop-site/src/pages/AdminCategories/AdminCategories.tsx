@@ -53,9 +53,9 @@ const AdminCategories = () => {
             <path fill-rule="evenodd" clip-rule="evenodd" d="M7.44799 0.971429V3.88571H10.3623V0.971429H7.44799ZM6.47656 0.874286C6.47656 0.391431 6.86799 0 7.35085 0H10.4594C10.9423 0 11.3337 0.391431 11.3337 0.874286V3.98286C11.3337 4.46571 10.9423 4.85714 10.4594 4.85714H7.35085C6.86799 4.85714 6.47656 4.46571 6.47656 3.98286V0.874286Z" fill="#454545"/>
           </svg>
         </div>
-        <div className='admin-head_title inter16-600'>
+        <h1 className='admin-head_title inter16-600'>
           Управление категориями
-        </div>
+        </h1>
       </div>
 
       <div className='admin-cat_head'>
