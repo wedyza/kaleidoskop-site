@@ -53,11 +53,19 @@ class NomenclatureSerializer(serializers.ModelSerializer):
         children = obj.daughter.all()
         return NomenclatureSerializer(children, many=True).data
 
+class ShortenedNomenclatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nomenclature
+        fields = ['id', 'title', 'code']
+
 
 class NomenclatureCategorySerializer(serializers.ModelSerializer):
+    nomenclature = ShortenedNomenclatureSerializer()
+    category = serializers.StringRelatedField()
     class Meta:
         model = NomenclatureCategory
-        exclude = ('id',)
+        read_only_fields = ['id']
+        fields = '__all__'
 
 
 class NomenclatureCompilationSerializer(serializers.ModelSerializer):

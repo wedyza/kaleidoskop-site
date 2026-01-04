@@ -11,6 +11,7 @@ from django.conf import settings
 from api.models import Banner, Category, Nomenclature, NomenclatureCategory
 from .models import Compilation
 from drf_yasg import openapi
+from .filters import IsAssignedFilter
 from rest_framework.parsers import MultiPartParser
 from api.functions import get_nomenclatures
 from api.paginators import CustomPagination
@@ -121,38 +122,26 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
 
 
-class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+class AdminNomenclatureCategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    queryset = NomenclatureCategory.objects.all()
+    serializer_class = NomenclatureCategorySerializer
+    permission_classes = [permissions.IsAdminUser]
+    pagination_class = CustomPagination
+
+
+class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
     serializer_class = NomenclatureSerializer
     queryset = Nomenclature.objects.all()
     permission_classes = [permissions.IsAdminUser]
     pagination_class = CustomPagination
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [filters.SearchFilter, IsAssignedFilter]
     search_fields = ['title', 'code']
 
-
-    @action(methods=['GET'], detail=False, url_path='assigned')
-    def list_assigned(self, request):
-        qs = Nomenclature.objects.exclude(categories=None)
-        page = self.paginate_queryset(qs)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
-
-    @action(methods=['GET'], detail=False, url_path='unassigned')
-    def list_unassigned(self, request):
-        qs = Nomenclature.objects.filter(categories=None)
-        page = self.paginate_queryset(qs)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter("assigned", openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False, description='Привязан к категории или нет')
+    ])
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(manual_parameters=[
             openapi.Parameter('level_of_nesting', openapi.IN_QUERY, description='Уровень вложенности, дефолт = 0', type=openapi.TYPE_INTEGER),

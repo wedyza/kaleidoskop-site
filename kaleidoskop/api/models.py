@@ -91,6 +91,7 @@ class NomenclatureCategory(UUIDModel):
         verbose_name='Номенклатура',
         on_delete=models.CASCADE
     )
+    created_at = models.DateField('Создано', auto_now_add=True)
 
     
     class Meta:
