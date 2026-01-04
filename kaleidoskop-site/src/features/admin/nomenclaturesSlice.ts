@@ -30,6 +30,9 @@ interface AdminNomenclaturesState {
   addToCategoryLoading: boolean;
   addToCategoryError: string | null;
   count: number;
+  assignedNomenclatures: Nomenclature[];
+  assignedLoading: boolean;
+  assignedError: string | null;
 }
 
 const initialState: AdminNomenclaturesState = {
@@ -39,6 +42,9 @@ const initialState: AdminNomenclaturesState = {
   addToCategoryLoading: false,
   addToCategoryError: null,
   count: 0,
+  assignedNomenclatures: [],
+  assignedLoading: false,
+  assignedError: null,
 };
 
 export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse>(
@@ -53,11 +59,23 @@ export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse>(
   }
 );
 
+export const fetchAssignedNomenclatures = createAsyncThunk<NomenclaturesResponse>(
+  'admin/nomenclatures/fetchAssigned',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/admin_panel/nomenclatures/assigned/');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки назначенных номенклатур');
+    }
+  }
+);
+
 export const addAdminNomenclatureToCategory = createAsyncThunk(
   'admin/nomenclatures/addToCategory',
   async (data: { category: AdminCategory; request: NomenclatureCategory[] }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/admin_panel/nomenclatures/add_to_category/', data.request);
+      await api.post('/admin_panel/nomenclatures/add_to_category/', data.request);
       return { category: data.category, request: data.request };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка привязки к категории');
@@ -72,10 +90,14 @@ const adminNomenclaturesSlice = createSlice({
     clearAdminNomenclaturesError: (state) => {
       state.error = null;
       state.addToCategoryError = null;
+      state.assignedError = null;
     },
     clearAdminNomenclatures: (state) => {
       state.nomenclatures = [];
       state.count = 0;
+    },
+    clearAssignedNomenclatures: (state) => {
+      state.assignedNomenclatures = [];
     },
   },
   extraReducers: (builder) => {
@@ -92,6 +114,19 @@ const adminNomenclaturesSlice = createSlice({
       .addCase(fetchAdminNomenclatures.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+
+      .addCase(fetchAssignedNomenclatures.pending, (state) => {
+        state.assignedLoading = true;
+        state.assignedError = null;
+      })
+      .addCase(fetchAssignedNomenclatures.fulfilled, (state, action) => {
+        state.assignedLoading = false;
+        state.assignedNomenclatures = action.payload.results;
+      })
+      .addCase(fetchAssignedNomenclatures.rejected, (state, action) => {
+        state.assignedLoading = false;
+        state.assignedError = action.payload as string;
       })
 
       .addCase(addAdminNomenclatureToCategory.pending, (state) => {
@@ -113,6 +148,14 @@ const adminNomenclaturesSlice = createSlice({
                 state.nomenclatures[nomIndex].categories.push(categoryToAdd);
               }
             }
+
+            const assignedNomIndex = state.assignedNomenclatures.findIndex(n => n.id === nomId);
+            if (assignedNomIndex !== -1) {
+              const assignedNom = state.assignedNomenclatures[assignedNomIndex];
+              if (!assignedNom.categories.some(cat => cat.id === categoryId)) {
+                state.assignedNomenclatures[assignedNomIndex].categories.push(categoryToAdd);
+              }
+            }
           }
         }
       })
@@ -126,5 +169,6 @@ const adminNomenclaturesSlice = createSlice({
 export const { 
   clearAdminNomenclaturesError, 
   clearAdminNomenclatures,
+  clearAssignedNomenclatures,
 } = adminNomenclaturesSlice.actions;
 export default adminNomenclaturesSlice.reducer;

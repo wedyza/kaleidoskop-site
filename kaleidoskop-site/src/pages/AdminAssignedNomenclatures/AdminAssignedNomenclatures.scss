@@ -1,0 +1,123 @@
+.admin-links_head {
+  display: flex;
+  background-color: var(--white);
+  margin-top: 20px;
+  border-radius: 15px;
+  height: 50px;
+  align-items: center;
+  box-shadow: var(--shadow3);
+}
+
+.admin-links_back,
+.admin-links_back:visited {
+  color: var(--grey400);
+}
+
+.admin-links_back {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  border-right: 1px solid var(--grey100);
+  height: 100%;
+  gap: 3px;
+}
+
+.admin-links_back-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-links_title {
+  padding: 0 15px;
+}
+
+.admin-links_content {
+  display: grid;
+  grid-template-columns: 19.5% 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-links_card {
+  background-color: var(--white);
+  border-radius: 15px;
+  box-shadow: var(--shadow3);
+}
+
+.admin-links_set {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 15px;
+}
+
+.admin-links_search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: var(--grey50);
+  border: 1px solid var(--grey200);
+  border-radius: var(--border-radius);
+  height: 36px;
+  padding: 0 10px;
+}
+
+.admin-links_search-icon {
+  height: 16px;
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-links_sort {
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+}
+
+.admin-links_sort-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-links_noms {
+  padding: 15px;
+}
+
+.admin-links_table {
+  border: 1px solid var(--grey100);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.admin-links_table-row {
+  display: grid;
+  grid-template-columns: 21.5% 1fr 16.6% 18.7% 212px;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-links_table-head {
+  height: 50px;
+  padding: 0 20px;
+  background-color: var(--grey50);
+  border-bottom: 1px solid var(--grey100);
+}
+
+.admin-links_table-content {
+  padding: 0 20px;
+}
+
+.admin-links_row {
+  padding: 15px 0;
+  border-bottom: 1px solid var(--grey100);
+}
+
+.admin-links_row:last-child {
+  border: none;
+}

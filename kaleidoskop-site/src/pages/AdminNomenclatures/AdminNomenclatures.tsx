@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import './AdminNomenclatures.scss'
 import { fetchAdminNomenclatures, type Nomenclature } from '../../features/admin/nomenclaturesSlice';
 import NomenclaturesModal from '../../components/NomenclaturesModal/NomenclaturesModal';
+import { Link } from 'react-router-dom';
 
 const AdminNomenclatures = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -37,14 +38,14 @@ const AdminNomenclatures = () => {
           Номенклатуры и категории
         </h1>
 
-        <div className='admin-nom_to-links'>
+        <Link to={'connections'} className='admin-nom_to-links'>
           <span className='inter12-600'>К существующим связям</span>
           <div className='admin-nom_to-links-icon'>
             <svg width="11" height="9" viewBox="0 0 11 9" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9.20819 4.25007L0.75 4.24992M6.58341 7.75006C6.58341 7.75006 10.0834 5.01863 10.0834 4.25004C10.0834 3.48144 6.58338 0.750061 6.58338 0.750061" stroke="#3D3D3C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-        </div>
+        </Link>
       </div>
 
       <div className='admin-nom_head'>
