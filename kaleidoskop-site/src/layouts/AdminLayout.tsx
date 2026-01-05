@@ -44,7 +44,7 @@ export const AdminLayout = () => {
           </Link>
           <Link 
             to={'/admin/nomenclatures'} 
-            className={`admin-nav_item ${pathname === '/admin/nomenclatures' ? 'admin-nav_item__active' : ''}`}
+            className={`admin-nav_item ${pathname.startsWith('/admin/nomenclatures') ? 'admin-nav_item__active' : ''}`}
           >
             <div className="admin-nav_icon">
               <svg width="16" height="16" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">

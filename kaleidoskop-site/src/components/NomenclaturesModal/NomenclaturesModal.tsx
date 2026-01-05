@@ -1,7 +1,11 @@
 import type React from 'react';
 import Modal from '../Modal/Modal';
 import './NomenclaturesModal.scss'
-import { addAdminNomenclatureToCategory, type Nomenclature } from '../../features/admin/nomenclaturesSlice';
+import { 
+  addAdminNomenclatureToCategory, 
+  deleteAdminNomenclatureFromCategory,
+  type Nomenclature 
+} from '../../features/admin/nomenclaturesSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { fetchAdminCategories } from '../../features/admin/adminCategoriesSlice';
@@ -14,7 +18,7 @@ type NomenclaturesModalProps = {
 
 const NomenclaturesModal: React.FC<NomenclaturesModalProps> = ({ isModalOpen, setIsModalOpen, selectedNom }) => {
   const { categories } = useAppSelector(state => state.adminCategories);
-  const { addToCategoryLoading } = useAppSelector(state => state.nomenclatures);
+  const { addToCategoryLoading, deleteFromCategoryLoading } = useAppSelector(state => state.nomenclatures);
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState('');
 
@@ -39,6 +43,13 @@ const NomenclaturesModal: React.FC<NomenclaturesModalProps> = ({ isModalOpen, se
     }
   };
 
+  const handleDeleteFromCategory = (categoryId: string) => {
+    dispatch(deleteAdminNomenclatureFromCategory({
+      nomenclature: selectedNom.id,
+      category: categoryId
+    }));
+  };
+
   const isCategorySelected = (categoryId: string) => {
     return selectedNom.categories?.some(cat => cat.id === categoryId) || false;
   };
@@ -47,7 +58,7 @@ const NomenclaturesModal: React.FC<NomenclaturesModalProps> = ({ isModalOpen, se
     cat.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  console.log(selectedNom.categories);
+  const isLoading = addToCategoryLoading || deleteFromCategoryLoading;
 
   return(
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} className='admin-nom_modal'>
@@ -90,7 +101,11 @@ const NomenclaturesModal: React.FC<NomenclaturesModalProps> = ({ isModalOpen, se
                     <span className='admin-nom_cat-selected-text inter14-600'>Назначена</span>
                   </div>
                   
-                  <button className='admin-nom_cat-cancel'>
+                  <button 
+                    className='admin-nom_cat-cancel'
+                    onClick={() => handleDeleteFromCategory(cat.id)}
+                    disabled={isLoading}
+                  >
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path fill-rule="evenodd" clip-rule="evenodd" d="M0.220236 0.219644C0.513129 -0.0732486 0.988003 -0.0732489 1.2809 0.219644L5.99321 4.93195L10.7055 0.219644C10.9984 -0.0732486 11.4733 -0.0732489 11.7662 0.219644C12.0591 0.512537 12.0591 0.987412 11.7662 1.2803L7.05387 5.99261L11.7662 10.7049C12.0591 10.9978 12.0591 11.4727 11.7662 11.7656C11.4733 12.0585 10.9984 12.0585 10.7055 11.7656L5.99321 7.05327L1.2809 11.7656C0.988003 12.0585 0.513129 12.0585 0.220236 11.7656C-0.0726573 11.4727 -0.0726572 10.9978 0.220236 10.7049L4.93255 5.99261L0.220236 1.2803C-0.0726572 0.987411 -0.0726573 0.512538 0.220236 0.219644Z" fill="#727271"/>
                     </svg>
@@ -100,7 +115,7 @@ const NomenclaturesModal: React.FC<NomenclaturesModalProps> = ({ isModalOpen, se
                 <button 
                   className='admin-nom_cat-select grey-btn inter14-600'
                   onClick={() => handleAddToCategory(cat.id)}
-                  disabled={addToCategoryLoading}
+                  disabled={isLoading}
                 >
                   Назначить
                 </button>

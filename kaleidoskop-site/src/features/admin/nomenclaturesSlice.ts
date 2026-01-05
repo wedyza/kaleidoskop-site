@@ -34,6 +34,8 @@ interface AdminNomenclaturesState {
   count: number;
   currentNomenclatureLoading: boolean;
   currentNomenclatureError: string | null;
+  deleteFromCategoryLoading: boolean;
+  deleteFromCategoryError: string | null;
 }
 
 const initialState: AdminNomenclaturesState = {
@@ -46,6 +48,8 @@ const initialState: AdminNomenclaturesState = {
   count: 0,
   currentNomenclatureLoading: false,
   currentNomenclatureError: null,
+  deleteFromCategoryLoading: false,
+  deleteFromCategoryError: null,
 };
 
 export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse, { search?: string; assigned?: boolean } | void>(
@@ -90,6 +94,18 @@ export const addAdminNomenclatureToCategory = createAsyncThunk(
       return { category: data.category, request: data.request };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка привязки к категории');
+    }
+  }
+);
+
+export const deleteAdminNomenclatureFromCategory = createAsyncThunk(
+  'admin/nomenclatures/deleteFromCategory',
+  async ({ nomenclature, category }: NomenclatureCategory, { rejectWithValue }) => {
+    try {
+      await api.delete(`/admin_panel/nomenclatures/${nomenclature}/delete_from_category/${category}/`);
+      return { nomenclature, category };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка удаления связи');
     }
   }
 );
@@ -161,6 +177,33 @@ const adminNomenclaturesSlice = createSlice({
       .addCase(addAdminNomenclatureToCategory.rejected, (state, action) => {
         state.addToCategoryLoading = false;
         state.addToCategoryError = action.payload as string;
+      })
+      
+      .addCase(deleteAdminNomenclatureFromCategory.pending, (state) => {
+        state.deleteFromCategoryLoading = true;
+        state.deleteFromCategoryError = null;
+      })
+      .addCase(deleteAdminNomenclatureFromCategory.fulfilled, (state, action) => {
+        state.deleteFromCategoryLoading = false;
+        
+        const { nomenclature, category } = action.payload;
+        
+        const nomIndex = state.nomenclatures.findIndex(n => n.id === nomenclature);
+        if (nomIndex !== -1) {
+          state.nomenclatures[nomIndex].categories = state.nomenclatures[nomIndex].categories.filter(
+            cat => cat.id !== category
+          );
+        }
+        
+        if (state.currentNomenclature?.id === nomenclature) {
+          state.currentNomenclature.categories = state.currentNomenclature.categories.filter(
+            cat => cat.id !== category
+          );
+        }
+      })
+      .addCase(deleteAdminNomenclatureFromCategory.rejected, (state, action) => {
+        state.deleteFromCategoryLoading = false;
+        state.deleteFromCategoryError = action.payload as string;
       });
   },
 });
