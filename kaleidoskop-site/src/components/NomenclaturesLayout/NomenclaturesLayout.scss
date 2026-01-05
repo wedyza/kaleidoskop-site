@@ -1,0 +1,27 @@
+.admin-nom_head-main {
+  background-color: var(--white);
+  border-radius: 15px 0 0 15px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  box-shadow: var(--shadow3);
+  color: var(--black-g);
+}
+
+.admin-nom_head-info {
+  padding-left: 15px;
+}
+
+.admin-nom_back {
+  display: flex;
+  align-items: center;
+  padding-right: 15px;
+  border-right: 1px solid var(--grey100);
+  height: 100%;
+  gap: 3px;
+}
+
+.admin-nom_back:visited,
+.admin-nom_back {
+  color: var(--grey400);
+}

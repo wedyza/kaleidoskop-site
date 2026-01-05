@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import './AdminAssignedNomenclatures.scss'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useEffect, useState } from 'react';
-import { fetchAssignedNomenclatures, type Nomenclature } from '../../features/admin/nomenclaturesSlice';
+import { fetchAdminNomenclatures, type Nomenclature } from '../../features/admin/nomenclaturesSlice';
 import NomenclaturesModal from '../../components/NomenclaturesModal/NomenclaturesModal';
 
 const AdminAssignedNomenclatures = () => {
-  const nomenclatures = useAppSelector(state => state.nomenclatures.assignedNomenclatures);
+  const nomenclatures = useAppSelector(state => state.nomenclatures.nomenclatures);
   const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedNom, setSelectedNom] = useState<Nomenclature | null>(null);
@@ -22,14 +22,14 @@ const AdminAssignedNomenclatures = () => {
   }, [nomenclatures, selectedNom?.id]);
 
   useEffect(() => {
-    dispatch(fetchAssignedNomenclatures());
+    dispatch(fetchAdminNomenclatures({ assigned: true }));
   }, [dispatch]);
 
   const handleSearch = () => {
     if (search.trim()) {
-      dispatch(fetchAssignedNomenclatures({ search: search.trim() }));
+      dispatch(fetchAdminNomenclatures({ search: search.trim(), assigned: true }));
     } else {
-      dispatch(fetchAssignedNomenclatures());
+      dispatch(fetchAdminNomenclatures({ assigned: true }));
     }
   };
 

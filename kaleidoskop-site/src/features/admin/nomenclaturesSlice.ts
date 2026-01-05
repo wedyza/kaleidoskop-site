@@ -9,6 +9,7 @@ export interface Nomenclature {
   parent_code: string | null;
   parent: string | null;
   categories: AdminCategory[];
+  daughter: Nomenclature[];
 }
 
 interface NomenclaturesResponse {
@@ -25,36 +26,41 @@ interface NomenclatureCategory {
 
 interface AdminNomenclaturesState {
   nomenclatures: Nomenclature[];
+  currentNomenclature: Nomenclature | null;
   loading: boolean;
   error: string | null;
   addToCategoryLoading: boolean;
   addToCategoryError: string | null;
   count: number;
-  assignedNomenclatures: Nomenclature[];
-  assignedLoading: boolean;
-  assignedError: string | null;
+  currentNomenclatureLoading: boolean;
+  currentNomenclatureError: string | null;
 }
 
 const initialState: AdminNomenclaturesState = {
   nomenclatures: [],
+  currentNomenclature: null,
   loading: false,
   error: null,
   addToCategoryLoading: false,
   addToCategoryError: null,
   count: 0,
-  assignedNomenclatures: [],
-  assignedLoading: false,
-  assignedError: null,
+  currentNomenclatureLoading: false,
+  currentNomenclatureError: null,
 };
 
-export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse, { search?: string } | void>(
+export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse, { search?: string; assigned?: boolean } | void>(
   'admin/nomenclatures/fetch',
   async (params, { rejectWithValue }) => {
     try {
       const search = params?.search;
-      const url = search 
-        ? `/admin_panel/nomenclatures/?search=${encodeURIComponent(search)}`
-        : '/admin_panel/nomenclatures/';
+      const assigned = params?.assigned;
+      
+      const urlParams = new URLSearchParams();
+      if (search) urlParams.append('search', search);
+      if (assigned !== undefined) urlParams.append('assigned', assigned.toString());
+      
+      const queryString = urlParams.toString();
+      const url = `/admin_panel/nomenclatures/${queryString ? `?${queryString}` : ''}`;
       
       const response = await api.get(url);
       return response.data;
@@ -64,19 +70,14 @@ export const fetchAdminNomenclatures = createAsyncThunk<NomenclaturesResponse, {
   }
 );
 
-export const fetchAssignedNomenclatures = createAsyncThunk<NomenclaturesResponse, { search?: string } | void>(
-  'admin/nomenclatures/fetchAssigned',
-  async (params, { rejectWithValue }) => {
+export const fetchAdminNomenclatureById = createAsyncThunk<Nomenclature, string>(
+  'admin/nomenclatures/fetchById',
+  async (id, { rejectWithValue }) => {
     try {
-      const search = params?.search;
-      const url = search 
-        ? `/admin_panel/nomenclatures/assigned/?search=${encodeURIComponent(search)}`
-        : '/admin_panel/nomenclatures/assigned/';
-      
-      const response = await api.get(url);
+      const response = await api.get(`/admin_panel/nomenclatures/${id}/`);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки назначенных номенклатур');
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки номенклатуры');
     }
   }
 );
@@ -100,14 +101,10 @@ const adminNomenclaturesSlice = createSlice({
     clearAdminNomenclaturesError: (state) => {
       state.error = null;
       state.addToCategoryError = null;
-      state.assignedError = null;
     },
     clearAdminNomenclatures: (state) => {
       state.nomenclatures = [];
       state.count = 0;
-    },
-    clearAssignedNomenclatures: (state) => {
-      state.assignedNomenclatures = [];
     },
   },
   extraReducers: (builder) => {
@@ -126,17 +123,17 @@ const adminNomenclaturesSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      .addCase(fetchAssignedNomenclatures.pending, (state) => {
-        state.assignedLoading = true;
-        state.assignedError = null;
+      .addCase(fetchAdminNomenclatureById.pending, (state) => {
+        state.currentNomenclatureLoading = true;
+        state.currentNomenclatureError = null;
       })
-      .addCase(fetchAssignedNomenclatures.fulfilled, (state, action) => {
-        state.assignedLoading = false;
-        state.assignedNomenclatures = action.payload.results;
+      .addCase(fetchAdminNomenclatureById.fulfilled, (state, action) => {
+        state.currentNomenclatureLoading = false;
+        state.currentNomenclature = action.payload;
       })
-      .addCase(fetchAssignedNomenclatures.rejected, (state, action) => {
-        state.assignedLoading = false;
-        state.assignedError = action.payload as string;
+      .addCase(fetchAdminNomenclatureById.rejected, (state, action) => {
+        state.currentNomenclatureLoading = false;
+        state.currentNomenclatureError = action.payload as string;
       })
 
       .addCase(addAdminNomenclatureToCategory.pending, (state) => {
@@ -158,14 +155,6 @@ const adminNomenclaturesSlice = createSlice({
                 state.nomenclatures[nomIndex].categories.push(categoryToAdd);
               }
             }
-
-            const assignedNomIndex = state.assignedNomenclatures.findIndex(n => n.id === nomId);
-            if (assignedNomIndex !== -1) {
-              const assignedNom = state.assignedNomenclatures[assignedNomIndex];
-              if (!assignedNom.categories.some(cat => cat.id === categoryId)) {
-                state.assignedNomenclatures[assignedNomIndex].categories.push(categoryToAdd);
-              }
-            }
           }
         }
       })
@@ -179,6 +168,5 @@ const adminNomenclaturesSlice = createSlice({
 export const { 
   clearAdminNomenclaturesError, 
   clearAdminNomenclatures,
-  clearAssignedNomenclatures,
 } = adminNomenclaturesSlice.actions;
 export default adminNomenclaturesSlice.reducer;
