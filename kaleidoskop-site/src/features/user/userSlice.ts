@@ -5,6 +5,7 @@ import { logout, validateChangeEmail } from '../auth/authSlice';
 interface User {
   id?: number;
   first_name?: string;
+  middle_name?: string;
   last_name?: string;
   phone_number?: string;
   email: string;
@@ -45,7 +46,7 @@ export const updateUserInfo = createAsyncThunk(
     userData: {
       first_name?: string;
       last_name?: string;
-      phone_number?: string;
+      middle_name?: string;
     },
     { rejectWithValue }
   ) => {

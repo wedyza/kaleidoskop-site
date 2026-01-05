@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Modal from "../Modal/Modal";
 import './LoginModal.scss'
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { createOtp, validateOtp, changeEmail, validateChangeEmail } from "../../features/auth/authSlice";
+import { addNotification } from "../../features/notifications/notificationsSlice";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -15,13 +16,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
   isOpen, 
   onClose, 
   mode = 'login',
-  //currentEmail = '' 
 }) => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [timer, setTimer] = useState(59);
   const [resendIndex, setResendIndex] = useState(0);
-  const { step, changeEmailStep } = useAppSelector(state => state.auth);
+  const { step, changeEmailStep, loading, error } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
 
   const currentStep = mode === 'login' ? step : 
@@ -49,26 +49,54 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (mode === 'login' && step === 'authenticated') {
-      setEmail('');
-      setCode('');
-      onClose();
-    } else if (mode === 'change-email' && changeEmailStep === 'validated') {
-      setEmail('');
-      setCode('');
-      onClose();
-    }
-  }, [step, changeEmailStep, mode, onClose]);
+  const handleClose = useCallback(() => {
+    setEmail('');
+    setCode('');
+    setTimer(59);
+    setResendIndex(0);
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    
+    if (mode === 'login' && step === 'authenticated') {
+      dispatch(addNotification({
+        title: 'Вход выполнен',
+        message: 'Вы успешно вошли в систему',
+        type: 'success'
+      }));
+      handleClose();
+    } else if (mode === 'change-email' && changeEmailStep === 'validated') {
+      dispatch(addNotification({
+        title: 'Почта изменена',
+        message: 'Адрес электронной почты успешно изменен',
+        type: 'success'
+      }));
+      handleClose();
+    }
+  }, [step, changeEmailStep, mode, isOpen, handleClose, dispatch]);
+
+  useEffect(() => {
+    if (!isOpen || !error) return;
+    
+    dispatch(addNotification({
+      title: 'Ошибка',
+      message: error,
+      type: 'error'
+    }));
+  }, [error, dispatch, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    
     if (code.length >= 6) {
       handleValidateOtp();
     }
-  }, [code])
+  }, [code, isOpen])
 
   useEffect(() => {
-    if (currentStep !== "otp") return;
+    if (!isOpen || currentStep !== "otp") return;
 
     setTimer(59);
     const interval = setInterval(() => {
@@ -82,7 +110,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [currentStep, resendIndex]);
+  }, [currentStep, resendIndex, isOpen]);
 
   const handleResend = () => {
     if (!email) return;
@@ -122,7 +150,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const titles = getTitles();
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="login-modal">
+    <Modal isOpen={isOpen} onClose={handleClose} className="login-modal">
       {currentStep === 'email' && (
         <>
           <h2 className="inter24-600">{titles.emailTitle}</h2>
@@ -138,8 +166,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
           <button
             onClick={handleRequestOtp}
             className="inter14-400 login-modal_btn accent-btn"
+            disabled={loading || !email}
           >
-            {titles.buttonText}
+            {loading ? 'Отправка...' : titles.buttonText}
           </button>
         </>
       )}
@@ -175,6 +204,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
               value={code}
               onChange={(e) => setCode(e.target.value)}
               className="inter14-400 login-modal_code-input"
+              disabled={loading}
             />
           </div>
 
@@ -193,6 +223,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             <button 
               className="grey-btn inter14-600 login-modal_resend"
               onClick={handleResend}
+              disabled={loading}
             >
               Получить новый код
             </button>

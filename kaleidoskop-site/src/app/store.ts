@@ -14,6 +14,7 @@ import shopsReducer from '../features/shops/shopsSlice'
 import adminCategoriesReducer from '../features/admin/adminCategoriesSlice'
 import nomenclaturesReducer from '../features/admin/nomenclaturesSlice'
 import telegramReducer from'../features/admin/telegramSlice'
+import notificationsReducer from '../features/notifications/notificationsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ export const store = configureStore({
     adminCategories: adminCategoriesReducer,
     nomenclatures: nomenclaturesReducer,
     telegram: telegramReducer,
+    notifications: notificationsReducer,
   },
 });
 
