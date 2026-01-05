@@ -3,7 +3,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.decorators import action
 import redis
-from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureCategorySerializer, NomenclatureSerializer, AdminCategorySerializer
+from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, CreateNomenclatureCategorySerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureCategorySerializer, NomenclatureSerializer, AdminCategorySerializer
 from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef
 from .rabbitmq import RabbitMQ
@@ -162,10 +162,10 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        request_body=NomenclatureCategorySerializer(many=True),
-        responses={201: NomenclatureCategorySerializer(many=True)}
+        request_body=CreateNomenclatureCategorySerializer(many=True),
+        responses={201: CreateNomenclatureCategorySerializer(many=True)}
     )        
-    @action(methods=['POST'], url_path='add_to_category', detail=False, serializer_class=NomenclatureCategorySerializer)
+    @action(methods=['POST'], url_path='add_to_category', detail=False, serializer_class=CreateNomenclatureCategorySerializer)
     def add_nomenclature_to_category(self, request):
         """
         Связывает номенклатуру с категорией. В этом роуте можно добавлять сразу много номенклатур/категорий, чтобы не делать много запросов и оптимизировать все запросы к БД. Просто передаешь их через массив
