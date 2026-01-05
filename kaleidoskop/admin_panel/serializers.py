@@ -59,7 +59,7 @@ class ShortenedNomenclatureSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'code']
 
 
-class CreateNomenclatureCategorySerializer(serializers.Serializer):
+class CreateNomenclatureCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = NomenclatureCategory
         fields = ['nomenclature', 'category']
