@@ -121,14 +121,6 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser]
     permission_classes = [permissions.IsAdminUser]
 
-
-class AdminNomenclatureCategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
-    queryset = NomenclatureCategory.objects.all()
-    serializer_class = NomenclatureCategorySerializer
-    permission_classes = [permissions.IsAdminUser]
-    pagination_class = CustomPagination
-
-
 class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
     serializer_class = NomenclatureSerializer
     queryset = Nomenclature.objects.all()
@@ -176,6 +168,15 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(methods=['DELETE'], url_path='delete_from_category/(?P<category_id>[^/.]+)', detail=True)
+    def delete_from_category(self, request, pk, category_id):
+        try:
+            category  = Category.objects.get(id=category_id)
+        except:
+            return Response({'detail': 'did not found any category with that'}, status=status.HTTP_404_NOT_FOUND)
+        nomenclature = Nomenclature.objects.get(id=pk)
+        nomenclature.categories.remove(category)
+        return Response({'detail': 'success'})
 
 class CompilationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
