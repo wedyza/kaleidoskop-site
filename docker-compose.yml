@@ -140,6 +140,13 @@ services:
       - cache:/root/.cache/
     # command: python main_hybrid.py
     # profiles: [donotstart]
+
+  frontend:
+    image: wedyzza/kaleidoskop_frontend
+    command: cp -r /app/build/. /frontend_static/
+    container_name: frontend_client
+    volumes:
+      - frontend_static:/frontend_static/
   
 volumes:
  pg_data:
@@ -148,3 +155,4 @@ volumes:
  indexes:
  cache:
  es-data:
+ frontend_static:
