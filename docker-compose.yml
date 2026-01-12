@@ -117,6 +117,7 @@ services:
       - app
     volumes:
       - static:/static/
+      - frontend_static:/frontend_static/
 
   telegram_bot:
     build: ./Telegram_Notification
@@ -142,7 +143,7 @@ services:
     # profiles: [donotstart]
 
   frontend:
-    image: wedyzza/kaleidoskop_frontend
+    image: wedyzza/kaleidoskop_frontend:latest
     command: cp -r /app/build/. /frontend_static/
     container_name: frontend_client
     volumes:
