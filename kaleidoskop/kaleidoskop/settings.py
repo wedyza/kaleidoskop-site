@@ -181,7 +181,7 @@ BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not C
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
 USER_1C = os.getenv("USER_1C")
 PASSWORD_1C = os.getenv("PASSWORD_1C")
-SERVER_1C = "http://localhost/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else "http://192.168.0.106/demohttp/hs/apiv1"
+SERVER_1C = "http://localhost/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else f"http://{os.getenv('REMOTE_1C')}/demohttp/hs/apiv1"
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
