@@ -144,7 +144,7 @@ services:
 
   frontend:
     image: wedyzza/kaleidoskop_frontend:latest
-    command: cp -r /app/build/. /frontend_static/
+    command: cp -r /app/dist/. /frontend_static/
     container_name: frontend_client
     volumes:
       - frontend_static:/frontend_static/
