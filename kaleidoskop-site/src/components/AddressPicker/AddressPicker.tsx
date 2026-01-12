@@ -147,7 +147,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     onDetailsChange?.(newDetails);
   };
 
-  const handleDetailBlur = (field: keyof typeof details) => {
+  const handleDetailBlur = (_field: keyof typeof details) => {
     onDetailsChange?.(details);
   };
 

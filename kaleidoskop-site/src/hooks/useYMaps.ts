@@ -1,4 +1,3 @@
-// src/hooks/useYMaps.ts
 import { useEffect, useState } from 'react';
 
 export function useYMaps(apiKey?: string) {
@@ -8,14 +7,11 @@ export function useYMaps(apiKey?: string) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // если уже загружено
     if ((window as any).ymaps) {
-      // ymaps может ещё инициализироваться — ждём ready
       (window as any).ymaps.ready(() => setReady(true));
       return;
     }
 
-    // создаём тег скрипта
     const script = document.createElement('script');
     script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey ?? ''}&lang=ru_RU`;
     script.async = true;
@@ -32,8 +28,6 @@ export function useYMaps(apiKey?: string) {
     document.head.appendChild(script);
 
     return () => {
-      // не удаляем script, оставляем кэшированным. Можно при необходимости удалить:
-      // document.head.removeChild(script);
     };
   }, [apiKey]);
 

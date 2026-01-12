@@ -9,13 +9,13 @@ const AdminTelegram = () => {
   const dispatch = useAppDispatch()
   const { connecting, error, success } = useAppSelector(state => state.telegram)
   const [code, setCode] = useState('')
-  const [copySuccess, setCopySuccess] = useState(false)
+  // const [copySuccess, setCopySuccess] = useState(false)
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(tg)
-      setCopySuccess(true)
-      setTimeout(() => setCopySuccess(false), 2000)
+      // setCopySuccess(true)
+      // setTimeout(() => setCopySuccess(false), 2000)
     } catch (error) {
       console.error('Ошибка копирования:', error)
     }
