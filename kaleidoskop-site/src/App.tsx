@@ -30,8 +30,11 @@ import AdminNomenclatures from './pages/AdminNomenclatures/AdminNomenclatures';
 import AdminTelegram from './pages/AdminTelegram/AdminTelegram';
 import AdminAssignedNomenclatures from './pages/AdminAssignedNomenclatures/AdminAssignedNomenclatures';
 import AdminNomenclature from './pages/AdminNomenclature/AdminNomenclature';
+import { selectGlobalLoading } from './app/store';
+import Loader from './components/Loader/Loader';
 
 function App() {
+  const isLoading = useAppSelector(selectGlobalLoading);
   const token = useAppSelector(state => state.auth.token)
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.user.user)
@@ -45,45 +48,48 @@ function App() {
   const isAdmin = user?.is_superuser === true;
 
   return (
-    <Routes>
-      {isAdmin ? (
-        <Route element={<AdminLayout />}>
-          <Route element={<ProtectedRoute allowedFor='admin' />}> 
-            <Route path="/" element={<AdminMain />} />
-            <Route path="/admin/categories" element={<AdminCategories />} />
-            <Route path="/admin/nomenclatures" element={<AdminNomenclatures />} />
-            <Route path="/admin/nomenclatures/:id" element={<AdminNomenclature />} />
-            <Route path="/admin/nomenclatures/connections" element={<AdminAssignedNomenclatures />} />
-            <Route path="/admin/telegram" element={<AdminTelegram />} />
-  
-            <Route path="/admin/categories/create" element={<AdminCategoryCreate />} />
-            <Route path="/admin/categories/:id/edit" element={<AdminCategoryEdit />} />
-            
-            <Route path="/admin/subcategories/create" element={<AdminSubcategoryCreate />} />
-            <Route path="/admin/subcategories/:id/edit" element={<AdminSubcategoryEdit />} />
-          </Route>
-        </Route>
-      ) : (
-        <Route element={<AppLayout />}>
-          <Route element={<ProtectedRoute allowedFor='auth' />}>
-            <Route element={<SectionLayout />}>
-              <Route path="/wishlist" element={<WishlistPage />} />
-              <Route path="/basket" element={<BasketPage />} />
-              <Route path="/orders" element={<OrdersPage />} />
-              <Route path="/comparison" element={<ComparisonPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/returns" element={<ReturnsPage />} />
+    <>
+      {isLoading && <Loader />}
+      <Routes>
+        {isAdmin ? (
+          <Route element={<AdminLayout />}>
+            <Route element={<ProtectedRoute allowedFor='admin' />}> 
+              <Route path="/" element={<AdminMain />} />
+              <Route path="/admin/categories" element={<AdminCategories />} />
+              <Route path="/admin/nomenclatures" element={<AdminNomenclatures />} />
+              <Route path="/admin/nomenclatures/:id" element={<AdminNomenclature />} />
+              <Route path="/admin/nomenclatures/connections" element={<AdminAssignedNomenclatures />} />
+              <Route path="/admin/telegram" element={<AdminTelegram />} />
+    
+              <Route path="/admin/categories/create" element={<AdminCategoryCreate />} />
+              <Route path="/admin/categories/:id/edit" element={<AdminCategoryEdit />} />
+              
+              <Route path="/admin/subcategories/create" element={<AdminSubcategoryCreate />} />
+              <Route path="/admin/subcategories/:id/edit" element={<AdminSubcategoryEdit />} />
             </Route>
-            <Route path="/make-order" element={<MakeOrderPage />} />
           </Route>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/product/:slug" element={<ProductPage />} />
-          <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="*" element={<Page404 />} />
-        </Route>
-      )}
-    </Routes>
+        ) : (
+          <Route element={<AppLayout />}>
+            <Route element={<ProtectedRoute allowedFor='auth' />}>
+              <Route element={<SectionLayout />}>
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/basket" element={<BasketPage />} />
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/comparison" element={<ComparisonPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/returns" element={<ReturnsPage />} />
+              </Route>
+              <Route path="/make-order" element={<MakeOrderPage />} />
+            </Route>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/product/:slug" element={<ProductPage />} />
+            <Route path="/category/:slug" element={<CategoryPage />} />
+          </Route>
+        )}
+        <Route path="*" element={<Page404 />} />
+      </Routes>
+    </>
   );
 }
 

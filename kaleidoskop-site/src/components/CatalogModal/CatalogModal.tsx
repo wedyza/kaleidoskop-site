@@ -17,7 +17,7 @@ interface SubcategoryGroup {
 
 const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const { categories, loading } = useAppSelector(state => state.categories);
+  const { categories } = useAppSelector(state => state.categories);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   useEffect(() => {
@@ -102,9 +102,7 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
       
       <div className="catalog-subcat_panel-container">
         <div className="catalog-subcat_panel">
-          {loading ? (
-            <div className="catalog-loading">Загрузка...</div>
-          ) : subcategoryGroups.length > 0 ? (
+          {subcategoryGroups.length > 0 ? (
             subcategoryGroups.map((group, groupIndex) => (
               <div 
                 key={groupIndex} 

@@ -40,3 +40,20 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export default store;
+
+export const selectGlobalLoading = (state: RootState) => {
+  return (
+    state.adminCategories.loading ||
+    state.nomenclatures.currentNomenclatureLoading ||
+    state.nomenclatures.loading || 
+    state.basket.loading ||
+    state.categories.loading ||
+    state.brands.loading ||
+    state.orders.loading || 
+    state.productItem.loading ||
+    state.search.loading ||
+    state.shops.loading ||
+    state.user.loading ||
+    state.wishlist.loading
+  );
+};
