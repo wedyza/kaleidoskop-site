@@ -281,6 +281,11 @@ a, a:link, button {
   background-color: var(--orange600);
 }
 
+.accent-btn:disabled {
+  background-color: var(--grey100);
+  color: var(--grey300);
+}
+
 .accent-btn__second {
   background-color: var(--orange200);
   border-radius: var(--border-radius);

@@ -65,9 +65,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               <span className='inter14-600'>Оформить заказ</span>
             </button>
           ) : (
-            <Link to='/make-order' className='basket-placement_link accent-btn'>
-              <span className='inter14-600'>Перейти к оформлению</span>
-            </Link>
+            selectedItems.length > 0 ? (
+              <Link to='/make-order' className='basket-placement_link accent-btn'>
+                <span className='inter14-600'>Перейти к оформлению</span>
+              </Link>
+            ) : (
+              <button className='basket-placement_link basket-placement_link__disabled accent-btn' disabled>
+                <span className='inter14-600'>Перейти к оформлению</span>
+              </button>
+            )
           )}
         </div>
       </div>

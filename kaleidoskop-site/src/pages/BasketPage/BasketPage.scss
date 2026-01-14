@@ -95,6 +95,10 @@
   color: var(--white);
 }
 
+.basket-placement_link__disabled span {
+  color: var(--grey300);
+}
+
 .basket-placement_gift {
   color: var(--grey400);
 }

@@ -39,8 +39,10 @@
 .catalog-cat_item__active {
   position: relative;
   background-color: var(--orange50);
-  color: var(--orange500);
-  font-weight: 600;
+  .catalog-cat_name {
+    color: var(--orange500);
+    font-weight: 600;
+  }
 }
 
 .catalog-cat_item__active:visited {

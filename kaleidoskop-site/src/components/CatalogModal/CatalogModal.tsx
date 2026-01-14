@@ -17,7 +17,7 @@ interface SubcategoryGroup {
 
 const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const { categories } = useAppSelector(state => state.categories);
+  const { categories, loading } = useAppSelector(state => state.categories);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   useEffect(() => {
@@ -72,17 +72,17 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
 
   const subcategoryGroups = groupSubcategories(subcategories);
 
-  const getSelectedCategoryTitle = (): string => {
-    if (!selectedCategory) return '';
-    const category = safeCategories.find(cat => cat.id === selectedCategory);
-    return category?.title || '';
-  };
+  // const getSelectedCategoryTitle = (): string => {
+  //   if (!selectedCategory) return '';
+  //   const category = safeCategories.find(cat => cat.id === selectedCategory);
+  //   return category?.title || '';
+  // };
 
   const handleLinkClick = () => {
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || loading) return null;
 
   return createPortal(
     <div className="catalog-modal">
@@ -140,8 +140,8 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose }) => {
             ))
           ) : (
             <div className="catalog-empty">
-              {parentCategories.length > 0 
-                ? `Нет подкатегорий для "${getSelectedCategoryTitle()}"`
+              {parentCategories.length > 0
+                ? `Нет подкатегорий`
                 : 'Категории не найдены'
               }
             </div>
