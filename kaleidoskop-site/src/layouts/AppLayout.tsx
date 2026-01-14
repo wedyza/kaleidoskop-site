@@ -1,11 +1,16 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CatalogModal from "../components/CatalogModal/CatalogModal";
 
 export const AppLayout = () => {
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsCatalogOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="page">

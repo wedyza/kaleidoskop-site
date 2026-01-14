@@ -158,20 +158,32 @@ const adminNomenclaturesSlice = createSlice({
       })
       .addCase(addAdminNomenclatureToCategory.fulfilled, (state, action) => {
         state.addToCategoryLoading = false;
-        
-        if (action.payload.request && action.payload.request.length > 0) {
-          const { category: categoryId, nomenclature: nomId } = action.payload.request[0];
-          const categoryToAdd = action.payload.category;
-          
-          if (categoryToAdd) {
-            const nomIndex = state.nomenclatures.findIndex(n => n.id === nomId);
-            if (nomIndex !== -1) {
-              const nom = state.nomenclatures[nomIndex];
-              if (!nom.categories.some(cat => cat.id === categoryId)) {
-                state.nomenclatures[nomIndex].categories.push(categoryToAdd);
-              }
-            }
+
+        if (!action.payload.request?.length) return;
+
+        const { category: categoryId, nomenclature: nomId } =
+          action.payload.request[0];
+
+        const categoryToAdd = action.payload.category;
+        if (!categoryToAdd) return;
+
+        // 1️⃣ Если есть текущая номенклатура → работаем с daughter
+        if (state.currentNomenclature) {
+          const daughter = state.currentNomenclature.daughter.find(
+            d => d.id === nomId
+          );
+
+          if (daughter && !daughter.categories.some(cat => cat.id === categoryId)) {
+            daughter.categories.push(categoryToAdd);
           }
+
+          return;
+        }
+
+        // 2️⃣ Иначе — работаем со списком
+        const nom = state.nomenclatures.find(n => n.id === nomId);
+        if (nom && !nom.categories.some(cat => cat.id === categoryId)) {
+          nom.categories.push(categoryToAdd);
         }
       })
       .addCase(addAdminNomenclatureToCategory.rejected, (state, action) => {
@@ -185,20 +197,28 @@ const adminNomenclaturesSlice = createSlice({
       })
       .addCase(deleteAdminNomenclatureFromCategory.fulfilled, (state, action) => {
         state.deleteFromCategoryLoading = false;
-        
-        const { nomenclature, category } = action.payload;
-        
-        const nomIndex = state.nomenclatures.findIndex(n => n.id === nomenclature);
-        if (nomIndex !== -1) {
-          state.nomenclatures[nomIndex].categories = state.nomenclatures[nomIndex].categories.filter(
-            cat => cat.id !== category
+
+        const { nomenclature: nomId, category: categoryId } = action.payload;
+
+        // 1️⃣ Если есть текущая номенклатура → работаем с daughter
+        if (state.currentNomenclature) {
+          const daughter = state.currentNomenclature.daughter.find(
+            d => d.id === nomId
           );
+
+          if (daughter) {
+            daughter.categories = daughter.categories.filter(
+              cat => cat.id !== categoryId
+            );
+          }
+
+          return;
         }
-        
-        if (state.currentNomenclature?.id === nomenclature) {
-          state.currentNomenclature.categories = state.currentNomenclature.categories.filter(
-            cat => cat.id !== category
-          );
+
+        // 2️⃣ Иначе — работаем со списком
+        const nom = state.nomenclatures.find(n => n.id === nomId);
+        if (nom) {
+          nom.categories = nom.categories.filter(cat => cat.id !== categoryId);
         }
       })
       .addCase(deleteAdminNomenclatureFromCategory.rejected, (state, action) => {

@@ -13,7 +13,7 @@ import type { Nomenclature } from '../../features/admin/nomenclaturesSlice';
 const AdminNomenclature = () => {
   const { id } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedNom, setSelectedNom] = useState<Nomenclature | null>(null);
+  const [selectedNomId, setSelectedNomId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   
   const dispatch = useAppDispatch();
@@ -44,9 +44,14 @@ const AdminNomenclature = () => {
   };
 
   const handleSelectNom = (nom: Nomenclature) => {
-    setSelectedNom(nom);
+    setSelectedNomId(nom.id);
     setIsModalOpen(true);
   };
+
+  const selectedNom = useMemo(() => {
+    if (!selectedNomId || !currentNom) return null;
+    return currentNom.daughter.find(n => n.id === selectedNomId) || null;
+  }, [selectedNomId, currentNom]);
   
   if (currentNomLoading) {
     return <div>Загрузка...</div>;
