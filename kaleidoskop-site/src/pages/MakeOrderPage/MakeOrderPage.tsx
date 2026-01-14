@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { clearCurrentOrder, createOrder } from '../../features/orders/ordersSlice';
 import ShopsPicker from '../../components/ShopsPicker/ShopsPicker';
 import { fetchShops, type Shop } from '../../features/shops/shopsSlice';
+import { addNotification } from '../../features/notifications/notificationsSlice';
 
 export type DeliveryType = 'pickup' | 'courier';
 
@@ -101,8 +102,20 @@ const MakeOrderPage = () => {
         addressDetails: activeTab === 'courier' ? addressDetails : undefined,
         shop: activeTab === 'pickup' && selectedStore ? selectedStore.id : undefined,
       })).unwrap();
-    } catch (error) {
-      console.error('Ошибка создания заказа:', error);
+      
+      dispatch(addNotification({
+        title: 'Заказ создан',
+        message: 'Ваш заказ успешно оформлен',
+        type: 'success',
+        duration: 3000
+      }));
+    } catch (error: any) {
+      dispatch(addNotification({
+        title: 'Ошибка',
+        message: error || 'Не удалось создать заказ',
+        type: 'error',
+        duration: 4000
+      }));
     }
   };
 
