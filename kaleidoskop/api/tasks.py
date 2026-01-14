@@ -7,7 +7,7 @@
 # @multitasker
 # @shared_task
 # def create_order_1C(order: Order): # Возможно нельзя будет это делать асинхронно, и надо будет прямо внутри кода дожидаться ответа, чтобы сгенерить ссылку для оплаты из 1С..
-from .models import Brand, ItemImage, Item, Parameter, ParameterItem, Shop
+from .models import Brand, ItemImage, Item, Parameter, ParameterItem, Shop, Warehouse
 from django.core.files.base import ContentFile
 import xml.etree.ElementTree as ET
 import httpx
@@ -251,6 +251,21 @@ def initialize_shops():
 
     cities = [Shop.objects.create(**shop) for shop in data]
 
+def initialize_warehouse():
+    names = [
+        'Склад Малышева',
+        'Склад База Малышева',
+        'Склад Ленина',
+        'Склад Выставка',
+        'Склад Мальского Лесной',
+        'Склад Оптовый Ленина 117',
+        'Склад Сервисный Центр',
+        'Склад Скорынина 6',
+        'Основной склад',
+        'Склад ТРЦ'
+    ]
+
+    warehouses = [Warehouse.objects.create(name=name, custom_name=name) for name in names]
 
 def parse_all():
     print("1 ЭТАП")

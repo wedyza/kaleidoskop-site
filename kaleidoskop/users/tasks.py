@@ -8,6 +8,7 @@ from typing import Dict
 import httpx
 import json
 import redis
+from receiver.serializers import RemainsReceiveSerializer 
 from admin_panel.rabbitmq import RabbitMQ
 
 LINK_1C = settings.SERVER_1C    
@@ -155,7 +156,13 @@ def sync_remains():
     )
     if response.status_code != 200:
         raise BaseException("somethign went wrong")
-    return response.json()
+        
+    remains = RemainsReceiveSerializer(data=response.json(), many=True)
+    if remains.is_valid():
+        remains.save()
+    else:
+        print(remains.errors)
+        print('Не удалось')
 
 
 r = redis.StrictRedis(
