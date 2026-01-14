@@ -63,7 +63,7 @@ async def new_order_notification(chat_id, data): # Потом доделать
 
 
 r = redis.StrictRedis(
-        host='localhost',  # из Endpoint
+        host='redis',  # из Endpoint
         port=6379,  # из Endpoint
         decode_responses=True
     )
