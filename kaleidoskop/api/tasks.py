@@ -22,20 +22,20 @@ client = httpx.Client(headers={
 })
 
 def save_image(url, image_name, item:Item, client=None):
-    try:
-        if client is None:
-            response = httpx.get(url)
-        else:
-            response = client.get(url)
-        bytes = response.content
-        content_file = ContentFile(bytes, name=image_name)
-        image = ItemImage.objects.create(source=content_file, item=item)
-    except Exception as e:
-        print(e)
+    # try:
+    #     if client is None:
+    #         response = httpx.get(url)
+    #     else:
+    #         response = client.get(url)
+    #     bytes = response.content
+    #     content_file = ContentFile(bytes, name=image_name)
+    #     image = ItemImage.objects.create(source=content_file, item=item)
+    # except Exception as e:
+    #     print(e)
     return
 
 def parse_xml_file():
-    tree = ET.parse('C:/Users/Moose/Desktop/projects/kaleidoskop project/file.xml')  # Замените на путь к вашему XML-файлу
+    tree = ET.parse('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/file.xml')  # Замените на путь к вашему XML-файлу
     root = tree.getroot()
 
     # Перейти к offers
@@ -80,7 +80,7 @@ def parse_xml_file():
             db_product.save()
 
 def parse_garden_file():
-    tree = ET.parse('C:/Users/Moose/Desktop/projects/kaleidoskop project/export_universal_2025-12-02_1764703254_6624003807.xml')  # Замените на путь к вашему XML-файлу
+    tree = ET.parse('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/export_universal_2026-01-14_1768374852_6624003807.xml')  # Замените на путь к вашему XML-файлу
     root = tree.getroot()
 
     offers = root.findall('offer')
@@ -115,7 +115,7 @@ def parse_garden_file():
             db_product.save()
 
 def parse_garden_media_file():
-    df = pd.read_csv('C:/Users/Moose/Desktop/projects/kaleidoskop project/export_media_2025-11-27_1764259311_6624003807.csv', delimiter=';')
+    df = pd.read_csv('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/export_media_2026-01-14_1768374900_6624003807.csv', delimiter=';')
 
     for index, row in df.iterrows():
         product = Item.objects.filter(okdp=row['okdp']).first()
@@ -125,7 +125,7 @@ def parse_garden_media_file():
             save_image(row['url'], f'{product.slug}--{index}.png', product)
 
 
-def parse_catalog_xml(path='C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221092775.xml'): #'C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221092775.xml'
+def parse_catalog_xml(path='C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/PRODAT_369147_1233114904.xml'): #'C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221092775.xml'
     path = Path(path)
     text = path.read_text(encoding="windows-1251", errors="replace")
     root = ET.fromstring(text)
@@ -259,6 +259,6 @@ def parse_all():
     parse_garden_file()
     parse_garden_media_file()
     print("3 ЭТАП")
-    parse_catalog_xml('C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221092775.xml')
-    parse_catalog_xml('C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221079811.xml')
+    parse_catalog_xml('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/PRODAT_369147_1233114904.xml')
+    parse_catalog_xml('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/PRODAT_369147_1233126057.xml')
     print("END")

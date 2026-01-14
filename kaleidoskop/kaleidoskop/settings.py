@@ -207,7 +207,7 @@ SIMPLE_JWT = {
 
 ELASTICSEARCH_DSL = {
     "default": {
-        "hosts": "http://localhost:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
+        "hosts": "http://192.168.0.203:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
         "http_auth": ("elastic", "MyPassword"),
         "verify_certs": False,
         "ca_certs": None,
