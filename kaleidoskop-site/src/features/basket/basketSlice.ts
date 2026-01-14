@@ -108,6 +108,7 @@ const basketSlice = createSlice({
         state.error = null;
       })
       .addCase(toggleBasketItem.fulfilled, (state, action) => {
+        state.loading = false;
         const { id, enable } = action.meta.arg;
         if (!enable) {
           state.items = state.items.filter((entry) => entry.item.id !== id);
