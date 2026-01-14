@@ -14,7 +14,8 @@ const ProfilePage = () => {
     email: '',
     first_name: '',
     last_name: '',
-    middle_name: ''
+    middle_name: '',
+    phone_number: ''
   });
 
   useEffect(() => {
@@ -23,7 +24,8 @@ const ProfilePage = () => {
         email: user.email || '',
         first_name: user.first_name || '',
         last_name: user.last_name || '',
-        middle_name: user.middle_name || ''
+        middle_name: user.middle_name || '',
+        phone_number: user.phone_number || ''
       });
     }
   }, [user]);
@@ -43,7 +45,8 @@ const ProfilePage = () => {
     const labels: Record<string, string> = {
       'first_name': 'Имя',
       'last_name': 'Фамилия',
-      'middle_name': 'Отчество'
+      'middle_name': 'Отчество',
+      'phone_number': 'Номер телефона'
     };
     return labels[fieldName] || fieldName;
   };
@@ -188,6 +191,7 @@ const ProfilePage = () => {
         
         <div className='profile-contacts'>
           {renderEmailField()}
+          {renderEditableField('phone_number', 'Номер телефона', 'Не указан')}
         </div>
         
         <div className='profile-info'>

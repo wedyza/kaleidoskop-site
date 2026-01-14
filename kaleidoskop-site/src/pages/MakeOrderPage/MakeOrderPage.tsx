@@ -297,13 +297,13 @@ const MakeOrderPage = () => {
                 {selectedStore ? (
                   <div className="pickup-store-selected">
                     <div className="selected-store-info">
-                      <span className="store-name inter14-600">{selectedStore.title}</span>
+                      <span className="store-name inter16-700">{selectedStore.title}</span>
                       <span className="store-address inter14-400">
                         {selectedStore.city}, {selectedStore.street}, {selectedStore.house}
                       </span>
                     </div>
                     <button 
-                      className="change-store-btn inter14-600 grey-btn"
+                      className="select-store_btn inter14-600 grey-btn"
                       onClick={() => setShowStoreModal(true)}
                     >
                       Изменить магазин

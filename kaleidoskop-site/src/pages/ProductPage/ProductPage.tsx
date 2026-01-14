@@ -136,7 +136,7 @@ function ProductPage() {
               </svg>
             </button> */}
           </div>
-          <div className='product-info_availability inter13-400'>
+          {/* <div className='product-info_availability inter13-400'>
             <div className='product-info_availability-item'>
               <span className='product-info_availability-day'>
                 Сегодня в 2 магазинах:
@@ -153,7 +153,7 @@ function ProductPage() {
                 Посмотреть
               </Link>
             </div>
-          </div>
+          </div> */}
 
           {selectedItem.parameters && selectedItem.parameters.length > 0 && (
             <div className='product-info_params'>
