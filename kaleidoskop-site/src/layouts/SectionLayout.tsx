@@ -10,6 +10,14 @@ const routeTitles: Record<string, string> = {
   '/comparison': 'Сравнение товаров',
   '/profile': 'Личные данные',
   '/returns': 'Возврат товаров',
+  '/services/delivery-to-entrance': 'Доставка до подъезда',
+  '/services/paint-coloring': 'Колеровка краски',
+  '/services/water-delivery': 'Доставка воды',
+  '/services/manipulator-delivery': 'Доставка манипулятором',
+  '/services/sheet-bending': 'Услуги листогиба',
+  '/services/service-center': 'Сервисный центр',
+  '/services/lift-to-apartment': 'Подъем товара до квартиры',
+  '/services/transport-services': 'Транспортные услуги',
 };
 
 export const SectionLayout = () => {

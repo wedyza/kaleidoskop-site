@@ -32,6 +32,14 @@ import AdminAssignedNomenclatures from './pages/AdminAssignedNomenclatures/Admin
 import AdminNomenclature from './pages/AdminNomenclature/AdminNomenclature';
 import { selectGlobalLoading } from './app/store';
 import Loader from './components/Loader/Loader';
+import DeliveryToEntrancePage from './pages/ServiceDetail/DeliveryToEntrancePage';
+import PaintColoringPage from './pages/ServiceDetail/PaintColoringPage';
+import WaterDeliveryPage from './pages/ServiceDetail/WaterDeliveryPage';
+import ManipulatorDeliveryPage from './pages/ServiceDetail/ManipulatorDeliveryPage';
+import SheetBendingPage from './pages/ServiceDetail/SheetBendingPage';
+import ServiceCenterPage from './pages/ServiceDetail/ServiceCenterPage';
+import LiftToApartmentPage from './pages/ServiceDetail/LiftToApartmentPage';
+import TransportServicesPage from './pages/ServiceDetail/TransportServicesPage';
 
 function App() {
   const isLoading = useAppSelector(selectGlobalLoading);
@@ -80,6 +88,17 @@ function App() {
                 <Route path="/returns" element={<ReturnsPage />} />
               </Route>
               <Route path="/make-order" element={<MakeOrderPage />} />
+            </Route>
+            
+            <Route element={<SectionLayout />}>
+              <Route path="/services/delivery-to-entrance" element={<DeliveryToEntrancePage />} />
+              <Route path="/services/paint-coloring" element={<PaintColoringPage />} />
+              <Route path="/services/water-delivery" element={<WaterDeliveryPage />} />
+              <Route path="/services/manipulator-delivery" element={<ManipulatorDeliveryPage />} />
+              <Route path="/services/sheet-bending" element={<SheetBendingPage />} />
+              <Route path="/services/service-center" element={<ServiceCenterPage />} />
+              <Route path="/services/lift-to-apartment" element={<LiftToApartmentPage />} />
+              <Route path="/services/transport-services" element={<TransportServicesPage />} />
             </Route>
             <Route path="/" element={<MainPage />} />
             <Route path="/search" element={<SearchPage />} />

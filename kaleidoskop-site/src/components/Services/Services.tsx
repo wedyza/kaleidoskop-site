@@ -2,140 +2,93 @@ import './Services.scss'
 import servicesImg from '../../assets/services.png'
 import screwdriver from '../../assets/screwdriver.png'
 import screw from '../../assets/screw.png'
+import { Link } from 'react-router-dom'
+import { SERVICES } from '../../constants/services'
 
 const Services: React.FC = () => {
+  const serviceCards = [
+    { type: 'card', data: SERVICES[0], index: 0 },
+    { type: 'info', index: 1 },
+    { type: 'card', data: SERVICES[1], index: 2 },
+    { type: 'card', data: SERVICES[2], index: 3 },
+    { type: 'card', data: SERVICES[3], index: 4 },
+    { type: 'card', data: SERVICES[4], index: 5 },
+    { type: 'empty', index: 6 },
+    { type: 'card', data: SERVICES[5], index: 7 },
+    { type: 'info', index: 8 },
+    { type: 'card', data: SERVICES[6], index: 9 },
+    { type: 'card', data: SERVICES[7], index: 10 },
+    { type: 'image', index: 11 },
+  ];
+
   return (
     <div className='services'>
-      <div className="service-card services-item">
-        <div className="service-screw service-screw__top">
-          <img src={screw} alt="" />
-        </div>
-        <div className="service-screwdriver">
-          <img src={screwdriver} alt="" />
-        </div>
-        <div className="service_title inter18-600">
-          Доставка до подъезда
-        </div>
-        <div className="service_desc inter14-400">
-          Бережно привозим заказ до 
-          вашего дома — быстро, аккуратно 
-          и в удобное время
-        </div>
-        <div className="service_link inter13-500">
-          Подробнее
-        </div>
-      </div>
-      <div className="services-item services-info">
-        <div className="services-info_title inter18-500">
-          Делаем быстро и без сбоев
-        </div>
-        <div className="services-info_desc inter14-400">
-          Мы организуем логистику 
-          так, чтобы вы получили товар 
-          в срок
-        </div>
-      </div>
-      <div className="service-card services-item">
-        <div className="service_title inter18-600">
-          Колеровка краски
-        </div>
-        <div className="service_desc inter14-400">
-          Подбираем идеальный цвет 
-          по образцу — точный оттенок 
-          без компромиссов
-        </div>
-        <div className="service_link inter13-500">
-          Подробнее
-        </div>
-      </div>
-      <div className="service-card services-item">
-        <div className="service-screw service-screw__top">
-          <img src={screw} alt="" />
-        </div>
-        <div className="service_title inter18-600">
-          Доставка воды
-        </div>
-        <div className="service_desc inter14-400">
-          Привозим чистую бутилированную воду прямо к вам — домой, в офис или на объект
-        </div>
-        <div className="service_link inter13-500">
-          Подробнее
-        </div>
-      </div>
-      <div className="service-card services-item">
-        <div className="service-screw service-screw__bottom">
-          <img src={screw} alt="" />
-        </div>
-        <div className="service_title inter18-600">
-          Доставка манипулятором
-        </div>
-        <div className="service_desc inter14-400">
-          Доставляем крупные и тяжёлые грузы с подъёмом — быстро 
-          и надёжно
-        </div>
-        <div className="service_link inter13-500">
-          Подробнее
-        </div>
-      </div>
-      <div className="service-card services-item">
-        <div className="service_title inter18-600">
-          Услуги листогиба
-        </div>
-        <div className="service_desc inter14-400">
-          Изготавливаем элементы нужной формы и размера — аккуратно, 
-          по вашим параметрам
-        </div>
-        <div className="service_link inter13-500">
-          Подробнее
-        </div>
-      </div>
-      <div className="services-item services-empty">
-        
-      </div>
-      <div className="service-card services-item">
-        <div className="service_title inter18-600">
-          Сервисный цент
-        </div>
-        <div className="service_desc inter14-400">
-          Чиним инструмент, затачиваем цепи, даём инструмент напрокат — когда нужен здесь и сейчас.
-        </div>
-        <div className="service_link inter13-500">
-          Подробнее
-        </div>
-      </div>
-      <div className="services-item services-info">
-        <div className="services-info_title inter18-500">
-          Все решения в одном месте
-        </div>
-        <div className="services-info_desc inter14-400">
-          Вы не тратите время на поиски: 
-          у нас доставка, инструмент, сервис и материалы
-        </div>
-      </div>
-      <div className="services-item services-empty">
-        
-      </div>
-      <div className="service-card services-item">
-        <div className="service-screw service-screw__bottom">
-          <img src={screw} alt="" />
-        </div>
-        <div className="service_title inter18-600">
-          Подъем товара до квартиры
-        </div>
-        <div className="service_desc inter14-400">
-          Поднимаем заказ до нужного 
-          этажа — без хлопот, очередей 
-          и тяжёлых сумок
-        </div>
-        <div className="service_link inter13-500">
-          Подробнее
-        </div>
-      </div>
-      <div className="services-item services-img">
-        <img src={servicesImg} alt="" />
-      </div>
+      {serviceCards.map((item) => {
+        if (item.type === 'card' && item.data) {
+          return (
+            <Link to={item.data.url} key={item.data.id} className="service-card services-item">
+              {item.data.hasScrewTop && (
+                <div className="service-screw service-screw__top">
+                  <img src={screw} alt="" />
+                </div>
+              )}
+              {item.data.hasScrewdriver && (
+                <div className="service-screwdriver">
+                  <img src={screwdriver} alt="" />
+                </div>
+              )}
+              {item.data.hasScrewBottom && (
+                <div className="service-screw service-screw__bottom">
+                  <img src={screw} alt="" />
+                </div>
+              )}
+              <div className="service_title inter18-600">
+                {item.data.title}
+              </div>
+              <div className="service_desc inter14-400">
+                {item.data.description}
+              </div>
+              <div className="service_link inter13-500">
+                Подробнее
+              </div>
+            </Link>
+          );
+        }
+
+        if (item.type === 'info') {
+          const titles = [
+            'Делаем быстро и без сбоев',
+            'Все решения в одном месте'
+          ];
+          const descriptions = [
+            'Мы организуем логистику так, чтобы вы получили товар в срок',
+            'Вы не тратите время на поиски: у нас доставка, инструмент, сервис и материалы'
+          ];
+          
+          return (
+            <div key={`info-${item.index}`} className="services-item services-info">
+              <div className="services-info_title inter18-500">
+                {titles[item.index === 1 ? 0 : 1]}
+              </div>
+              <div className="services-info_desc inter14-400">
+                {descriptions[item.index === 1 ? 0 : 1]}
+              </div>
+            </div>
+          );
+        }
+
+        if (item.type === 'image') {
+          return (
+            <div key="image" className="services-item services-img">
+              <img src={servicesImg} alt="" />
+            </div>
+          );
+        }
+
+        return <div key={`empty-${item.index}`} className="services-item services-empty" />;
+      })}
     </div>
-  )
-}
+  );
+};
 
 export default Services;
