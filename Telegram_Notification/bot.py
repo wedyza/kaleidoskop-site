@@ -52,7 +52,10 @@ def paste_session(chat_id):
 
 def remove_session(chat_id):
     session = read_session()
+    print('Removing session')
+    print(session)
     session["session"].remove(chat_id)
+    print(session)
     write_session(session)
 
 

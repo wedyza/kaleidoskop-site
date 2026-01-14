@@ -97,6 +97,7 @@ class NomenclatureCategory(UUIDModel):
     class Meta:
         verbose_name = 'Номенклатура<->Категория'
         verbose_name_plural = "Номенклатуры<->Категории"
+        unique_together = ['nomenclature', 'category']
 
 
 class Item(UUIDModel):
