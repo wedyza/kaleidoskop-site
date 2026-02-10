@@ -1,4 +1,5 @@
-from .models import Nomenclature
+from typing import List
+from .models import Nomenclature, Category, Item
 
 def get_nomenclatures(level_of_nesting:int):
     nomenclatures = Nomenclature.objects.filter(parent=None).all()
@@ -15,3 +16,11 @@ def get_daughter_nomenclatures(nomenclatures):
         now = returning.count() 
         if past - now == 0:
             return returning
+        
+def get_items_queryset_of_category(category):
+    daughter_categories = category.daughter.all()
+    base_nomenclatures = category.nomenclatures.all()
+    for daughter in daughter_categories:
+        base_nomenclatures |= daughter.nomenclatures.all()
+    nomenclatures = get_daughter_nomenclatures(base_nomenclatures)
+    return Item.objects.filter(nomenclature__in=nomenclatures)

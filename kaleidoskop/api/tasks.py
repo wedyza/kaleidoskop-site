@@ -1,12 +1,3 @@
-#from celery import shared_task
-#from .models import Order
-#from users.tasks import multitasker
-#import httpx
-#from django.conf import settings
-
-# @multitasker
-# @shared_task
-# def create_order_1C(order: Order): # Возможно нельзя будет это делать асинхронно, и надо будет прямо внутри кода дожидаться ответа, чтобы сгенерить ссылку для оплаты из 1С..
 from .models import Brand, ItemImage, Item, Parameter, ParameterItem, Shop
 from django.core.files.base import ContentFile
 import xml.etree.ElementTree as ET
@@ -22,16 +13,16 @@ client = httpx.Client(headers={
 })
 
 def save_image(url, image_name, item:Item, client=None):
-    # try:
-    #     if client is None:
-    #         response = httpx.get(url)
-    #     else:
-    #         response = client.get(url)
-    #     bytes = response.content
-    #     content_file = ContentFile(bytes, name=image_name)
-    #     image = ItemImage.objects.create(source=content_file, item=item)
-    # except Exception as e:
-    #     print(e)
+    try:
+        if client is None:
+            response = httpx.get(url)
+        else:
+            response = client.get(url)
+        bytes = response.content
+        content_file = ContentFile(bytes, name=image_name)
+        image = ItemImage.objects.create(source=content_file, item=item)
+    except Exception as e:
+        print(e)
     return
 
 def parse_xml_file():
@@ -262,3 +253,8 @@ def parse_all():
     parse_catalog_xml('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/PRODAT_369147_1233114904.xml')
     parse_catalog_xml('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/PRODAT_369147_1233126057.xml')
     print("END")
+
+
+def start_app():
+    initialize_shops()
+    parse_all()

@@ -30,7 +30,7 @@ from search.documents import ItemDocument
 from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from .functions import get_daughter_nomenclatures
+from .functions import get_daughter_nomenclatures, get_items_queryset_of_category
 from django.db.models import F, Sum
 from users.tasks import delete_order_1c, update_user_1c, create_order_1c, produce_tg_notification
 import httpx
@@ -68,12 +68,7 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
     )
     def get_items(self, request, pk):
         category = Category.objects.get(id=pk)
-        daughter_categories = category.daughter.all()
-        base_nomenclatures = category.nomenclatures.all()
-        for daughter in daughter_categories:
-            base_nomenclatures |= daughter.nomenclatures.all()
-        nomenclatures = get_daughter_nomenclatures(base_nomenclatures)
-        items=  Item.objects.filter(nomenclature__in=nomenclatures).all()
+        items = get_items_queryset_of_category(category).all()
         filter = ItemFilter(request.GET, queryset=items)
         if not filter.is_valid():
             return Response(filter.errors, status=400)
@@ -258,7 +253,6 @@ class CommentViewSet(
 
 class UsersViewSet(
     viewsets.GenericViewSet,
-    mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
     mixins.RetrieveModelMixin,
 ):
@@ -434,15 +428,24 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
         
         if order.status == Order.OrderStatus.SENDED:
             delete_order_1c(order.code) 
-            # order.delete()
+            order.delete()
         else:
             return Response({'detail': 'Невозможно отменить заказ, который был согласован. Чтобы отменить его, позвоните менеджеру'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"detail": "success"})
 
-class BrandViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
-    queryset = Brand.objects.all()
+class BrandViewSet(viewsets.GenericViewSet):
     serializer_class = BrandSerializer
     permission_classes = (permissions.AllowAny,)
+
+    @action(methods=["GET"], detail=False, url_path="(?P<pk>[^/.]+)") # для получения брендов по категории
+    def get_brands_of_category(self, request, pk):
+        try:
+            category = Category.objects.get(id=pk)
+        except:
+            return Response({"detail": "Not found category with that id"}, status=status.HTTP_404_NOT_FOUND)
+        items = get_items_queryset_of_category(category)
+        queryset = Brand.objects.filter(id__in=items.values_list("brand_id", flat=True).distinct()).all()
+        return Response(self.get_serializer(instance=queryset, many=True).data)
 
 
 class ShopViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):

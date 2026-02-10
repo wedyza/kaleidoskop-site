@@ -106,7 +106,7 @@ DATABASES = {
         "NAME": os.getenv("POSTGRES_DB"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("DB_HOST") if not CONTAINER_LAUNCHER else 'db',
+        "HOST": os.getenv("DB_HOST", 'localhost') if not CONTAINER_LAUNCHER else 'db',
         "PORT": os.getenv("DB_PORT"),
     }
 }
@@ -176,7 +176,6 @@ AWS_S3_ADDRESSING_STYLE = "path"
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq//"  # Когда пакуешь в контейнер поменять localhost->rabbitmq
 BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq:5672//" # Когда пакуешь в контейнер поменять localhost->rabbitmq
-# CELERY_BACKEND_URL = os.getenv("CELERY_BACKEND_URL", "redis://localhost")
 
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
 USER_1C = os.getenv("USER_1C")
@@ -207,20 +206,12 @@ SIMPLE_JWT = {
 
 ELASTICSEARCH_DSL = {
     "default": {
-        "hosts": "http://192.168.0.203:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
+        "hosts": "http://localhost:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
         "http_auth": ("elastic", "MyPassword"),
         "verify_certs": False,
         "ca_certs": None,
     }
 }
-
-# AUTHENTICATION_BACKENDS = [
-#    'django.contrib.auth.backends.ModelBackend',
-# ]
-
-# ESSION_COOKIE_SECURE = True
-# SESSION_COOKIE_DOMAIN = None
-# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 LANGUAGE_CODE = 'ru-RU'
 
