@@ -7,11 +7,11 @@ const PaintColoringPage = () => {
 
       <div className='service-page_content'>
         <div className='service-page_card service-page_info inter16-400'>
-          <p>
-            При покупке краски в магазине колеровка 
-            предоставляется <span className='inter16-600'>бесплатно</span>.
+          <p className='service-page_info-p__wide'>
+            При покупке в наших магазинах, услуга колеровки
+            предоставляется <span className='inter16-600'>бесплатно</span>, оплачиваются только необходимые колеры.
           </p>
-          <p className='service-page_p'>
+          <p className='service-page_p service-page_info-p__narrow'>
             При колеровке краски, приобретенной отдельно, 
             стоимость услуги <span className='inter16-600'>рассчитывается по прайс-листу</span>.
           </p>

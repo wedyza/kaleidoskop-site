@@ -52,6 +52,12 @@ const MakeOrderPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    return () => {
+      dispatch(clearCurrentOrder());
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
     if (user) {
       setFormData({
         phone_number: user.phone_number || '',

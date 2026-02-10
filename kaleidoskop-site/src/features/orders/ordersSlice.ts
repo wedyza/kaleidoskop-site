@@ -209,7 +209,6 @@ const orderSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
         state.currentOrder = action.payload;
-        // Добавляем новый заказ в начало списка
         state.orders.unshift(action.payload);
         state.totalOrdersCount += 1;
       })

@@ -59,7 +59,7 @@ const ServiceCenterPage = () => {
                 6
               </span>
               <span className='service-page_item-text'>
-                Доставка инструмента в сервис
+                Клепка цепи
               </span>
             </li>
             <li className='service-page_item'>
@@ -67,7 +67,7 @@ const ServiceCenterPage = () => {
                 7
               </span>
               <span className='service-page_item-text'>
-                Клепка цепи
+                Бесплатное обслуживание гарантийного товара
               </span>
             </li>
           </ul>

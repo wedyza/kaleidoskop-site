@@ -17,7 +17,7 @@ const SheetBendingPage = () => {
             труб, ДВП и ДСП</span> указаны в <span className='service-page_text__underline'>прайсе</span>
           </p>
           <p className='service-page_p'>
-            Цены на металлические кровельные изделия:
+            Цены на <span className='inter16-600'>металлические кровельные изделия</span>:
           </p>
 
           <div className='services-page_prices'>

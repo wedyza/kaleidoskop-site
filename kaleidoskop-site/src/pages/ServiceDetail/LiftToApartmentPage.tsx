@@ -8,8 +8,8 @@ const LiftToApartmentPage = () => {
       <div className='service-page_content'>
         <div className='service-page_card service-page_info inter16-400'>
           <p>
-            Услуга подъема товара <span className='inter16-600'>на этаж 
-            с заносом в квартиру или офис</span>.
+            Услуга подъема товара <span className='inter16-600'>на этаж с последующим 
+            занесением и размещением в указанном помещении (квартира или офис)</span>.
           </p>
           <p className='service-page_p'>
             Подъём товара выполняется наёмными грузчиками. Цены, 
