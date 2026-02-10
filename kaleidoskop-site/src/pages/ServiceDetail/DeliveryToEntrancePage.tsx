@@ -1,6 +1,21 @@
 import './ServiceDetail.scss'
+import ServiceProcess, { type ServiceProcessCard } from './ServiceProcess/ServiceProcess';
 
 const DeliveryToEntrancePage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'При оформлении заказа на сайте выберите доставку до подъезда и укажите данные для доставки. Дождитесь звонка оператора для подтверждения.',
+      buttonText: 'Выбрать товар в каталоге',
+    },
+    {
+      id: 2,
+      description: 'Вы можете заказать доставку по телефону. Мы согласуем удобное время, уточним адрес и проконсультируем по всем вопросам.',
+      buttonText: 'Позвонить',
+      isPhone: true,
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Доставка до подъезда</h1>
@@ -33,6 +48,7 @@ const DeliveryToEntrancePage = () => {
             можно дополнительно оформить услугу подъема.
           </p>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )

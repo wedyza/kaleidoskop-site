@@ -1,6 +1,16 @@
 import './ServiceDetail.scss'
+import ServiceProcess, { type ServiceProcessCard } from './ServiceProcess/ServiceProcess';
 
 const SheetBendingPage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'Закажите услуги листогиба и резки по телефону — наши специалисты согласуют время и детали работы.',
+      buttonText: 'Позвонить',
+      isPhone: true,
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Услуги листогиба и реза</h1>
@@ -35,6 +45,7 @@ const SheetBendingPage = () => {
             </div>
           </div>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )

@@ -1,6 +1,22 @@
 import './ServiceDetail.scss'
+import type { ServiceProcessCard } from './ServiceProcess/ServiceProcess';
+import ServiceProcess from './ServiceProcess/ServiceProcess';
 
 const TransportServicesPage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'При оформлении заказа на сайте выберите аренда автомобиля. Дождитесь звонка оператора для подтверждения..',
+      buttonText: 'Выбрать товар в каталоге',
+    },
+    {
+      id: 2,
+      description: 'Бронируйте аренду по телефону — наши специалисты помогут выбрать подходящее авто и согласовать время.',
+      buttonText: 'Позвонить',
+      isPhone: true,
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Транспортные услуги</h1>
@@ -28,6 +44,7 @@ const TransportServicesPage = () => {
             </div>
           </div>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )

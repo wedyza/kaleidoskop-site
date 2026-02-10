@@ -1,6 +1,22 @@
 import './ServiceDetail.scss'
+import type { ServiceProcessCard } from './ServiceProcess/ServiceProcess';
+import ServiceProcess from './ServiceProcess/ServiceProcess';
 
 const LiftToApartmentPage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'При оформлении заказа на сайте выберите подъем товара до квартиры и укажите данные для доставки. Дождитесь звонка оператора для подтверждения.',
+      buttonText: 'Выбрать товар в каталоге',
+    },
+    {
+      id: 2,
+      description: 'Оформите подъём товара по телефону — наши специалисты согласуют время и обсудят все детали работы.',
+      buttonText: 'Позвонить',
+      isPhone: true,
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Подъем товара до квартиры</h1>
@@ -31,6 +47,7 @@ const LiftToApartmentPage = () => {
             Услуга оформляется дополнительно к доставке
           </p>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )

@@ -1,6 +1,16 @@
 import './ServiceDetail.scss'
+import ServiceProcess, { type ServiceProcessCard } from './ServiceProcess/ServiceProcess'
 
 const ServiceCenterPage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'Закажите доставку по телефону или получите консультацию по указанному номеру.',
+      buttonText: 'Позвонить',
+      isPhone: true,
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Сервисный центр</h1>
@@ -79,6 +89,7 @@ const ServiceCenterPage = () => {
             по <span className='service-page_text__underline'>телефону</span>.
           </p>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )

@@ -1,0 +1,48 @@
+.service-process {
+  background-color: var(--white);
+  padding: 30px 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow3);
+}
+
+.service-process_cards {
+  display: grid;
+  margin-top: 20px;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.service-process_card {
+  background-color: var(--grey50);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.service-process_card-acts {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.service-process_card-button {
+  color: var(--orange500);
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--orange500);
+}
+
+.service-process_card-phone {
+  color: var(--grey500);
+  display: flex;
+  gap: 5px;
+}
+
+.service-process_card-phone-btn {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,6 +1,15 @@
 import './ServiceDetail.scss'
+import ServiceProcess, { type ServiceProcessCard } from './ServiceProcess/ServiceProcess'
 
 const PaintColoringPage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'Для колеровки краски посетите наш магазин. Специалисты выполнят работу на месте и вы получите готовый цвет сразу.',
+      buttonText: 'Адреса магазинов',
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Колеровка краски</h1>
@@ -25,6 +34,7 @@ const PaintColoringPage = () => {
             </div>
           </div>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )

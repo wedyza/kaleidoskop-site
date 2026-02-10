@@ -1,6 +1,22 @@
 import './ServiceDetail.scss'
+import type { ServiceProcessCard } from './ServiceProcess/ServiceProcess';
+import ServiceProcess from './ServiceProcess/ServiceProcess';
 
 const ManipulatorDeliveryPage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'При оформлении заказа на сайте выберите доставку манипулятором и укажите данные для доставки. Дождитесь звонка оператора для подтверждения.',
+      buttonText: 'Выбрать товар в каталоге',
+    },
+    {
+      id: 2,
+      description: 'Вы можете заказать доставку по телефону. Мы согласуем удобное время, уточним адрес и проконсультируем по всем вопросам.',
+      buttonText: 'Позвонить',
+      isPhone: true,
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Доставка манипулятором</h1>
@@ -33,6 +49,7 @@ const ManipulatorDeliveryPage = () => {
             можно дополнительно оформить <span className='service-page_text__underline'>услугу подъема</span>.
           </p>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )

@@ -1,6 +1,16 @@
 import './ServiceDetail.scss'
+import ServiceProcess, { type ServiceProcessCard } from './ServiceProcess/ServiceProcess'
 
 const WaterDeliveryPage = () => {
+  const processCards: ServiceProcessCard[] = [
+    {
+      id: 1,
+      description: 'Оформите доставку воды по телефону — наши специалисты согласуют удобное время и все детали.',
+      buttonText: 'Позвонить',
+      isPhone: true,
+    },
+  ];
+
   return (
     <div className='service-page'>
       <h1 className='service-title inter28-600'>Доставка воды</h1>
@@ -15,6 +25,7 @@ const WaterDeliveryPage = () => {
             Доставка выполняется до подъезда в согласованное время.
           </p>
         </div>
+        <ServiceProcess cards={processCards} />
       </div>
     </div>
   )
