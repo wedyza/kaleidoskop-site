@@ -18,6 +18,11 @@ const routeTitles: Record<string, string> = {
   '/services/service-center': 'Сервисный центр',
   '/services/lift-to-apartment': 'Подъем товара до квартиры',
   '/services/transport-services': 'Транспортные услуги',
+  '/delivery-payment': 'Доставка и оплата',
+  '/suppliers': 'Поставщикам',
+  '/about': 'О компании',
+  '/loyalty-cards': 'О картах лояльности',
+  '/contacts': 'Контакты',
 };
 
 export const SectionLayout = () => {

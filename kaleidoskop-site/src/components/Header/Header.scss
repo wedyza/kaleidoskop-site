@@ -35,6 +35,11 @@
   margin-left: 35px;
 }
 
+.header-info_link,
+.header-info_link:visited {
+  color: var(--white);
+}
+
 .header-info_contacts {
   margin-top: 6px;
   margin-left: auto;

@@ -80,7 +80,6 @@
 
 .service-page_item {
   display: flex;
-  gap: 10px;
   background-color: var(--grey50);
   border-radius: 5px;
   height: 35px;
@@ -92,7 +91,15 @@
   color: var(--grey300);
   font-weight: 600;
   padding: 0 10px;
-  border-right: 1px solid var(--grey100);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.service-page_item-text {
+  padding: 0 10px;
+  border-left: 1px solid var(--grey100);
+  padding-left: 10px;
   height: 100%;
   display: flex;
   align-items: center;

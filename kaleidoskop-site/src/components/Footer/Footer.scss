@@ -58,6 +58,9 @@
 
 .footer_main-info {
   display: flex;
+  height: 100%;
+  margin-bottom: 37px;
+  gap: 68px;
 }
 
 .footer_list {
@@ -68,10 +71,11 @@
 }
 
 .footer_info-container {
-  margin-left: 68px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 10px;
+  justify-content:  space-between;
+  height: 100%;
 }
 
 .footer-net_list {

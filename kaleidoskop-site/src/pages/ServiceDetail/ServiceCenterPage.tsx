@@ -23,7 +23,7 @@ const ServiceCenterPage = () => {
           </p>
 
           <p className='inter16-600 service-page_text-info'>Предоставляемые услуги:</p>
-          <ul className='service-page_list'>
+          <ol className='service-page_list'>
             <li className='service-page_item'>
               <span className='service-page_item-number'>
                 1
@@ -80,7 +80,7 @@ const ServiceCenterPage = () => {
                 Бесплатное обслуживание гарантийного товара
               </span>
             </li>
-          </ul>
+          </ol>
 
           <p>
             Стоимость данных услуг рассчитывается исходя из <span className='inter16-600'>сложности 

@@ -1,0 +1,31 @@
+.suppliers-content {
+  display: grid;
+  grid-template-columns: 58% 1fr;
+  gap: 13px;
+  margin-top: 30px;
+}
+
+.suppliers-card {
+  background-color: var(--white);
+  box-shadow: var(--shadow3);
+  border-radius: var(--border-radius);
+  padding: 30px 40px 35px 40px;
+}
+
+.suppliers-info {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.suppliers-contacts {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.suppliers-contacts_content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

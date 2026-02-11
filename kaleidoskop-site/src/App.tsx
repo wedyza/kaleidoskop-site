@@ -40,6 +40,11 @@ import SheetBendingPage from './pages/ServiceDetail/SheetBendingPage';
 import ServiceCenterPage from './pages/ServiceDetail/ServiceCenterPage';
 import LiftToApartmentPage from './pages/ServiceDetail/LiftToApartmentPage';
 import TransportServicesPage from './pages/ServiceDetail/TransportServicesPage';
+import DeliveryPage from './pages/DeliveryPage/DeliveryPage';
+import SuppliersPage from './pages/SuppliersPage/SuppliersPage';
+import AboutPage from './pages/AboutPage/AboutPage';
+import LoyaltyCardsPage from './pages/LoyaltyCardsPage/LoyaltyCardsPage';
+import ContactsPage from './pages/ContactsPage/ContactsPage';
 
 function App() {
   const isLoading = useAppSelector(selectGlobalLoading);
@@ -99,6 +104,13 @@ function App() {
               <Route path="/services/service-center" element={<ServiceCenterPage />} />
               <Route path="/services/lift-to-apartment" element={<LiftToApartmentPage />} />
               <Route path="/services/transport-services" element={<TransportServicesPage />} />
+              
+              <Route path="/delivery-payment" element={<DeliveryPage />} />
+              <Route path="/suppliers" element={<SuppliersPage />} />
+
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/loyalty-cards" element={<LoyaltyCardsPage />} />
+              <Route path="/contacts" element={<ContactsPage />} />
             </Route>
             <Route path="/" element={<MainPage />} />
             <Route path="/search" element={<SearchPage />} />

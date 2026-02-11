@@ -62,17 +62,18 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
           <div className="header-info_link">
             Магазины
           </div>
-          <div className="header-info_link">
-            Доставка и оплата
-          </div>
-          <div className="header-info_link">
-            Поставщикам
-          </div>
+          <Link to={'delivery-payment'}>
+            <span className="header-info_link">
+              Доставка и оплата
+            </span>
+          </Link>
+          <Link to={'suppliers'}>
+            <span className="header-info_link">
+              Поставщикам
+            </span>
+          </Link>
           <div className="header-info_link">
             Юридическим лицам
-          </div>
-          <div className="header-info_link">
-            Подарочные сертификаты
           </div>
         </nav>
         <div className="header-info_contacts">

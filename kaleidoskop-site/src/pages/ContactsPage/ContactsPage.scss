@@ -1,0 +1,51 @@
+.contatcs-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.contacts-card {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow3);
+  padding: 40px;
+  height: 212px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  justify-content: space-between;
+}
+
+.contacts-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contacts-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.contacts-link {
+  height: 42px;
+  width: 42px;
+  border-radius: 7.5px;
+  overflow: hidden;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.contacts_stores-link {
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--orange500);
+}
+
+.contacts_stores-link,
+.contacts_stores-link:visited {
+  color: var(--orange500);
+}

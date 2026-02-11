@@ -1,0 +1,114 @@
+.loyalty-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.loyalty-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.loyalty-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.loyalty-card {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow3);
+  padding: 40px;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.loyalty-subtitle {
+  margin-top: 50px;
+}
+
+.loyalty_price-table {
+  margin-top: 20px;
+  max-width: 1133px;
+}
+
+.loyalty_price-item {
+  display: grid;
+  grid-template-columns: 52.5% 1fr;
+  font-weight: 600;
+  color: var(--orange500);
+  height: 49px;
+  align-items: center;
+  padding: 0 30px;
+  border-radius: var(--border-radius);
+}
+
+.loyalty_price-item:nth-child(2n-1) {
+  background-color: var(--grey50);
+}
+
+.loyalty_price-head {
+  font-weight: 400;
+  color: var(--black-r);
+}
+
+.loyalty_rules-list {
+  margin-top: 10px;
+}
+
+.loyalty-info_list {
+  display: flex;
+  flex-direction: column;
+  counter-reset: step-counter;
+  line-height: 150%;
+
+  li {
+    line-height: 150%;
+  }
+}
+
+.loyalty_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loyalty_info-title {
+  margin-top: 10px;
+}
+
+.loyalty_info-text {
+  margin-top: 15px;
+  max-width: 480px;
+  text-align: center;
+}
+
+.loyalty_info-call {
+  margin-top: 25px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--orange500);
+}
+
+.loyalty_info-call-icon {
+  background-color: var(--orange100);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6.5px;
+}
+
+.loyalty_info-call-label {
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--orange500);
+}

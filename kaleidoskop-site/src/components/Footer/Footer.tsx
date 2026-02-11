@@ -2,6 +2,7 @@ import './Footer.scss'
 import logo from './../../assets/logo.svg'
 import vk from './../../assets/vk.svg'
 import ok from './../../assets/ok.svg'
+import { Link } from 'react-router-dom'
 
 const Footer: React.FC = () => {
   return (
@@ -22,26 +23,24 @@ const Footer: React.FC = () => {
       </div>
       <div className="footer-info">
         <div className="footer_main-info">
-          <div className="footer-nav">
-            <div className="footer-nav_title inter20-700">
-              Навигация
-            </div>
-            <div className="footer-nav_list footer_list inter14-300">
-              <p>Магазины</p>
-              <p>Доставка и оплата</p>
-              <p>Поставщикам</p>
-              <p>Юридическим лицам</p>
-            </div>
-          </div>
           <div className="footer_info-container">
-            <div className="footer-about">
-              <div className="footer-about_title inter20-700">
-                О нас
+            <div className="footer-nav">
+              <div className="footer-nav_title inter20-700">
+                Навигация
               </div>
-              <div className="footer-about_list footer_list inter14-300">
-                <p>Вакансии</p>
-                <p>Контакты</p>
-                <p>Блог</p>
+              <div className="footer-nav_list footer_list inter14-300">
+                <p>Магазины</p>
+                <Link to={'delivery-payment'}>
+                  <span className="header-info_link">
+                    Доставка и оплата
+                  </span>
+                </Link>
+                <Link to={'suppliers'}>
+                  <span className="header-info_link">
+                    Поставщикам
+                  </span>
+                </Link>
+                <p>Юридическим лицам</p>
               </div>
             </div>
             <div className="footer-net">
@@ -56,6 +55,30 @@ const Footer: React.FC = () => {
                   <img src={ok} alt="" />
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="footer-about">
+            <div className="footer-about_title inter20-700">
+              О нас
+            </div>
+            <div className="footer-about_list footer_list inter14-300">
+              <Link to={'about'}>
+                <span className="header-info_link">
+                  О компании
+                </span>
+              </Link>
+              <p>Новости и статьи</p>
+              <Link to={'loyalty-cards'}>
+                <span className="header-info_link">
+                  О картах лояльности
+                </span>
+              </Link>
+              <Link to={'contacts'}>
+                <span className="header-info_link">
+                  Контакты и реквизиты
+                </span>
+              </Link>
+              <p>Вакансии</p>
             </div>
           </div>
           <div className="footer_contact-container">
