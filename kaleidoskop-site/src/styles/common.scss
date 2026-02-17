@@ -3,6 +3,7 @@
   --black-r: #000;
   --black-g: #161616;
   --black10: rgba(0, 0, 0, 0.1);
+  --black15: rgba(0, 0, 0, 0.15);
   --black30: rgba(0, 0, 0, 0.3);
 
   --grey950: #262626;
@@ -49,10 +50,12 @@
   --shadow3: 0 0 15px 0px rgba(0, 0, 0, 0.05);
   --shadow10: 0 0 15px 0px rgba(0, 0, 0, 0.1);
   --header-height: 149px;
+  --header-height__mobile: 96px;
+  --header-nav__mobile: 75px;
   --nav-width: 272px;
 }
 
-$breakpoint-laptop: 1290px;
+$breakpoint-laptop: 1100px;
 $breakpoint-tablet: 780px;
 $breakpoint-mobile: 480px;
 
@@ -95,6 +98,16 @@ a, a:link, button {
   padding: var(--padding);
   padding-bottom: 110px;
   padding-top: var(--header-height);
+}
+
+@media (max-width: $breakpoint-laptop) {
+  .page-content {
+    padding-top: var(--header-height__mobile);
+  }
+
+  .page {
+    padding-bottom: calc(var(--header-nav__mobile) - 15px);
+  }
 }
 
 .inter32-700 {
