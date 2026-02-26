@@ -54,14 +54,13 @@ class BrandSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ItemSerializer(serializers.ModelSerializer): # Завтра проверить характеристики, также подключить их для фильтров в категории?
+class ItemDetailSerializer(serializers.ModelSerializer):
     remains = ItemRemainsSerializer(many=True, read_only=True)
     in_wishlist = serializers.SerializerMethodField("get_in_wishlist", read_only=True)
     cart_count = serializers.SerializerMethodField("get_cart_count", read_only=True)
     images = ItemImageSerializer(many=True, read_only=True)
     parameters = ParameterItemSerializer(many=True, read_only=True)
     brand = BrandSerializer(read_only=True)
-    # discount = serializers.SerializerMethodField('get_discount', read_only=True)
 
     class Meta:
         model = Item
@@ -102,22 +101,44 @@ class ItemSerializer(serializers.ModelSerializer): # Завтра провери
             return cart_item
         return cart_item.amount
 
-    def get_discount(self, obj):
-        if obj.price_group == Item.PriceGroup.NOTHING or obj.price_group is None:
-            return 0
-        elif obj.price_group == Item.PriceGroup.THIRD:
-            return 3
-        elif obj.price_group == Item.PriceGroup.FIRST:
-            return 1
-        elif obj.price_group == Item.PriceGroup.SECOND:
-            return 2
-        elif obj.price_group == Item.PriceGroup.FOURTH:
-            return 4
-        return 5
+class ItemListSerializer(ItemDetailSerializer): # Завтра проверить характеристики, также подключить их для фильтров в категории?
+    class Meta:
+        model = Item
+        fields = (
+            "id",
+            "title",
+            "price",
+            "article",
+            "slug",
+            "in_wishlist",
+            "cart_count",
+            'images',
+        )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
+
+    
+    def get_in_wishlist(self, obj):
+        user = self.context["request"].user
+        if user.is_anonymous:
+            return False
+        
+        wishlist = Like.objects.filter(user=user).filter(item=obj).first()
+
+        return not wishlist is None
+
+    def get_cart_count(self, obj):
+        user = self.context["request"].user
+        if user.is_anonymous:
+            return None
+        
+        cart_item = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=user).filter(current_cart=True))).filter(item=obj).first()
+
+        if cart_item is None:
+            return cart_item
+        return cart_item.amount
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    item = ItemSerializer(read_only=True)
+    item = ItemDetailSerializer(read_only=True)
 
     class Meta:
         model = CartItem
@@ -134,7 +155,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 class LikeSerializer(serializers.ModelSerializer):
-    item = ItemSerializer()
+    item = ItemListSerializer()
 
     class Meta:
         model = Like

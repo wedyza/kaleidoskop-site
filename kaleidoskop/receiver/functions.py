@@ -1,5 +1,4 @@
 from api.models import Category, Item, Nomenclature, Order, Remains, Warehouse
-from api.serializers import ItemSerializer
 from django.db.models import Q
 
 def get_or_create_item(item) -> tuple[Item, bool]:

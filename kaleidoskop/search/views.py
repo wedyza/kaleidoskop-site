@@ -6,7 +6,6 @@ from elasticsearch_dsl import Q
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from django_elasticsearch_dsl import Document
-from api.serializers import ItemSerializer
 from .documents import ItemDocument
 
 
@@ -37,13 +36,3 @@ class PaginatedElasticSearchAPIView:  # Общий клаасс для поис�
         return Response(serializer.data)
         # except Exception as e:
         #     return HttpResponse(e, status=500)
-
-
-class ItemSearchView(PaginatedElasticSearchAPIView):
-    serializer_class = ItemSerializer
-    document_class = ItemDocument
-
-    def generate_q_expression(self, query):
-        return Q(
-            "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
-        )

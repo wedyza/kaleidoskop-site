@@ -128,6 +128,8 @@ services:
       rabbitmq:
         condition: service_healthy
     command: python bot.py
+    # volumes: # разобраться с конфигом
+    #   - ./Telegram_Notification/config.json:config.json
     # profiles: [donotstart]
   
   recommendation_system:

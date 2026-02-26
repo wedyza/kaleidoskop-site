@@ -12,7 +12,7 @@ from .serializers import (
     CartSerializer,
     CategorySerializer,
     ItemCartAmountSerialzier,
-    ItemSerializer,
+    ItemDetailSerializer,
     LikeSerializer,
     CommentSerializer,
     ListCartItemSerializer,
@@ -22,7 +22,8 @@ from .serializers import (
     ShopSerializer,
     SwitchSerializer,
     UserSerializer,
-    CartTo1CSerializer
+    CartTo1CSerializer,
+    ItemListSerializer
 )
 from .models import Banner, Brand, Cart, Category, Item, Like, Comment, CartItem, Order, Shop
 from search.views import PaginatedElasticSearchAPIView
@@ -39,7 +40,7 @@ from django.utils import timezone
 from django.conf import settings
 
 User = get_user_model()
-
+# Может быть потом выделить сервисный слой и работать в нём?
 class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     queryset = Category.objects.filter(active=True).all()
     serializer_class = CategorySerializer
@@ -64,7 +65,7 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
         detail=True,
         url_path="items",
         pagination_class=CustomPagination,
-        serializer_class=ItemSerializer,
+        serializer_class=ItemListSerializer,
     )
     def get_items(self, request, pk):
         category = Category.objects.get(id=pk)
@@ -92,14 +93,17 @@ class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
 
 class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
-    serializer_class = ItemSerializer
     queryset = Item.objects.all()
     pagination_class = CustomPagination
     filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ['price']
-    serializer_class = ItemSerializer
     filterset_class = ItemFilter
     document_class = ItemDocument
+    
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ItemDetailSerializer
+        return ItemListSerializer
 
     def generate_q_expression(self, query):
         return Q(

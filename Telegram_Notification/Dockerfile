@@ -6,6 +6,4 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt --no-cache-dir  
 
-COPY . .
-
-# CMD ["bin/bash/", "-c", "python bot.py"]
+COPY __init__.py .env bot.py rabbitmq.py config.json ./

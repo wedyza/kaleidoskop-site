@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from api.models import Item, Like, CartItem, Cart
-from api.serializers import ItemSerializer
+from api.serializers import ItemDetailSerializer
 class ItemToAIModel(serializers.ModelSerializer):
     class Meta:
         model = Item
@@ -9,7 +9,7 @@ class ItemToAIModel(serializers.ModelSerializer):
 
 class ItemFromAISerializer(serializers.Serializer):
     product_id = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), write_only=True)
-    item = ItemSerializer(read_only=True)
+    item = ItemDetailSerializer(read_only=True)
     similarity_score = serializers.FloatField()
     rank = serializers.IntegerField()
 
