@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
       </div>
       <div className="footer-info">
         <div className="footer_main-info">
-          <div className="footer_info-container">
+          {/* <div className="footer_info-container"> */}
             <div className="footer-nav">
               <div className="footer-nav_title inter20-700">
                 Навигация
@@ -56,7 +56,7 @@ const Footer: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          {/* </div> */}
           <div className="footer-about">
             <div className="footer-about_title inter20-700">
               О нас

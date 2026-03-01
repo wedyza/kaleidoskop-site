@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .footer {
   display: flex;
   //height: 353px;
@@ -57,10 +59,15 @@
 }
 
 .footer_main-info {
-  display: flex;
   height: 100%;
   margin-bottom: 37px;
-  gap: 68px;
+  display: grid;
+  grid-template-areas: 
+    'nav about contacts'
+    'net about contacts';
+  row-gap: 10px;
+  column-gap: 68px;
+  grid-template-columns: auto auto 1fr;
 }
 
 .footer_list {
@@ -124,4 +131,46 @@
   border-top: 1px solid var(--grey900);
   padding-top: 15px;
   margin-top: auto;
+}
+
+.footer-nav {
+  grid-area: nav;
+}
+
+.footer-net {
+  grid-area: net;
+}
+
+.footer-about {
+  grid-area: about;
+}
+
+.footer_contact-container {
+  grid-area: contacts;
+}
+
+@media (max-width: common.$breakpoint-laptop) {
+  .footer_main-info {
+    grid-template-areas: 
+      'about nav'
+      'contacts net';
+    grid-template-columns: 1fr 1fr;
+    row-gap: 32px;
+  }
+
+  .footer_contact-container {
+    margin-left: 0;
+  }
+
+  .footer-img {
+    display: none;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    padding-top: 20px;
+    padding-bottom: 15px;
+  }
 }
