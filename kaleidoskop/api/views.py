@@ -5,7 +5,9 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from .paginators import CustomPagination
 from admin_panel.models import Compilation
+from typing import Any
 from django.core.exceptions import ValidationError
+from exceptions.exceptions import NotFoundException
 from .serializers import (
     BrandSerializer,
     CartItemSerializer,
@@ -31,9 +33,12 @@ from search.documents import ItemDocument
 from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from .functions import get_daughter_nomenclatures, get_items_queryset_of_category
+# from .functions import get_daughter_nomenclatures, get_items_queryset_of_category
 from django.db.models import F, Sum
 from users.tasks import delete_order_1c, update_user_1c, create_order_1c, produce_tg_notification
+from services.category_service import CategoryService
+from services.item_service import ItemService
+from services.like_service import LikeService
 import httpx
 from .filters import ItemFilter
 from django.utils import timezone
@@ -44,6 +49,7 @@ User = get_user_model()
 class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     queryset = Category.objects.filter(active=True).all()
     serializer_class = CategorySerializer
+    service = CategoryService()
     pagination_class = CustomPagination
     permissions = (permissions.AllowAny, )
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -68,8 +74,7 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
         serializer_class=ItemListSerializer,
     )
     def get_items(self, request, pk):
-        category = Category.objects.get(id=pk)
-        items = get_items_queryset_of_category(category).all()
+        items = self.service.get_items_of_category(pk)
         filter = ItemFilter(request.GET, queryset=items)
         if not filter.is_valid():
             return Response(filter.errors, status=400)
@@ -87,10 +92,10 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
 class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     serializer_class = LikeSerializer
     permission_classes = (permissions.IsAuthenticated,)
-
+    service = LikeService()
+    
     def get_queryset(self):
-        return Like.objects.filter(user=self.request.user).all()
-
+        return self.service.get_likes_of_user(self.request.user.id)
 
 class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
     queryset = Item.objects.all()
@@ -98,19 +103,25 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
     filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ['price']
     filterset_class = ItemFilter
+    service = ItemService()
     document_class = ItemDocument
     
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> ItemDetailSerializer | ItemListSerializer:
         if self.action == 'retrieve':
             return ItemDetailSerializer
         return ItemListSerializer
+    
+    def serializer_class(self, *args, **kwargs) -> ItemDetailSerializer | ItemListSerializer:
+        if self.action == 'retrieve':
+            return ItemDetailSerializer(*args, **kwargs)
+        return ItemListSerializer(*args, **kwargs)
 
-    def generate_q_expression(self, query):
+    def generate_q_expression(self, query) -> Q:
         return Q(
             "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
         )
 
-    def get_serializer_context(self):
+    def get_serializer_context(self) -> dict[str, Any]:
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
@@ -125,7 +136,7 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             openapi.Parameter("ordering", openapi.IN_QUERY, description='Поля для сортировки: price', type=openapi.TYPE_STRING, enum=['price', '-price'])
         ]
     )
-    @action(detail=False, methods=["GET"], url_path="search/(?P<queryset>.*)")
+    @action(detail=False, methods=["GET"], url_path="search/(?P<queryset>.*)") # Тут взаимодействие с другим сервисом, хз, надо ли выделять или я потом вообще на индексы в Postgresql перейду
     def search(self, request, queryset=None):
         try:
             query = self.generate_q_expression(queryset)
@@ -151,16 +162,11 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
     )
     def switch_wishlist(self, request, pk):
         status = self.get_serializer(data=request.data)
-
         if not status.is_valid():
             return Response(status.errors)
-        like = Like.objects.filter(item_id=pk).filter(user=request.user).first()
-        if like is not None and not status.data["enable"]:
-            like.delete()
-        elif like is None and status.data["enable"]:
-            like = Like.objects.create(item_id=pk, user=request.user)
-            like.save()
-        return Response({"enable": status.data["enable"]})
+        
+        result = self.service.switch_wishlist_to_item(item_pk=pk, user_pk=self.request.user.id, status=status.data["enable"])
+        return Response({"enable": result})
 
     @action(
         detail=True,
@@ -173,33 +179,12 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
         data = self.get_serializer(data=request.data)
         if not data.is_valid():
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
-        current_cart = (
-            Cart.objects.filter(order=None)
-            .filter(current_cart=True)
-            .filter(user=self.request.user)
-            .first()
-        )
-
-        if current_cart is None:
-            current_cart = Cart.objects.create(user=self.request.user)
-            current_cart.save()
-
-        item = Item.objects.get(pk=pk)
-        cart_item = CartItem.objects.filter(item=item).filter(cart=current_cart).first()
         enable = data.data["enable"]
-        if enable and cart_item is None:
-            cart_item = CartItem.objects.create(cart=current_cart, item=item, amount=1)
-            cart_item.save()
-        elif not enable and not cart_item is None:
-            cart_item.delete()
-
-        return Response({"enabled": enable}, status=status.HTTP_200_OK)
+        result = self.service.add_item_to_cart(pk, self.request.user.id, enable)
+        return Response({"enabled": result}, status=status.HTTP_200_OK)
     
 
-    @swagger_auto_schema(
-        request_body=ItemCartAmountSerialzier(),
-        responses={201: CartItemSerializer()}
-    )
+    @swagger_auto_schema(request_body=ItemCartAmountSerialzier(), responses={201: CartItemSerializer()})
     @action(
         detail=True,
         permission_classes=(permissions.IsAuthenticated,),
@@ -212,16 +197,15 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
         if not amount.is_valid():
             return Response(amount.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        item = Item.objects.get(id=pk)
-        cart_item = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=request.user).filter(current_cart=True))).filter(item=item).first()
-
-        if cart_item is None:
+        try:
+            updated_cart_item = self.service.update_cart_item_amount(pk, self.request.user.id, amount.validated_data['amount'])
+            return Response(CartItemSerializer(instance=updated_cart_item, context={"request": request}).data)
+        except NotFoundException:
             return Response({"detail": "This item is not currently in cart!"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        cart_item.amount = amount.validated_data["amount"]
-        cart_item.save()
+        except Exception as e:
+            print(e)
+            return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(CartItemSerializer(instance=cart_item, context={"request": request}).data)
 
 
 class CommentViewSet(
