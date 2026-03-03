@@ -93,6 +93,7 @@ const CategoryPage = () => {
         onLoadMore={handleLoadMore}
         hasMore={hasMore}
         isLoadingMore={loading}
+        categoryId={categoryId!}
       />
     </div>
   )

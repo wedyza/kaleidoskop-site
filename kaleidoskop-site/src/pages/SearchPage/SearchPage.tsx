@@ -59,7 +59,6 @@ const SearchPage = () => {
         onLoadMore={handleLoadMore}
         hasMore={hasMore}
         isLoadingMore={false}
-        isSearch={true}
       />
     </div>
   )

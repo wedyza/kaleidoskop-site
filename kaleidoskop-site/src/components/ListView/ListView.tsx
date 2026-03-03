@@ -19,7 +19,7 @@ interface ListViewProps {
   onLoadMore?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;
-  isSearch?: boolean;
+  categoryId?: string;
 }
 
 const ListView: React.FC<ListViewProps> = ({ 
@@ -29,6 +29,7 @@ const ListView: React.FC<ListViewProps> = ({
   onLoadMore,
   hasMore = false,
   isLoadingMore = false,
+  categoryId = null,
 }) => {
   const dispatch = useAppDispatch();
   const { brands, loading: brandsLoading } = useAppSelector(state => state.brands);
@@ -46,7 +47,8 @@ const ListView: React.FC<ListViewProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    dispatch(fetchBrands());
+    if (categoryId)
+      dispatch(fetchBrands(categoryId));
   }, [dispatch]);
 
   useEffect(() => {
