@@ -52,7 +52,7 @@ const ItemsBlock: React.FC<ItemsBlockProps> = ({
             {restWords && <span className="colored-title__rest"> {restWords}</span>}
           </div>
           {dates && (
-            <div className="item-block_dates inter16-500">
+            <div className="item-block_dates inter16-600">
               {dates}
             </div>
           )}

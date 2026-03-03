@@ -31,12 +31,12 @@ const Footer: React.FC = () => {
               <div className="footer-nav_list footer_list inter14-300">
                 <p>Магазины</p>
                 <Link to={'delivery-payment'}>
-                  <span className="header-info_link">
+                  <span className="footer-info_link">
                     Доставка и оплата
                   </span>
                 </Link>
                 <Link to={'suppliers'}>
-                  <span className="header-info_link">
+                  <span className="footer-info_link">
                     Поставщикам
                   </span>
                 </Link>
@@ -63,18 +63,18 @@ const Footer: React.FC = () => {
             </div>
             <div className="footer-about_list footer_list inter14-300">
               <Link to={'about'}>
-                <span className="header-info_link">
+                <span className="footer-info_link">
                   О компании
                 </span>
               </Link>
               <p>Новости и статьи</p>
               <Link to={'loyalty-cards'}>
-                <span className="header-info_link">
+                <span className="footer-info_link">
                   О картах лояльности
                 </span>
               </Link>
               <Link to={'contacts'}>
-                <span className="header-info_link">
+                <span className="footer-info_link">
                   Контакты и реквизиты
                 </span>
               </Link>

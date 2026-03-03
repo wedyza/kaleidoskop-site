@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .item-card {
   background-color: var(--white);
   padding: 15px;
@@ -74,4 +76,34 @@
   max-height: calc(1.2em * 3);
   min-height: calc(1.2em * 3);
   letter-spacing: 0;
+}
+
+
+@media (max-width: common.$breakpoint-laptop) {
+  .item-card_discount {
+    display: none;
+  }
+
+  .item-card_actions {
+    display: none;
+  }
+
+  .item-card {
+    padding: 15px 10px;
+    gap: 5px;
+  }
+
+  .item-card_img {
+    height: 91px;
+    width: 108px;
+    padding: 0 8.5px;
+  }
+
+  .item-card_prices {
+    gap: 3px;
+  }
+
+  .item-card_name-container {
+    margin-top: 5px;
+  }
 }

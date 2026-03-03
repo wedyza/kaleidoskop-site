@@ -149,6 +149,11 @@
   grid-area: contacts;
 }
 
+.footer-info_link,
+.footer-info_link:visited {
+  color: var(--white);
+}
+
 @media (max-width: common.$breakpoint-laptop) {
   .footer_main-info {
     grid-template-areas: 

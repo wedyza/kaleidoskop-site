@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .item-block {
   margin-top: 120px;
 }
@@ -60,4 +62,19 @@
 
 .item-block_list::-webkit-scrollbar {
   display: none;
+}
+
+@media (max-width: common.$breakpoint-laptop) {
+  .item-block {
+    margin-top: 40px;
+  }
+
+  .item-block_head-btns {
+    display: none;
+  }
+  
+  .item-block_list {
+    margin-top: 0;
+    gap: 10px;
+  }
 }
