@@ -6,7 +6,7 @@ from api.utils import slugify
 from django.db.models import Q
 import pandas as pd
 from pathlib import Path
-# ЗАВТРА С УТРА ДОНАСТРОЙ ВСЕ ПУТИ И ЗАПУСКАЙ
+
 client = httpx.Client(headers={
     'User-Agent': '1',
     'Host': 'b2b.utake.ru',

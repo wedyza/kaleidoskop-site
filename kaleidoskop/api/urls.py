@@ -18,8 +18,6 @@ from .views import (
     UsersViewSet,
     CartItemView
 )
-# from recomendation_system.views import TestView
-
 
 router = routers.DefaultRouter()
 

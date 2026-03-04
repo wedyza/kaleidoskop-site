@@ -1,6 +1,7 @@
 from typing import Iterable
 from api.models import Cart
 from uuid import UUID
+from users.models import CustomAbstractUser
 
 class CartRepository:
     def get_or_create_user_cart(self, user_pk: UUID) -> Cart:
@@ -15,3 +16,6 @@ class CartRepository:
         cart = Cart.objects.create(user_pk=user_pk)
         cart.save()
         return cart
+    
+    def create_empty_cart(self, user: CustomAbstractUser) -> Cart:
+        return Cart.objects.create(user=user, current_cart=False)

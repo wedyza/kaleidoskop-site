@@ -1,5 +1,7 @@
 from api.models import CartItem, Item, Cart
 from repositories.cart_item_repository import CartItemRepository
+from uuid import UUID
+from typing import List
 
 class CartItemService:
     __cart_item_repository = CartItemRepository()
@@ -18,3 +20,6 @@ class CartItemService:
     
     def update_amount_of_cart_item(self, cart_item: CartItem, amount: int) -> CartItem:
         return self.__cart_item_repository.update_amount_of_cart_item(cart_item, amount)
+    
+    def update_cart(self, ids: List[UUID], enable: bool):
+        CartItem.objects.filter(id__in=ids).update(marked_for_order=enable)
