@@ -240,7 +240,8 @@ const ListView: React.FC<ListViewProps> = ({
           </div>
         </div>
 
-        <div className='list_filter-group'>
+        {categoryId &&
+          (<div className='list_filter-group'>
           <h4 className='list_filter-group-title inter14-600'>Бренды</h4>
           {brandsLoading ? (
             <div className='list_brands-loading inter14-400'>Загрузка...</div>
@@ -257,7 +258,7 @@ const ListView: React.FC<ListViewProps> = ({
               ))}
             </div>
           )}
-        </div>
+        </div>)}
       </div>
 
       <div className='list-main'>

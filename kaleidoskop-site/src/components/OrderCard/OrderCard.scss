@@ -1,11 +1,19 @@
+@use '../../styles/common.scss';
+
 .order-card {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
   //box-shadow: var(--shadow3);
   border-top: 1px solid var(--grey100);
   padding: 30px;
   padding-bottom: 50px;
+  display: grid;
+  position: relative;
+  column-gap: 30px;
+  grid-template-areas: 
+  'status status'
+  'id sum'
+  'list sum'
+  'list cancel'
+  ;
 }
 
 .order-card_status {
@@ -13,33 +21,41 @@
   background-color: var(--yellow);
   width: fit-content;
   border-radius: var(--border-radius);
+  grid-area: status;
+  margin-bottom: 15px;
 }
 
-.order-card_info {
-  display: grid;
-  grid-template-columns: 1fr max-content;
-  gap: 90px;
-}
+// .order-card_info {
+//   display: grid;
+//   grid-template-columns: 1fr max-content;
+//   gap: 90px;
+// }
 
-.order-card_main {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  min-width: 0;
-  width: 100%;
-  position: relative;
-}
+// .order-card_main {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 25px;
+//   min-width: 0;
+//   width: 100%;
+//   position: relative;
+// }
 
 .order-card_id {
   color: var(--grey500);
-  position: absolute;
+  grid-area: id;
 }
 
 .order-card_items {
+  margin-top: 23px;
+  grid-area: list;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.order-card_items-list {
   display: flex;
   gap: 20px;
-  margin-top: 32px;
-  min-width: 0;
   overflow-x: auto;
   min-width: 0;
   width: 100%;
@@ -90,9 +106,9 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2;
-  max-height: 4.8em;
-  min-height: 4.8em;
+  line-height: 1.35;
+  max-height: 5.4em;
+  min-height: 5.4em;
 }
 
 .order-card_sum {
@@ -100,6 +116,7 @@
   flex-direction: column;
   gap: 5px;
   align-items: flex-end;
+  grid-area: sum;
 }
 
 .order-card_sum-label {
@@ -120,4 +137,53 @@
 .scroll-arrow__right {
   right: 0;
   transform: translate(50%);
+}
+
+.order-card_cancel {
+  grid-area: cancel;
+  color: #ED2222;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+
+@media (max-width: common.$breakpoint-laptop) {
+  .order-card {
+    //gap: 15px;
+    border: none;
+    padding: 20px;
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: var(--shadow3);
+    grid-template-areas: 
+    'status sum'
+    'id id'
+    'list list'
+    'cancel cancel'
+    ;
+  }
+
+  .order-card_item-name {
+    display: none;
+  }
+
+  .order-card_sum-label {
+    display: none;
+  }
+
+  .order-card_item {
+    width: fit-content;
+  }
+
+  .order-card_item-img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .scroll-arrow {
+    display: none;
+  }
 }

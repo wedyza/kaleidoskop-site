@@ -1,3 +1,5 @@
+@use '../styles/common.scss';
+
 .page-path {
   display: flex;
   gap: 10px;
@@ -56,4 +58,25 @@
 .section-content {
   margin-top: 40px;
   height: fit-content;
+}
+
+
+@media (max-width: common.$breakpoint-laptop) {
+  .page-path {
+    margin-top: 25px;
+  }
+
+  .section-nav {
+    display: none;
+  }
+
+  .section-block {
+    display: block;
+    margin-top: 23px;
+  }
+
+  .section-content__with-nav {
+    background-color: transparent;
+    box-shadow: none;
+  }
 }

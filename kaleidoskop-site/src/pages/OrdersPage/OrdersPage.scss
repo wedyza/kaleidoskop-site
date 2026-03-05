@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .page-orders {
   padding: 30px 40px 50px 40px;
 }
@@ -49,4 +51,17 @@
 
 .orders-list {
   margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (max-width: common.$breakpoint-laptop) {
+  .page-orders {
+    padding: 0;
+  }
+
+  .orders-list {
+    margin-top: 25px;
+  }
 }

@@ -213,7 +213,6 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
           </nav>
           {/* <button className='header-login inter14-400 accent-border'>Войти</button> */}
         </div>
-        <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} mode="login" />
       </header>
 
       <header className='header-mobile'>
@@ -323,21 +322,39 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
             Заказы
           </span>
         </Link>
-        <Link 
-          to={'/profile'}
-          className={`header-nav-item ${location.pathname === '/profile' ? 'header-nav-item__active' : ''}`}
-        >
-          <div className="header-nav_icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12.75C8.54822 12.75 5.75 15.5482 5.75 19V20C5.75 20.4142 5.41421 20.75 5 20.75C4.58579 20.75 4.25 20.4142 4.25 20V19C4.25 14.7198 7.71979 11.25 12 11.25C16.2802 11.25 19.75 14.7198 19.75 19V20C19.75 20.4142 19.4142 20.75 19 20.75C18.5858 20.75 18.25 20.4142 18.25 20V19C18.25 15.5482 15.4518 12.75 12 12.75Z" fill="white"/>
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4.75C10.2051 4.75 8.75 6.20507 8.75 8C8.75 9.79493 10.2051 11.25 12 11.25C13.7949 11.25 15.25 9.79493 15.25 8C15.25 6.20507 13.7949 4.75 12 4.75ZM7.25 8C7.25 5.37665 9.37665 3.25 12 3.25C14.6234 3.25 16.75 5.37665 16.75 8C16.75 10.6234 14.6234 12.75 12 12.75C9.37665 12.75 7.25 10.6234 7.25 8Z" fill="white"/>
-            </svg>
-          </div>
+        {token ? (
+          <Link 
+            to={'/profile'}
+            className={`header-nav-item ${location.pathname === '/profile' ? 'header-nav-item__active' : ''}`}
+          >
+            <div className="header-nav_icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12.75C8.54822 12.75 5.75 15.5482 5.75 19V20C5.75 20.4142 5.41421 20.75 5 20.75C4.58579 20.75 4.25 20.4142 4.25 20V19C4.25 14.7198 7.71979 11.25 12 11.25C16.2802 11.25 19.75 14.7198 19.75 19V20C19.75 20.4142 19.4142 20.75 19 20.75C18.5858 20.75 18.25 20.4142 18.25 20V19C18.25 15.5482 15.4518 12.75 12 12.75Z" fill="white"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4.75C10.2051 4.75 8.75 6.20507 8.75 8C8.75 9.79493 10.2051 11.25 12 11.25C13.7949 11.25 15.25 9.79493 15.25 8C15.25 6.20507 13.7949 4.75 12 4.75ZM7.25 8C7.25 5.37665 9.37665 3.25 12 3.25C14.6234 3.25 16.75 5.37665 16.75 8C16.75 10.6234 14.6234 12.75 12 12.75C9.37665 12.75 7.25 10.6234 7.25 8Z" fill="white"/>
+              </svg>
+            </div>
             <span className="header-nav_text">
-              {token ? userName || 'Ваше имя' : 'Вход'}
+              {userName || 'Ваше имя'}
             </span>
-        </Link>
+          </Link>
+          ) : (
+          <button
+            className='header-nav_text'
+            onClick={(e) => {e.stopPropagation();setIsModalOpen(true)}}
+          >
+            <div className="header-nav_icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12.75C8.54822 12.75 5.75 15.5482 5.75 19V20C5.75 20.4142 5.41421 20.75 5 20.75C4.58579 20.75 4.25 20.4142 4.25 20V19C4.25 14.7198 7.71979 11.25 12 11.25C16.2802 11.25 19.75 14.7198 19.75 19V20C19.75 20.4142 19.4142 20.75 19 20.75C18.5858 20.75 18.25 20.4142 18.25 20V19C18.25 15.5482 15.4518 12.75 12 12.75Z" fill="white"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4.75C10.2051 4.75 8.75 6.20507 8.75 8C8.75 9.79493 10.2051 11.25 12 11.25C13.7949 11.25 15.25 9.79493 15.25 8C15.25 6.20507 13.7949 4.75 12 4.75ZM7.25 8C7.25 5.37665 9.37665 3.25 12 3.25C14.6234 3.25 16.75 5.37665 16.75 8C16.75 10.6234 14.6234 12.75 12 12.75C9.37665 12.75 7.25 10.6234 7.25 8Z" fill="white"/>
+              </svg>
+            </div>
+            <span className="header-nav_text">
+              Вход
+            </span>
+          </button>
+        )}
       </nav>
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} mode="login" />
 
       {showMenu && (
         <>

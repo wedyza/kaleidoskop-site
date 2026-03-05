@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .page-profile {
   padding: 30px 40px;
 }
@@ -33,4 +35,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+
+@media (max-width: common.$breakpoint-laptop) {
+  .page-profile {
+    padding: 0;
+  }
 }

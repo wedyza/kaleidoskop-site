@@ -95,9 +95,12 @@ a, a:link, button {
 // }
 
 .page-content {
+  max-width: calc(1300px + var(--padding)*2);
   padding: var(--padding);
   padding-bottom: 110px;
   padding-top: var(--header-height);
+  width: 100%;
+  align-self: center;
 }
 
 .inter32-700 {
@@ -401,9 +404,8 @@ a, a:link, button {
   }
 
   .inter16-400 {
-    // font-weight: 400;
-    // font-size: 16px;
-    // line-height: 120%;
+    font-size: 14px;
+    line-height: 150%;
   }
 
   .inter14-700 {
@@ -414,10 +416,9 @@ a, a:link, button {
   }
 
   .inter14-600 {
-    // font-weight: 600;
-    // font-size: 14px;
-    // line-height: 135%;
-    // letter-spacing: 0%;
+    font-weight: 700;
+    font-size: 10px;
+    line-height: 120%;
   }
 
   .inter14-500 {
@@ -473,9 +474,7 @@ a, a:link, button {
   }
 
   .inter12-400 {
-    // font-size: 12px;
-    // line-height: 120%;
-    // letter-spacing: 0%;
+    font-size: 10px;
   }
 
   .inter11-600 {
