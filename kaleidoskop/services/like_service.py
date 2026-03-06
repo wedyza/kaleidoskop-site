@@ -1,0 +1,18 @@
+from typing import Iterable
+from api.models import Like
+from uuid import UUID
+from repositories.like_repository import LikeRepository
+
+class LikeService:
+    __like_repository = LikeRepository()
+
+    def switch_like(self, item_pk:UUID, user_pk: UUID, status: bool) -> bool:
+        like = self.__like_repository.filter_like_by_user_id_and_item_id(item_pk, user_pk)
+        if like is not None and not status:
+            self.__like_repository.create_like(item_pk, user_pk)
+        elif like is None and status:
+            self.__like_repository.delete_like(like)
+        return status
+    
+    def get_likes_of_user(self, user_pk: UUID) -> Iterable[Like]:
+        return self.__like_repository.get_likes_of_user(user_pk)

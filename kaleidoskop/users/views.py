@@ -3,26 +3,25 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from .Serializers import (
-    UserCreateSerializer,
     UserLoginSerializer,
     UserLoginOTPSerializer,
 )
 from django.contrib.auth import get_user_model
-from .utils import enforce_csrf, generate_otp, set_jwt_cookies
-from .tasks import send_otp_email
+from exceptions.exceptions import EmailIsNotFree, NotFoundException, OTPTimedOutException, WrongOTPPassedException
+from .utils import set_jwt_cookies
 from drf_yasg.utils import swagger_auto_schema
 from django.middleware.csrf import get_token
 from rest_framework import permissions
-from django.utils import timezone
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
 from rest_framework import permissions
-from django.utils.decorators import method_decorator
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from services.auth_service import AuthService
 
 User = get_user_model()
+
+auth_service = AuthService()
 
 class LoginOrRegisterView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -32,17 +31,8 @@ class LoginOrRegisterView(APIView):
         email = UserLoginSerializer(data=request.data)
         if not email.is_valid():
             return Response(email.errors, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            user = User.objects.get(email=email.data["email"])
-        except User.DoesNotExist as e:
-            user = User.objects.create(email=email.data["email"])
 
-        otp = generate_otp()
-        user.otp = otp
-        user.otp_expires = timezone.now() + timezone.timedelta(minutes=15)
-        user.save()
-
-        send_otp_email(email.data["email"], otp)
+        auth_service.login_or_register(email.data['email'])
 
         return Response(
             {
@@ -58,45 +48,30 @@ class ValidateOTPView(APIView):
     @swagger_auto_schema(request_body=UserLoginOTPSerializer)
     def post(self, request):
         payload = UserLoginOTPSerializer(data=request.data)
-
         if not payload.is_valid():
             return Response(payload.errors, status=status.HTTP_400_BAD_REQUEST)
         try:
-            user = User.objects.get(email=payload.data["email"])
-        except User.DoesNotExist:
-            return Response(
-                {"error": "Пользователя с такой почтой не существует."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        otp = payload.data["otp"]
-        if user.otp == otp:
-            if timezone.now() > user.otp_expires:
-                return Response(  # pragma: no cover
-                    {"error": "Срок действия пароля истек"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            user.otp = None
-            user.otp_expires = None
-            user.save()
-
-            refresh = RefreshToken.for_user(user)
-            refresh.payload.update({"user_id": user.pk, "email": user.email})
-
+            refresh = auth_service.validate_otp(payload.data['email'], payload.data['otp'])
             response = Response(
                 {"access": str(refresh.access_token)},
                 status=status.HTTP_200_OK,
             )
             response = set_jwt_cookies(response, refresh)
-
             return response
-        else:
+        except WrongOTPPassedException:
             return Response(
                 {"error": "Неправильный код."}, status=status.HTTP_400_BAD_REQUEST
             )
-        
-
+        except OTPTimedOutException:
+            return Response( 
+                {"error": "Срок действия пароля истек"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except NotFoundException:
+            return Response(
+                {"error": "Пользователя с такой почтой не существует."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 class ChangeEmailOTPView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -106,23 +81,11 @@ class ChangeEmailOTPView(APIView):
         if not email.is_valid():
             return Response(email.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        
-        user_exists = User.objects.filter(email=email.data["email"]).exists()
-        if user_exists:
-            return Response({"detail": "Невозможно поменять почту на данную!"}, status=status.HTTP_400_BAD_REQUEST)
-
-        user = request.user
-
-        otp = generate_otp()
-        user.email_to_change = email.data["email"]
-        user.otp_change_email = otp
-        user.otp_expires_change_email = timezone.now() + timezone.timedelta(minutes=15)
-        user.save()
-
-        send_otp_email(email.data["email"], otp)
-
-        return Response({"message": "Письмо с подтверждением отправлено на указанную почту. Код действителен в течении 15 минут"})
-
+        try:
+            auth_service.change_email(self.request.user, email.data["email"])
+            return Response({"message": "Письмо с подтверждением отправлено на указанную почту. Код действителен в течении 15 минут"})
+        except EmailIsNotFree:
+            return Response({"detail": "Невозможно поменять почту на данную, она уже занята!"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ValidateChangeEmailOTPView(APIView):
     permission_classes = (permissions.IsAuthenticated, )
@@ -133,31 +96,17 @@ class ValidateChangeEmailOTPView(APIView):
 
         if not payload.is_valid():
             return Response(payload.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        user = request.user
-
-        otp = payload.data["otp"]
-        if user.otp_change_email == otp:
-            if timezone.now() > user.otp_expires_change_email:
-                return Response(  # pragma: no cover
-                    {"error": "Срок действия пароля истек"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            
-            user.otp_change_email = None
-            user.otp_expires_change_email = None
-            user.email = user.email_to_change
-            user.email_to_change = None
-            user.save()
-
+        try:
+            auth_service.validate_change_email_otp(self.request.user, payload.data["otp"])
             return Response({"detail": "Успешно"})
-        else:
+        except OTPTimedOutException:
+            return Response({"error": "Срок действия пароля истек"}, status=status.HTTP_400_BAD_REQUEST,)            
+        except WrongOTPPassedException:
             return Response({"detail": "Неверный код"}, status=status.HTTP_400_BAD_REQUEST)
     
-class CookieTokenRefreshView(JWTAuthentication, TokenRefreshView):
+class CookieTokenRefreshView(JWTAuthentication, TokenRefreshView): # Тут пока не буду менять
     def post(self, request, *args, **kwargs):
         raw_refresh_token = request.COOKIES.get(settings.SIMPLE_JWT['REFRESH_COOKIE']) or None
-        # raw_acces_token = request.COOKIES.get(settings.SIMPLE_JWT['AUTH_COOKIE']) or None
         raw_acces_token = None
         data = {'access': raw_acces_token, 'refresh': raw_refresh_token}
         serializer = self.get_serializer(data=data)

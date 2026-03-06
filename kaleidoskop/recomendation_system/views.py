@@ -5,11 +5,12 @@ from drf_yasg.utils import swagger_auto_schema
 import httpx
 from api.models import Item
 from .serializers import ItemFromAISerializer
-from users.tasks import train_content_based_model
+from services.async_service import AsyncService
 from django.conf import settings
 
 class ContentRecommendationView(views.APIView):
     permission_classes = (permissions.IsAuthenticated, )
+    async_service = AsyncService()
 
     @swagger_auto_schema(manual_parameters=[
             openapi.Parameter('product_id', openapi.IN_QUERY, description='UUID продукта', type=openapi.TYPE_STRING),
@@ -51,25 +52,25 @@ class ContentRecommendationView(views.APIView):
         Обучение модели (content-based)
         """
         try:
-            train_content_based_model()
+            self.async_service.train_content_based_model()
         except httpx.ReadTimeout:
             return Response({"detail": "Обучение началось"}, status=status.HTTP_200_OK)
         except Exception as e:
             raise e
         return Response("Обучение началось")
 
-class CollaborativeRecomendationView(views.APIView):
-    permission_classes = (permissions.IsAuthenticated, )
+# class CollaborativeRecomendationView(views.APIView):
+#     permission_classes = (permissions.IsAuthenticated, )
 
-    @swagger_auto_schema(manual_parameters=[
-            openapi.Parameter('n', openapi.IN_QUERY, description='Количество рекомендаций (default n = 10)', type=openapi.TYPE_INTEGER),
-        ], operation_summary="Получить коллаборативные рекомендации")
-    def get(self, request):
-        """
-        Получить рекомендации на основе рецензий других пользователей (Пока что не работает - не трогать)
-        """
+#     @swagger_auto_schema(manual_parameters=[
+#             openapi.Parameter('n', openapi.IN_QUERY, description='Количество рекомендаций (default n = 10)', type=openapi.TYPE_INTEGER),
+#         ], operation_summary="Получить коллаборативные рекомендации")
+#     def get(self, request):
+#         """
+#         Получить рекомендации на основе рецензий других пользователей (Пока что не работает - не трогать)
+#         """
     
-        n = 10 if 'n' not in request.GET else request.get['n']
-        response = httpx.post(url=f"http://localhost:8081/recommendations/collaborative", json={'n': n})
-        print(response.json())
-        return Response()
+#         n = 10 if 'n' not in request.GET else request.get['n']
+#         response = httpx.post(url=f"http://localhost:8081/recommendations/collaborative", json={'n': n})
+#         print(response.json())
+#         return Response()

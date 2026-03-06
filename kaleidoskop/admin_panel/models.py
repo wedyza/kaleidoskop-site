@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from api.models import UUIDModel, Item, Nomenclature
-from django.conf import settings
+from api.models import UUIDModel, Nomenclature
 from django.utils import timezone
 
 # Create your models here.

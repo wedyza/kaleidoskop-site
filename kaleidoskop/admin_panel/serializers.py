@@ -2,8 +2,10 @@ from rest_framework import serializers
 from api.models import Banner, Category, Item, NomenclatureCategory, Nomenclature
 from .models import Compilation
 from django.db.models import Q
-from api.functions import get_daughter_nomenclatures
+from services.nomenclature_service import NomenclatureService
 from django.utils import timezone
+
+nomenclature_service = NomenclatureService()
 
 class SessionCodeSerializer(serializers.Serializer):
     code = serializers.CharField()
@@ -92,7 +94,7 @@ class CompilationSerializer(serializers.ModelSerializer):
 
     def get_item_count(self, obj:Compilation):
         base_nomenclatures = obj.nomenclatures.all()
-        nomenclatures = get_daughter_nomenclatures(base_nomenclatures)
+        nomenclatures = nomenclature_service.get_daughter_nomenclatures(base_nomenclatures)
         return Item.objects.filter(nomenclature__in=nomenclatures).count()
 
     

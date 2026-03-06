@@ -65,7 +65,7 @@ class ItemCreateSerializer(serializers.ModelSerializer):
         )
 
 
-class ListRemainsReceiveSerializer(serializers.ListSerializer):
+class ListRemainsReceiveSerializer(serializers.ListSerializer): # Тут удобная логика обработки приемки, к сожалению, как костыль пока-что оставлю
     def create(self, validated_data):
         remains_to_update = []
         remains_to_create = []
