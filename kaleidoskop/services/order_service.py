@@ -38,7 +38,7 @@ class OrderService:
         return self.__order_repository.get_order_by_code(code)
     
     def get_order_queryset(self, user_pk: UUID) -> Iterable[Order]:
-        return Order.objects.filter(user_pk=user_pk).all()
+        return Order.objects.filter(user_id=user_pk).all()
     
     def __validate_user(self, user: CustomAbstractUser) -> bool:
         if user.code == None or user.first_name == None or user.phone_number == None:

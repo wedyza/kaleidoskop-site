@@ -26,4 +26,4 @@ class LikeRepository:
         return self.__create_or_delete_like(like, status)
     
     def get_likes_of_user(self, user_pk: UUID):
-        return Like.objects.filter(user_pk=user_pk).all()
+        return Like.objects.filter(user_id=user_pk).all()

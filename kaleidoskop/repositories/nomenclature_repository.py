@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from api.models import Nomenclature
 from typing import Iterable, List
 
@@ -38,3 +40,6 @@ class NomenclatureRepository:
             nomenclatures = Nomenclature.objects.filter(parent__in=nomenclatures).all()
             level_of_nesting -= 1
         return nomenclatures
+    
+    def get_nomenclature_by_id(self, pk: UUID) -> Nomenclature:
+        return Nomenclature.objects.get(id=pk)

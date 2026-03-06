@@ -25,6 +25,6 @@ class ItemRepository:
             c += 1
             try:
                 item.nomenclature = Nomenclature.objects.get(code=item.parent_code)
-            except:
+            except:  # noqa: E722
                 continue
         Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)

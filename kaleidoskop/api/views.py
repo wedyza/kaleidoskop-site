@@ -3,6 +3,7 @@ from django_filters import rest_framework as rf_filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from api.permissions import IsUserHimself
 from .paginators import CustomPagination
 from admin_panel.models import Compilation
 from typing import Any
@@ -245,11 +246,10 @@ class CommentViewSet(
 
 class UsersViewSet(
     viewsets.GenericViewSet,
-    mixins.UpdateModelMixin,
     mixins.RetrieveModelMixin,
 ):
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated, IsUserHimself)
     queryset = User.objects.all()
     integration_service = IntegrationService()
     user_service = UserService()

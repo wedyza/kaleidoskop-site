@@ -3,7 +3,7 @@ from repositories.item_repository import ItemRepository
 from .like_service import LikeService
 from .cart_item_service import CartItemService
 from .cart_service import CartService
-from kaleidoskop.exceptions.exceptions import NotFoundException
+from exceptions.exceptions import NotFoundException
 from uuid import UUID
 
 class ItemService:

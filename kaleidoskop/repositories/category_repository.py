@@ -6,9 +6,8 @@ from uuid import UUID
 class CategoryRepository:
     __nomenclature_service = NomenclatureService()
     
-    def __get_category_by_id(self, id: UUID) -> Category:
+    def get_category_by_id(self, id: UUID) -> Category:
         return Category.objects.get(id=id)
-
 
     def __get_base_nomenclatures(self, category: Category) -> Iterable[Nomenclature]:
         daughter_categories = category.daughter.all()
@@ -18,7 +17,7 @@ class CategoryRepository:
         return base_nomenclatures
 
     def get_items_of_category(self, category_pk: UUID) -> Iterable[Item]:
-        category = self.__get_category_by_id(category_pk)
+        category = self.get_category_by_id(category_pk)
         base_nomenclatures = self.__get_base_nomenclatures(category)
         nomenclatures = self.__nomenclature_service.get_daughter_nomenclatures(base_nomenclatures)
         return Item.objects.filter(nomenclature__in=nomenclatures)

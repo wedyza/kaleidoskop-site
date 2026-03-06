@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.template.loader import render_to_string
 from django.conf import settings
 from exceptions.exceptions import EmailIsNotFree
-from random import random
+import random
 
 class AuthService:
     __user_service = UserService()

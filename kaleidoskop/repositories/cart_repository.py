@@ -13,7 +13,7 @@ class CartRepository:
         return Cart.objects.filter(order=None).filter(current_cart=True).filter(user_id=user_pk).first()
     
     def __create_user_cart(self, user_pk: UUID) -> Cart:
-        cart = Cart.objects.create(user_pk=user_pk)
+        cart = Cart.objects.create(user_id=user_pk)
         cart.save()
         return cart
     

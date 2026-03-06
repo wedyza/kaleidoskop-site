@@ -1,6 +1,5 @@
-from integration_service import multitasker
 from celery import shared_task
-from services.integration_service import IntegrationService
+from services.integration_service import IntegrationService, multitasker
 from services.nomenclature_service import NomenclatureService
 from services.item_service import ItemService
 from services.remains_service import RemainsService
