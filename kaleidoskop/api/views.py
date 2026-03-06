@@ -3,7 +3,6 @@ from django_filters import rest_framework as rf_filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from kaleidoskop.api.functions import get_items_queryset_of_category
 from .paginators import CustomPagination
 from admin_panel.models import Compilation
 from typing import Any
@@ -27,14 +26,13 @@ from .serializers import (
     UserSerializer,
     ItemListSerializer
 )
-from .models import Banner, Brand, Cart, Category, Item, Comment, CartItem, Order, Shop
+from .models import Banner, Cart, Category, Item, Comment, CartItem, Shop
 from search.views import PaginatedElasticSearchAPIView
 from search.documents import ItemDocument
 from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 # from .functions import get_daughter_nomenclatures, get_items_queryset_of_category
-from users.tasks import delete_order_1c
 from services.category_service import CategoryService
 from services.item_service import ItemService
 from services.integration_service import IntegrationService
@@ -42,6 +40,8 @@ from services.like_service import LikeService
 from services.user_service import UserService
 from services.cart_item_service import CartItemService
 from services.order_service import OrderService
+from services.brand_service import BrandService
+from services.banner_service import BannerService
 from .filters import ItemFilter
 from django.utils import timezone
 
@@ -374,23 +374,22 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
             return Response({"detail": "failed"})
 
 
-class BrandViewSet(viewsets.GenericViewSet):
+class BrandViewSet(viewsets.GenericViewSet): # Закончил тут
     serializer_class = BrandSerializer
     permission_classes = (permissions.AllowAny,)
-
+    brand_service = BrandService()
+    
     @action(methods=["GET"], detail=False, url_path="(?P<pk>[^/.]+)") # для получения брендов по категории
     def get_brands_of_category(self, request, pk):
         try:
-            category = Category.objects.get(id=pk)
+            queryset = self.brand_service.get_queryset(pk)
+            return Response(self.get_serializer(instance=queryset, many=True).data)
         except:
             return Response({"detail": "Not found category with that id"}, status=status.HTTP_404_NOT_FOUND)
-        items = get_items_queryset_of_category(category)
-        queryset = Brand.objects.filter(id__in=items.values_list("brand_id", flat=True).distinct()).all()
-        return Response(self.get_serializer(instance=queryset, many=True).data)
 
 
 class ShopViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
-    queryset = Shop.objects.all()
+    queryset = Shop.objects.all() # Для этого не буду делать сервис, он и так тонкий
     serializer_class = ShopSerializer
     permission_classes = (permissions.AllowAny,)
 
@@ -398,11 +397,12 @@ class ShopViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 class PublicBannerViewSet(viewsets.GenericViewSet):
     serializer_class = PublicBannerSerializer
     permission_classes = (permissions.AllowAny, )
+    banner_service = BannerService()
 
     def get_queryset(self):
         if self.action == 'first_group':
-            return Banner.objects.filter(group_type=Banner.BannerGroupType.FIRST).filter(active=True).order_by('queue').all()
-        return Banner.objects.filter(group_type=Banner.BannerGroupType.SECOND).filter(active=True).order_by('queue').all()
+            return self.banner_service.get_public_queryset(Banner.BannerGroupType.FIRST)
+        return self.banner_service.get_public_queryset(Banner.BannerGroupType.SECOND)
 
     @action(detail=False, methods=['GET'], url_path='first_group')
     def first_group(self, request):
@@ -419,7 +419,7 @@ class PublicCompilationViewSet(viewsets.GenericViewSet):
 
     def get_queryset(self):
         today = timezone.now()
-        queryset = Compilation.objects.filter(active=True).filter(Q(end_time=None) | Q(end_time__lte=today)).order_by('-queue')
+        queryset = Compilation.objects.filter(active=True).filter(Q(end_time=None) | Q(end_time__lte=today)).order_by('-queue') # Тут тоже наверное
         return queryset
 
     @action(methods=['GET'], url_path='first', detail=False)

@@ -3,24 +3,25 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.decorators import action
 import redis
-from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, CreateNomenclatureCategorySerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureCategorySerializer, NomenclatureSerializer, AdminCategorySerializer
+from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, CreateNomenclatureCategorySerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureSerializer, AdminCategorySerializer
 from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef
 from .rabbitmq import RabbitMQ
 from django.conf import settings
-from api.models import Banner, Category, Nomenclature, NomenclatureCategory
+from kaleidoskop.api.models import Banner, Category, Nomenclature
 from .models import Compilation
 from drf_yasg import openapi
 from .filters import IsAssignedFilter
 from rest_framework.parsers import MultiPartParser
-from api.functions import get_nomenclatures
-from api.paginators import CustomPagination
-import django
+from kaleidoskop.api.paginators import CustomPagination
+from kaleidoskop.services.nomenclature_service import NomenclatureService
+from rest_framework.request import Request
 
+# Закончил тут
 
 class LinkTelegrammView(views.APIView):
     @swagger_auto_schema(request_body=SessionCodeSerializer)
-    def post(self, request):
+    def post(self, request: Request):
         
         r = redis.StrictRedis(
                 host=settings.REDIS_HOST,  # из Endpoint
@@ -128,6 +129,7 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter, IsAssignedFilter]
     search_fields = ['title', 'code']
+    nomenclature_service = NomenclatureService()
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter("assigned", openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False, description='Привязан к категории или нет')
@@ -143,7 +145,7 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
     @action(methods=['GET'], url_path='by_nesting', detail=False)
     def get_by_nesting(self, request):
         level_of_nesting = int(request.GET['level_of_nesting']) if 'level_of_nesting' in request.GET else 0
-        nomenclatures = get_nomenclatures(level_of_nesting)
+        nomenclatures = self.nomenclature_service.get_nomenclatures(level_of_nesting)
         page = self.paginate_queryset(nomenclatures)
 
         if page is not None:

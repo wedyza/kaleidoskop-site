@@ -20,6 +20,23 @@ class OrderService:
     __async_service = AsyncService()
     LOCAL_TZ = settings.LOCAL_TZ
     
+    def update_order_status(self, code: str, status: str):
+        order = self.get_order_by_code(code)
+        reformed_status = Order.OrderStatus.APPROVED
+        match status:
+            case 'Закрыт':
+                reformed_status = Order.OrderStatus.REALISED
+            case 'На согласовании':
+                reformed_status = Order.OrderStatus.ON_APPROVE
+            case 'К выполнению / В резерве':
+                reformed_status = Order.OrderStatus.ON_REALISATION
+            case 'Отменен':
+                reformed_status = Order.OrderStatus.CANCELED
+        self.__order_repository.update_order_status(order, reformed_status)
+    
+    def get_order_by_code(self, code: str) -> Order:
+        return self.__order_repository.get_order_by_code(code)
+    
     def get_order_queryset(self, user_pk: UUID) -> Iterable[Order]:
         return Order.objects.filter(user_pk=user_pk).all()
     
@@ -74,7 +91,7 @@ class OrderService:
     
     def delete_order(self, user_pk: UUID, order_pk: UUID) -> bool:
         user = self.__user_service.get_user_by_id(user_pk)
-        order = self.__order_repository.get_order_by_id(order_pk)
+        order = self.__order_repository.get_order_by_code(order_pk)
         if user != order.user:
             raise UserUnauthorized
         

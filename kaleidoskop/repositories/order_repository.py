@@ -4,8 +4,19 @@ from api.models import Item, Order, Cart
 from users.models import CustomAbstractUser
 from uuid import UUID
 from api.serializers import OrderSerializer
+from exceptions.exceptions import NotFoundException
 
 class OrderRepository:
+    def get_order_by_code(self, code: str) -> Order:
+        order = Order.objects.filter(code=code).first()
+        if order is None:
+            raise NotFoundException
+        return order
+
+    def update_order_status(self, order: Order, status: Order.OrderStatus):
+        order.status = status
+        order.save()
+            
     def get_items_for_order(self, cart: Cart) -> Iterable[Item]:
         return cart.items.filter(marked_for_order=True)
 
@@ -25,7 +36,7 @@ class OrderRepository:
         order_cart.save()
         return instance
     
-    def get_order_by_id(self, order_pk: UUID) -> Order:
+    def get_order_by_code(self, order_pk: UUID) -> Order:
         return Order.objects.get(id=order_pk)
 
     def delete_order(self, order: Order):

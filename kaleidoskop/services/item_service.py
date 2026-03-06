@@ -12,6 +12,11 @@ class ItemService:
     __cart_item_service = CartItemService()
     __cart_service = CartService()
     
+    def create_new_items(self, data: dict[str, str]):
+        created = self.__item_repository.create_new_items(data)
+        if created:
+            self.__item_repository.fillup_items_with_parents()
+    
     def switch_wishlist_to_item(self, item_pk:UUID, user_pk: UUID, status: bool) -> bool:
         return self.__like_service.switch_like(item_pk, user_pk, status)
 

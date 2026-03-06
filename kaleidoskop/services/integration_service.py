@@ -73,3 +73,34 @@ class IntegrationService:
             },
             timeout=15
         )
+        
+    def sync_nomenclatures(self) -> dict[str, str]:
+        response = self.client.get(
+            self.LINK_1C + '/nomenclatures/',
+            params={"API_KEY": self.API_KEY},
+            timeout=60
+        )
+        if response.status_code != 200:
+            raise BaseException("something went wrong")
+        return response.json()
+    
+    def sync_items(self):
+        response = self.client.get(
+            self.LINK_1C + '/items/',
+            params={"API_KEY": self.API_KEY},
+            timeout=60
+        )
+        if response.status_code != 200:
+            raise BaseException("something went wrong")
+        items = response.json()
+        return items
+    
+    def sync_remains(self):
+        response = self.client.get(
+            self.LINK_1C + '/remains/',
+            params={"API_KEY": self.API_KEY},
+            timeout=15
+        )
+        if response.status_code != 200:
+            raise BaseException("somethign went wrong")
+        return response.json()
