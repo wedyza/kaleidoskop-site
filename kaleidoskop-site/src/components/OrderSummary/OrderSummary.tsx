@@ -29,10 +29,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     return sum + (item.item.price * item.amount);
   }, 0);
 
+  const totalCount = selectedItems.reduce((sum, item) => {
+    return sum + item.amount;
+  }, 0);
+
   return (
     <div>
       <div className='basket-placement'>
         <div className='basket-placement_content'>
+          <h2 className='inter16-600 basket-placement_title'>Информация</h2>
           <div className="basket-placement_list">
             {selectedItems && selectedItems.length > 0 && selectedItems.map((item) => (
               <div className="basket-placement_list-item">
@@ -45,6 +50,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </div>
             ))}
           </div>
+
+          <div className='basket-placement_info'>
+            <div className='basket-placement_info-item'>
+              <span className='inter13-500'>Количество товаров</span>
+              <span className='inter16-400'>{totalCount}</span>
+            </div>
+          </div>
+          
           <div className="basket-placement_sum">
             <span className='basket-placement_content__label inter16-600'>Итого:</span>
             <span className='basket-placement_content__value inter24-700'>

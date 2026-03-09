@@ -1,0 +1,122 @@
+@use '../../styles/common.scss';
+
+.basket-placement {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  height: fit-content;
+  //border: 1px solid var(--black15);
+}
+
+.basket-placement_content {
+  display: flex;
+  flex-direction: column;
+}
+
+.basket-placement_list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border-bottom: 1px solid var(--grey100);
+  padding-bottom: 20px;
+  margin-top: 20px;
+}
+
+.basket-placement_list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.basket-placement_list-item::after {
+  content: ".............................................................................................";
+  position: absolute;
+  left: 100%;
+  transform: translateX(-100%);
+  white-space: nowrap;
+  color: var(--grey600);
+  pointer-events: none;
+  font-size: 10px;
+  z-index: 0;
+}
+
+.basket-placement_list__label {
+  max-width: 144px;
+  color: var(--grey600);
+  background-color: var(--white);
+  position: relative;
+  z-index: 1;
+}
+
+.basket-placement_list__value {
+  background-color: var(--white);
+  position: relative;
+  z-index: 1;
+}
+
+.basket-placement_sum {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+}
+
+.basket-placement_actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+  }
+}
+
+.basket-placement_link span {
+  color: var(--white);
+}
+
+.basket-placement_link__disabled span {
+  color: var(--grey300);
+}
+
+.basket-placement_gift {
+  color: var(--grey400);
+}
+
+.basket-placement_info-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.basket-placement_info {
+  border-bottom: 1px solid var(--grey100);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0 10px 0;
+}
+
+
+@media (max-width: common.$breakpoint-laptop) {
+  .basket-placement_list,
+  .basket-placement_title {
+    display: none;
+  }
+
+  .basket-placement_content__label.inter16-600 {
+    font-size: 16px;
+  }
+
+  .basket-placement_info {
+    padding-top: 0;
+  }
+}

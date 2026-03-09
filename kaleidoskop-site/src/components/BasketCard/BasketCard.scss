@@ -1,18 +1,19 @@
+@use '../../styles/common.scss';
+
 .basket-card {
   display: grid;
-  grid-template-areas: 
-    '. . id .'
-    'input img info act'
+  grid-template-areas:
+    'input img info price'
+    '. . act .'
   ;
   grid-template-columns: auto auto auto 1fr;
-  row-gap: 15px;
   padding-top: 30px;
   padding-bottom: 50px;
 }
 
 .basket-card_id {
-  grid-area: id;
   color: var(--grey300);
+  margin-bottom: 15px;
 }
 
 .basket-card_checkbox {
@@ -45,12 +46,7 @@
 }
 
 .basket-card_info {
-  display: flex;
-  gap: 22px;
   grid-area: info;
-}
-
-.basket-card_info-main {
   display: flex;
   flex-direction: column;
 }
@@ -76,7 +72,7 @@
 }
 
 .basket-card_count {
-  margin-top: 32px;
+  margin-top: 27px;
   display: flex;
   gap: 10px;
   align-items: center;
@@ -104,6 +100,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  grid-area: price;
+  margin-left: auto;
 }
 
 .basket-card_discount {
@@ -125,20 +123,67 @@
 }
 
 .basket-card_actions {
-  margin-left: auto;
   grid-area: act;
   display: flex;
-  gap: 7px;
+  gap: 15px;
   height: fit-content;
   align-items: center;
+  margin-top: 25px;
 }
 
-.basket-card_remove {
-  height: 32px;
-  width: 32px;
+.basket-card_btn {
+  height: 20px;
+  gap: 7.5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow3);
   border-radius: var(--border-radius);
+  color: var(--grey500);
+}
+
+
+
+@media (max-width: common.$breakpoint-laptop) {
+  .basket-card {
+    grid-template-areas:
+      'img info input'
+      'img info act'
+      '. price .'
+    ;
+    grid-template-columns: min-content auto min-content;
+    padding: 15px 10px 20px 15px;
+    column-gap: 15px;
+  }
+
+  .basket-card_actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+    width: fit-content;
+    margin-top: 22px;
+  }
+
+  .basket-card_btn-label {
+    display: none;
+  }
+
+  .basket-card_checkbox {
+    margin-right: 0;
+  }
+
+  .basket-card_info-price {
+    margin-left: 0;
+    margin-top: 15px;
+  }
+
+  .basket-card_id {
+    margin-bottom: 10px;
+  }
+
+  .basket-card_date {
+    margin-top: 10px;
+  }
+
+  .basket-card_count {
+    margin-top: 15px;
+  }
 }

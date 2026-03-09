@@ -41,11 +41,15 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${API_URL}/auth/token/refresh/`,
         {},
         { withCredentials: true }
       );
+
+      const newAccess = response.data.access;
+      localStorage.setItem('token', newAccess);
+      
 
       pendingRequests.forEach((cb) => cb());
       pendingRequests = [];

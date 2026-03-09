@@ -21,7 +21,7 @@ const ItemCard: React.FC<ItemCardProps> = ({product}) => {
         <span className="item-card_discount inter13-500">
           - 25%
         </span>
-        <div className="item-card_actions">
+        <div className="item-card_actions item-card_actions__main">
           <ItemsActions product={product} />
         </div>
       </div>
