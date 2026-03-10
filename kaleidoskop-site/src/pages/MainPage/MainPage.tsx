@@ -4,6 +4,7 @@ import ItemsBlock from '../../components/ItemsBlock/ItemsBlock';
 import Services from '../../components/Services/Services';
 import './MainPage.scss';
 import { fetchProducts } from '../../features/products/productsSlice';
+import Banners from '../../components/Banners/Banners';
 
 function MainPage () {
   const dispatch = useAppDispatch();
@@ -28,6 +29,7 @@ function MainPage () {
             icon
             dates={'01.07 - 16.07'}
           />
+          <Banners group='first' />
           <ItemsBlock 
             title={'Популярные товары'}
             items={products}
