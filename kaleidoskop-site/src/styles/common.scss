@@ -192,6 +192,12 @@ a, a:link, button {
   line-height: 120%;
 }
 
+.inter15-400 {
+  font-size: 15px;
+  line-height: 135%;
+  letter-spacing: -0.5px;
+}
+
 .inter14-700 {
   font-weight: 700;
   font-size: 14px;
@@ -404,6 +410,12 @@ a, a:link, button {
   .inter16-400 {
     font-size: 14px;
     line-height: 150%;
+  }
+
+  .inter15-400 {
+    // font-size: 15px;
+    // line-height: 135%;
+    // letter-spacing: -0.5px;
   }
 
   .inter14-700 {

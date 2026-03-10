@@ -45,6 +45,7 @@ import SuppliersPage from './pages/SuppliersPage/SuppliersPage';
 import AboutPage from './pages/AboutPage/AboutPage';
 import LoyaltyCardsPage from './pages/LoyaltyCardsPage/LoyaltyCardsPage';
 import ContactsPage from './pages/ContactsPage/ContactsPage';
+import AdminBanners from './pages/AdminBanners/AdminBanners';
 
 function App() {
   const isLoading = useAppSelector(selectGlobalLoading);
@@ -73,6 +74,7 @@ function App() {
               <Route path="/admin/nomenclatures/:id" element={<AdminNomenclature />} />
               <Route path="/admin/nomenclatures/connections" element={<AdminAssignedNomenclatures />} />
               <Route path="/admin/telegram" element={<AdminTelegram />} />
+              <Route path="/admin/banners" element={<AdminBanners />} />
     
               <Route path="/admin/categories/create" element={<AdminCategoryCreate />} />
               <Route path="/admin/categories/:id/edit" element={<AdminCategoryEdit />} />

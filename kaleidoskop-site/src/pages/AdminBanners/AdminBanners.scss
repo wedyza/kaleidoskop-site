@@ -1,0 +1,106 @@
+.admin-banners_tabs {
+  margin-top: 20px;
+  display: flex;
+  height: 45px;
+  padding: 4px;
+  background-color: var(--white);
+  color: var(--grey400);
+  width: fit-content;
+  border-radius: var(--border-radius);
+}
+
+.admin-banners_tab {
+  height: 100%;
+  padding: 0 15px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--white);
+}
+
+.admin-banners_tab__active {
+  background-color: var(--orange50);
+  color: var(--orange500);
+  border-color: var(--orange500);
+}
+
+.admin-banners_content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.admin-banners_block {
+  background-color: var(--white);
+  padding: 0 20px 30px 20px;
+  border-radius: 20px;
+}
+
+.admin-banners_block-head {
+  height: 59px;
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  justify-content: space-between;
+}
+
+.admin-banners_add-btn {
+  height: 26px;
+  padding: 0 10px;
+  background-color: var(--grey100);
+  color: var(--grey900);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-banners_table {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-banners_table-row {
+  display: grid;
+  grid-template-columns: 13.5% 17% 16% 20% 17.7% 1fr;
+  height: 50px;
+  align-items: center;
+  border-bottom: 1px solid var(--grey100);
+}
+
+.admin-banners_table-row:last-child {
+  border: none;
+}
+
+.admin-banners_table-head {
+  background-color: var(--grey50);
+  border: 1px solid var(--grey100);
+  border-radius: 15px 15px 0 0;
+  padding: 0 32px 0 20px;
+}
+
+.admin-banners_table-content {
+  border: 1px solid var(--grey100);
+  border-top: none;
+  border-radius: 0 0 15px 15px;
+  padding: 0 32px 0 20px;
+}
+
+.admin-banners_actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-banners_action {
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  border: 1px solid var(--grey500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-banners_move {
+  margin-left: auto;
+}

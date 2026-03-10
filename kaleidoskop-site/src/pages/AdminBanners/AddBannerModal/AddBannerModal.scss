@@ -1,0 +1,53 @@
+.banner-addmodal {
+  width: 55%;
+
+  &_upload {
+    border: 2px dashed var(--grey500);
+    background-color: var(--grey50);
+    height: 318px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    margin-top: 30px;
+  }
+
+  &_main {
+    display: flex;
+    gap: 6px;
+    margin-top: 15px;
+  }
+
+  &_input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  &_button {
+    color: var(--orange500);
+    border-bottom: 1px solid var(--orange500);
+  }
+
+  &_hint {
+    color: var(--grey500);
+    margin-top: 10px;
+  }
+
+  // &_icon {
+
+  // }
+}
+
+.banner-addmodal_desc {
+  color: var(--grey400);
+  margin-top: 13px;
+  width: 100%;
+  max-width: 480px;
+}

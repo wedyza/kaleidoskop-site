@@ -16,6 +16,7 @@ import nomenclaturesReducer from '../features/admin/nomenclaturesSlice'
 import telegramReducer from'../features/admin/telegramSlice'
 import notificationsReducer from '../features/notifications/notificationsSlice'
 import bannersReducer from '../features/banners/bannersSlice'
+import adminBannersReducer from '../features/admin/adminBannersSlice'
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ export const store = configureStore({
     telegram: telegramReducer,
     notifications: notificationsReducer,
     banners: bannersReducer,
+    adminBanners: adminBannersReducer,
   },
 });
 

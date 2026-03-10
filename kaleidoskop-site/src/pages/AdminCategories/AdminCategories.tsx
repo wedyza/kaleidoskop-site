@@ -3,6 +3,7 @@ import './AdminCategories.scss'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchAdminCategories } from '../../features/admin/adminCategoriesSlice';
 import { Link } from 'react-router-dom';
+import Toggle from '../../components/ui/Toggle/Toggle';
 
 const AdminCategories = () => {
   const [activeTab, setActivetab] = useState<'cat' | 'subcat'>('cat');
@@ -151,7 +152,12 @@ const AdminCategories = () => {
                       {cat.daughter_count}
                     </div>
                     <div className={`admin-cat_table-cell inter12-600 admin-cat_table-status ${cat.active ? '' : 'admin-cat_table-status__inactive'}`}>
-                      {cat.active ? 'Активная' : 'Отключена'}
+                      {/* <Toggle
+                        isActive={cat.active}
+                        onToggle={() => handleToggle(banner)}
+                        activeText="Активный"
+                        inactiveText="Отключен"
+                      /> */}
                     </div>
                     <Link to={`/admin/categories/${cat.id}/edit`} className='admin-cat_table-cell inter12-600 admin-cat_table-act'>
                       <span>Редактировать</span>

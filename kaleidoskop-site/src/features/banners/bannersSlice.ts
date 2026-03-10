@@ -2,13 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../../api/axiosInstance';
 
 interface Banner {
-  id: string;
-  title: string;
-  public_queue: string;
   source: string;
-  created_at: string;
-  active: boolean;
-  queue: number;
 }
 
 interface BannersState {
@@ -41,7 +35,7 @@ export const fetchFirstGroupBanners = createAsyncThunk(
   'banners/fetchFirstGroup',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/admin_panel/banner/first_group/');
+      const response = await api.get('/banner/first_group/');
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки баннеров первой группы');
@@ -53,7 +47,7 @@ export const fetchSecondGroupBanners = createAsyncThunk(
   'banners/fetchSecondGroup',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/admin_panel/banner/second_group/');
+      const response = await api.get('/banner/second_group/');
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки баннеров второй группы');

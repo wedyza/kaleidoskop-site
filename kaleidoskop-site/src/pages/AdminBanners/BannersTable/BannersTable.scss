@@ -1,0 +1,14 @@
+.admin-banners_empty {
+  display: flex;
+  flex-direction: column;
+  height: 153px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--grey400);
+
+  span {
+    max-width: 180px;
+    text-align: center;
+  }
+}
