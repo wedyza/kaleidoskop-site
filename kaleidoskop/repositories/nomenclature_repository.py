@@ -1,7 +1,6 @@
 from uuid import UUID
-
 from api.models import Nomenclature
-from typing import Iterable, List
+from typing import Iterable
 
 class NomenclatureRepository:
     def create_new_nomenclatures(self, data:list) -> bool:
@@ -21,7 +20,7 @@ class NomenclatureRepository:
         for nomenclature in nomenclatures:
             try:
                 nomenclature.parent = Nomenclature.objects.get(code=nomenclature.parent_code)
-            except:
+            except:  # noqa: E722
                 pass
         Nomenclature.objects.bulk_update(nomenclatures, fields=["parent"])
         

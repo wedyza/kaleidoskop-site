@@ -1,3 +1,6 @@
+import json
+
+from redis import StrictRedis
 from rest_framework import views, viewsets, permissions, status, mixins, filters
 from django_filters import rest_framework as rf_filters
 from rest_framework.decorators import action
@@ -43,6 +46,7 @@ from services.cart_item_service import CartItemService
 from services.order_service import OrderService
 from services.brand_service import BrandService
 from services.banner_service import BannerService
+from services.redis_service import RedisService
 from .filters import ItemFilter
 from django.utils import timezone
 
@@ -110,6 +114,7 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
     filterset_class = ItemFilter
     item_service = ItemService()
     document_class = ItemDocument
+    redis_service: StrictRedis = RedisService.initialize()
     
     def get_serializer_class(self) -> ItemDetailSerializer | ItemListSerializer:
         if self.action == 'retrieve':
@@ -148,6 +153,11 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             search = self.document_class.search().query(query)
             total = search.count()
             response = search[0:total].to_queryset()
+            
+            items_ids = list(response.exclude(brand=None).values_list("brand_id", flat=True).distinct())
+            items_ids = json.dumps([str(i) for i in items_ids])
+            self.redis_service.set(hash(queryset), items_ids, 120)
+
             filter = ItemFilter(request.GET, queryset=response)
             if not filter.is_valid():
                 return Response(filter.errors, status=400)
@@ -156,7 +166,7 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             serializer = self.serializer_class(results, context={"request": request}, many=True)
             return self.get_paginated_response(serializer.data)
         except Exception as e:
-            return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'detail': f"raised error {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(
         detail=True,
@@ -379,15 +389,20 @@ class BrandViewSet(viewsets.GenericViewSet): # Закончил тут
     permission_classes = (permissions.AllowAny,)
     brand_service = BrandService()
     
-    @action(methods=["GET"], detail=False, url_path="(?P<pk>[^/.]+)") # для получения брендов по категории
-    def get_brands_of_category(self, request, pk):
+    @action(methods=["GET"], detail=False, url_path="category/(?P<category_id>[^/.]+)") # для получения брендов по категории
+    def get_brands_of_category(self, request, category_id):
         try:
-            queryset = self.brand_service.get_queryset(pk)
+            queryset = self.brand_service.get_queryset(category_id)
             return Response(self.get_serializer(instance=queryset, many=True).data)
-        except:
+        except:  # noqa: E722
             return Response({"detail": "Not found category with that id"}, status=status.HTTP_404_NOT_FOUND)
 
-
+    @action(methods=["GET"], detail=False, url_path="query/(?P<query>.*)")
+    def get_brands_of_queryset(self, request, query=None):
+        queryset = self.brand_service.get_queryset_of_search_query(query)
+        return Response(self.get_serializer(instance=queryset, many=True).data)
+        
+        
 class ShopViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = Shop.objects.all() # Для этого не буду делать сервис, он и так тонкий
     serializer_class = ShopSerializer

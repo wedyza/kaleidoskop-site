@@ -8,17 +8,17 @@ import httpx
 from django.conf import settings
 
 class AsyncService:
-    rq = RabbitMQ()
+    _rq = RabbitMQ()
     
     @multitasker
     @shared_task
     def produce_tg_notification(self, order_data):
         try:
-            self.rq.publish(action="new_order", message=json.dumps(order_data, ensure_ascii=False))
+            self._rq.publish(action="new_order", message=json.dumps(order_data, ensure_ascii=False))
         except Exception as e:
-            print('Ошибка отрпавки уведомления')
+            print('Ошибка отправки уведомления', e)
         finally:
-            self.rq.close()
+            self._rq.close()
             
     @multitasker
     @shared_task
@@ -29,5 +29,6 @@ class AsyncService:
             response = httpx.post(
                 url=f"http://{settings.RECOMENDATIONS_URL}/train/content", json=serializer.data, timeout=0.5
             )
-        except httpx.TimeoutException as e:
+            print(response)
+        except httpx.TimeoutException:
             print("Началось обучение")

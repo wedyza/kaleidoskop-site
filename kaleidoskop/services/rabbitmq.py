@@ -64,7 +64,7 @@ class RabbitMQ:
                 self.channel = self.connection.channel()
                 self.channel.queue_declare(queue=self.queue_name, durable=True)
                 return True
-            except:
+            except:  # noqa: E722
                 self.logger.error("Failed to recreate channel, reconnecting...")
                 self.connect()
                 return True
@@ -75,12 +75,12 @@ class RabbitMQ:
         if self.channel and not self.channel.is_closed:
             try:
                 self.channel.close()
-            except:
+            except:  # noqa: E722
                 pass
         if self.connection and not self.connection.is_closed:
             try:
                 self.connection.close()
-            except:
+            except:  # noqa: E722
                 pass
 
     def consume(self, queue_name, callback):

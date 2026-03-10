@@ -1,6 +1,6 @@
 from typing import Iterable
+
 from api.models import Item, Nomenclature
-from repositories.category_repository import CategoryRepository
 from uuid import UUID
 
 class ItemRepository:
@@ -28,3 +28,6 @@ class ItemRepository:
             except:  # noqa: E722
                 continue
         Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)
+        
+    def get_items_from_ids(self, ids: list[UUID]) -> Iterable[Item]:
+        return Item.objects.filter(id__in=ids).all()

@@ -1,14 +1,13 @@
 from django.conf import settings
 from rest_framework import permissions
 
-
 class ContainsAPIKey(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method != ["PUT"]:
             return True
         try:
             return request.headers["API_KEY"] == settings.API_KEY_1c
-        except:
+        except:  # noqa: E722
             return False
 
 

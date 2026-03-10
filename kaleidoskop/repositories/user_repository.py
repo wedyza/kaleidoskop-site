@@ -16,7 +16,7 @@ class UserRepository:
     def get_user_by_email(self, email: str) -> CustomAbstractUser:
         try:
             return CustomAbstractUser.objects.get(email=email)
-        except:
+        except:  # noqa: E722
             raise NotFoundException
     
     def create_user_with_email(self, email: str) -> CustomAbstractUser:

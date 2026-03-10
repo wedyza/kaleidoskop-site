@@ -2,7 +2,6 @@ from django.db.models import F, Sum
 from typing import List, Iterable
 from api.models import Item, Order, Cart
 from users.models import CustomAbstractUser
-from uuid import UUID
 from api.serializers import OrderSerializer
 from exceptions.exceptions import NotFoundException
 
@@ -35,9 +34,6 @@ class OrderRepository:
         order_cart.order = instance
         order_cart.save()
         return instance
-    
-    def get_order_by_code(self, order_pk: UUID) -> Order:
-        return Order.objects.get(id=order_pk)
 
     def delete_order(self, order: Order):
         order.delete()

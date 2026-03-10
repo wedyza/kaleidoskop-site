@@ -1,4 +1,3 @@
-from typing import Iterable
 from api.models import Cart
 from uuid import UUID
 from users.models import CustomAbstractUser

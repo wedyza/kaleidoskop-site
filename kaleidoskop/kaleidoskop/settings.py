@@ -253,6 +253,6 @@ SWAGGER_SETTINGS = {
     # другие опции...
 }
 LOCAL_TZ = zoneinfo.ZoneInfo('Asia/Yekaterinburg')
-RECOMENDATIONS_URL = f"localhost:8082" if not CONTAINER_LAUNCHER else "recommendation_system:8000"
+RECOMENDATIONS_URL = "localhost:8082" if not CONTAINER_LAUNCHER else "recommendation_system:8000"
 
 CORS_ALLOW_CREDENTIALS = True
