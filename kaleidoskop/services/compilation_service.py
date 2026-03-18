@@ -1,13 +1,15 @@
+from typing import Union
+
 from admin_panel.models import Compilation, Nomenclature
 from admin_panel.serializers import CompilationCreateSerializer
 from repositories.compilation_repository import CompilationRepository
 from uuid import UUID
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, QuerySet
 
 class CompilationService:
     _compilation_repository = CompilationRepository()
 
-    def save(self, data: dict) -> list[Compilation]:
+    def save(self, data: dict) -> Union[QuerySet, list[Compilation]]:
         compilations = []
         for item in data:
             comp = item['id']
@@ -16,7 +18,7 @@ class CompilationService:
             compilations.append(comp)
         return compilations
 
-    def get_nomenclatures_queryset(self, pk: UUID) -> list[Nomenclature]:
+    def get_nomenclatures_queryset(self, pk: UUID) -> Union[QuerySet, list[Nomenclature]]:
         compilation = self._compilation_repository.get_by_id(pk)
         return Nomenclature.objects.annotate(
             status=Exists(compilation.nomenclatures.filter(id=OuterRef('pk')))

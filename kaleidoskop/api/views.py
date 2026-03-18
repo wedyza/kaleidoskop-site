@@ -1,3 +1,4 @@
+import json
 
 from redis import StrictRedis
 from rest_framework import views, viewsets, permissions, status, mixins, filters
@@ -145,6 +146,12 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
     @action(detail=False, methods=["GET"], url_path="search/(?P<query>.*)")
     def search(self, request, query=None):
         items = self.item_service.get_items_queryset_by_query(query)
+        
+        # DEPRECTATED 
+        # brand_ids = list(items.exclude(brand=None).values_list('brand_id', flat=True).distinct()) # Сравнить по оперативе, может быть дешевле будет заново провести поиск, учитывая, что это теперь это достаточно дешевая операция поиска по индексу (скорее всего это будет более верным решением)
+        # brand_ids = json.dumps([str(i) for i in brand_ids]) 
+        # self.redis_service.set(hash(self.queryset), brand_ids, 120)
+
         filter = ItemFilter(request.GET, queryset=items)
         if not filter.is_valid():
             return Response(filter.errors, status=400)
@@ -345,7 +352,6 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
         order = self.get_serializer(data=request.data)
         if not order.is_valid():
             return Response(order.errors, status=status.HTTP_400_BAD_REQUEST)
-
         try:
             instance = self.order_service.create_order(self.request.user.id, order)
             return Response(self.get_serializer(instance=instance).data)

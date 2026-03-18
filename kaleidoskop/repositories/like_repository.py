@@ -13,17 +13,17 @@ class LikeRepository:
     def delete_like(self, like: Like):
         like.delete()
     
-    # def __create_or_delete_like(self, like: Like, status: bool) -> bool: # я вернусь сюда, когда доделаю корзину
-    #     if like is not None and not status:
-    #         like.delete()
-    #     elif like is None and status:
-    #         like = Like.objects.create(item_id=pk, user=request.user)
-    #         like.save()
-    #     return status
+    def __create_or_delete_like(self, like: Like, status: bool, item_pk: UUID, user_pk: UUID) -> bool:
+        if like is not None and not status:
+            like.delete()
+        elif like is None and status:
+            like = Like.objects.create(item_id=item_pk, user_id=user_pk)
+            like.save()
+        return status
 
     def switch_like(self, item_pk: UUID, user_pk: UUID, status: bool) -> bool:
         like = self.filter_like_by_user_id_and_item_id(item_pk, user_pk)
-        return self.__create_or_delete_like(like, status)
+        return self.__create_or_delete_like(like, status, item_pk, user_pk)
     
     def get_likes_of_user(self, user_pk: UUID):
         return Like.objects.filter(user_id=user_pk).all()

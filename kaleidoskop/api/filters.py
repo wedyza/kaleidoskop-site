@@ -1,5 +1,5 @@
 import django_filters as filters
-from .models import Brand, Item
+from .models import Item
 
 class ItemFilter(filters.FilterSet):
     min_price = filters.NumberFilter(field_name='price', lookup_expr='gte', label='Min price')
@@ -8,4 +8,4 @@ class ItemFilter(filters.FilterSet):
 
     class Meta:
         model = Item
-        fields = ('min_price', 'max_price', 'brands')
+        fields = ('min_price', 'max_price', 'brands') 

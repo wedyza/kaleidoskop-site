@@ -4,14 +4,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from enum import Enum
 import uuid
 from django.contrib.postgres.indexes import GinIndex
-from search.functions import Unaccent
-from django.db.models.functions import Lower
 from django.contrib.postgres.search import SearchVectorField
 from django.forms import ValidationError
 from .utils import slugify
 
 User = get_user_model()
-
 
 class UUIDModel(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
@@ -112,7 +109,6 @@ class Item(UUIDModel):
         THIRD = 'Ценовая группа 3%'
         FOURTH = 'Ценовая группа 4%'
         FIFTH = 'Ценовая группа 5%'
-
 
     title = models.CharField("Название", max_length=100)
     nomenclature = models.ForeignKey(
@@ -243,7 +239,6 @@ class Order(UUIDModel):
     code = models.CharField('Код', null=True, unique=True, max_length=20) # Для 1С
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
 
-    
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = "Заказы"
@@ -284,10 +279,6 @@ class CartItem(UUIDModel):
     class Meta:
         verbose_name = 'Товар в корзине'
         verbose_name_plural = "Товары в корзинах"
-
-
-# class Banner(models.Model):
-#     pass
 
 
 class Comment(UUIDModel):
@@ -343,7 +334,6 @@ class Remains(UUIDModel):
         related_name="remains",
     )
 
-    
     class Meta:
         verbose_name = 'Остаток'
         verbose_name_plural = "Остатки"
@@ -351,6 +341,7 @@ class Remains(UUIDModel):
     
     def __str__(self):
         return f"{self.item.title} - {self.warehouse.name}"
+
 
 class ItemImage(UUIDModel):
     source = models.ImageField(upload_to="media", null=False, max_length=300)
@@ -385,7 +376,6 @@ class ParameterItem(UUIDModel):
 class Parameter(UUIDModel):
     title = models.CharField("Название", max_length=100, null=False, blank=False)
     unit = models.CharField("Единица измерения", max_length=25, blank=True, null=True)
-    # value = models.TextField("Значение", max_length=200, null=False, blank=False)
 
 
 class Brand(UUIDModel):

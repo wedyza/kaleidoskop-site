@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Union, List
 from api.models import CartItem, Item
 from repositories.item_repository import ItemRepository
 from .like_service import LikeService
@@ -6,6 +6,7 @@ from .cart_item_service import CartItemService
 from .cart_service import CartService
 from exceptions.exceptions import NotFoundException
 from uuid import UUID
+from django.db.models import QuerySet
 
 
 class ItemService:
@@ -35,8 +36,8 @@ class ItemService:
             raise NotFoundException
         return self._cart_item_service.update_amount_of_cart_item(cart_item, amount)
 
-    def get_items_from_ids(self, ids: list[str]) -> Iterable[Item]:
+    def get_items_from_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
         return self._item_repository.get_items_from_ids(ids)
     
-    def get_items_queryset_by_query(self, query: str) -> Iterable[Item]:
+    def get_items_queryset_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
         return self._item_repository.search_items_by_query(query)

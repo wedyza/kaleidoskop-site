@@ -1,5 +1,4 @@
-from typing import List
-from .models import Nomenclature, Category, Item
+from .models import Nomenclature, Item
 
 def get_nomenclatures(level_of_nesting:int):
     nomenclatures = Nomenclature.objects.filter(parent=None).all()

@@ -1,6 +1,7 @@
 from uuid import UUID
 from api.models import Nomenclature
-from typing import Iterable
+from django.db.models import QuerySet
+from typing import Union
 
 class NomenclatureRepository:
     def create_new_nomenclatures(self, data:list) -> bool:
@@ -24,7 +25,7 @@ class NomenclatureRepository:
                 pass
         Nomenclature.objects.bulk_update(nomenclatures, fields=["parent"])
         
-    def get_daughter_nomenclatures(self, nomenclatures: Iterable[Nomenclature]) -> Iterable[Nomenclature]:
+    def get_daughter_nomenclatures(self, nomenclatures: Union[QuerySet, list[Nomenclature]]) -> Union[QuerySet, list[Nomenclature]]:
         returning = nomenclatures
         while True:
             past = returning.count()
@@ -33,7 +34,7 @@ class NomenclatureRepository:
             if past - now == 0:
                 return returning
             
-    def get_nomenclatures(self, level_of_nesting: int) -> Iterable[Nomenclature]:
+    def get_nomenclatures(self, level_of_nesting: int) -> Union[QuerySet, list[Nomenclature]]:
         nomenclatures = Nomenclature.objects.filter(parent=None).all()
         while level_of_nesting != 0:
             nomenclatures = Nomenclature.objects.filter(parent__in=nomenclatures).all()

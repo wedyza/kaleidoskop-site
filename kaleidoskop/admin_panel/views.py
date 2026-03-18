@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, CreateNomenclatureCategorySerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureSerializer, AdminCategorySerializer
 from django.core.exceptions import ValidationError
-from django.db.models import Exists, OuterRef
+from exceptions.exceptions import NotFoundException
 from services.compilation_service import CompilationService
 from api.models import Banner, Category, Nomenclature
 from .models import Compilation
@@ -16,8 +16,6 @@ from services.nomenclature_service import NomenclatureService
 from services.admin_service import AdminService
 from rest_framework.request import Request
 
-# Закончил тут
-
 
 class LinkTelegrammView(views.APIView):
     admin_service = AdminService()
@@ -27,7 +25,10 @@ class LinkTelegrammView(views.APIView):
         code = SessionCodeSerializer(data=request.data)
         if not code.is_valid():
             raise ValidationError(code.errors)
-        chat_id = self.admin_service.link_telegram(code.data['code'])
+        try:
+            chat_id = self.admin_service.link_telegram(code.data['code'])
+        except NotFoundException:
+            return Response({'detaail': 'did not found any code'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'chat_id': chat_id}, status=status.HTTP_201_CREATED)
 
 

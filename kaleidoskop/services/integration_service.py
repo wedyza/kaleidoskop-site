@@ -86,7 +86,7 @@ class IntegrationService:
         return response.json()
     
 
-    def sync_items(self):
+    def sync_items(self) -> dict[str, str]:
         response = self._client.get(
             self._LINK_1C + '/items/',
             params={"API_KEY": self._API_KEY},
@@ -98,7 +98,7 @@ class IntegrationService:
         return items
     
 
-    def sync_remains(self):
+    def sync_remains(self) -> dict[str, str]:
         response = self._client.get(
             self._LINK_1C + '/remains/',
             params={"API_KEY": self._API_KEY},

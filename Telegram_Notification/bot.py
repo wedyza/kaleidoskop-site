@@ -128,7 +128,6 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 async def main() -> None:
     global bot, loop
     loop = asyncio.get_running_loop()
-    print("MAIN LOOP:", loop)
     threading.Thread(target=launch_consumer, daemon=True).start()
     await dp.start_polling(bot)
 

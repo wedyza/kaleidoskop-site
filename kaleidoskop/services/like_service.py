@@ -1,7 +1,8 @@
-from typing import Iterable
+from typing import Union
 from api.models import Like
 from uuid import UUID
 from repositories.like_repository import LikeRepository
+from django.db.models import QuerySet
 
 class LikeService:
     _like_repository = LikeRepository()
@@ -14,5 +15,5 @@ class LikeService:
             self._like_repository.delete_like(like)
         return status
     
-    def get_likes_of_user(self, user_pk: UUID) -> Iterable[Like]:
+    def get_likes_of_user(self, user_pk: UUID) -> Union[QuerySet, list[Like]]:
         return self._like_repository.get_likes_of_user(user_pk)

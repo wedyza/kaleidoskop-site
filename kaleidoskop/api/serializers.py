@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Banner, Brand, Category, Item, Cart, CartItem, ItemImage, Like, Comment, NomenclatureCategory, Order, Parameter, ParameterItem, Remains, Nomenclature, Shop
+from .models import Banner, Brand, Category, Item, Cart, CartItem, ItemImage, Like, Comment, Order, Parameter, ParameterItem, Remains, Shop
 from django.contrib.auth import get_user_model
 from .functions import get_daughter_nomenclatures
 from admin_panel.models import Compilation
@@ -88,7 +88,7 @@ class ItemDetailSerializer(serializers.ModelSerializer):
         
         wishlist = Like.objects.filter(user=user).filter(item=obj).first()
 
-        return not wishlist is None
+        return wishlist is not None
 
     def get_cart_count(self, obj):
         user = self.context["request"].user
@@ -123,7 +123,7 @@ class ItemListSerializer(ItemDetailSerializer): # Завтра проверит�
         
         wishlist = Like.objects.filter(user=user).filter(item=obj).first()
 
-        return not wishlist is None
+        return wishlist is not None
 
     def get_cart_count(self, obj):
         user = self.context["request"].user

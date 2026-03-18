@@ -4,11 +4,12 @@ from services.cart_service import CartService
 from services.async_service import AsyncService
 from repositories.order_repository import OrderRepository
 from users.models import CustomAbstractUser
-from typing import Iterable
+from typing import Union
 from exceptions.exceptions import OrderIsAgreed, UnknownUserException, EmptyCartException, ExceededRemainsException, UserUnauthorized
 from api.models import Order, Cart, Item
 from api.serializers import OrderSerializer, CartTo1CSerializer
 from services.integration_service import IntegrationService
+from django.db.models import QuerySet
 from django.conf import settings
 from django.utils import timezone
 
@@ -37,7 +38,7 @@ class OrderService:
     def get_order_by_code(self, code: str) -> Order:
         return self._order_repository.get_order_by_code(code)
     
-    def get_order_queryset(self, user_pk: UUID) -> Iterable[Order]:
+    def get_order_queryset(self, user_pk: UUID) -> Union[QuerySet, list[Order]]:
         return Order.objects.filter(user_id=user_pk).all()
     
     def __validate_user(self, user: CustomAbstractUser) -> bool:
@@ -45,7 +46,7 @@ class OrderService:
             raise UnknownUserException
         return True
         
-    def __validate_cart(self, items_for_order: Iterable[Item]) -> float:
+    def __validate_cart(self, items_for_order: Union[QuerySet, list[Item]]) -> float:
         if items_for_order.count() == 0:
             raise EmptyCartException
         total_sum = self._order_repository.validate_cart(items_for_order)
@@ -55,12 +56,12 @@ class OrderService:
             raise ExceededRemainsException(item_list=self._order_repository.get_exceeded_items(items_for_order))
         return total_sum
         
-    def __validate_order(self, user: CustomAbstractUser, items_for_order: Iterable[Item]) -> float:
+    def __validate_order(self, user: CustomAbstractUser, items_for_order: Union[QuerySet, list[Item]]) -> float:
         total_sum = self.__validate_cart(items_for_order) 
         self.__validate_user(user)
         return total_sum
     
-    def __create_cart(self, user: CustomAbstractUser, items_for_order: Iterable[Item]) -> Cart:
+    def __create_cart(self, user: CustomAbstractUser, items_for_order: Union[QuerySet, list[Item]]) -> Cart:
         cart = self._cart_service.create_empty_cart_for_user(user)
         cart.items.add(*items_for_order.all())
         return cart
@@ -83,7 +84,7 @@ class OrderService:
             'user_code': user.code
         }
     
-    def __create_order(self, user: CustomAbstractUser, items_for_order: Iterable[Item], order_data: OrderSerializer, cart: Cart, total_sum: float) -> Order:
+    def __create_order(self, user: CustomAbstractUser, items_for_order: Union[QuerySet, list[Item]], order_data: OrderSerializer, cart: Cart, total_sum: float) -> Order:
         order_cart = self.__create_cart(user, items_for_order)
         data_to_1C = self.__fill_order_data_to_1C(order_cart, user)        
         response = self._integration_service.create_order_1c(data_to_1C)

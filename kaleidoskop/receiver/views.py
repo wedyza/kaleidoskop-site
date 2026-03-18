@@ -54,5 +54,5 @@ class ReceiveOrderView(APIView):
         try:
             receiver_service.update_order_status(request.data['code'], request.data['status'])
             return Response(status=status.HTTP_200_OK)
-        except:
+        except:  # noqa: E722
             return Response(stauts=status.HTTP_500_INTERNAL_SERVER_ERROR)
