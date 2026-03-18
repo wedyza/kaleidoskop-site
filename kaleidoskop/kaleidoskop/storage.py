@@ -8,7 +8,7 @@ class MinioDualStorage(S3Boto3Storage):
         internal = (
             "http://minio:9000"
             if getattr(dj, "CONTAINER_LAUNCHER", False)
-            else "http://192.168.0.243:9000" # Тут локальный адрес, обычно localhost
+            else "http://localhost:9000" # Тут локальный адрес, обычно localhost
         )
 
         self.public_host = dj.SERVER_ENDPOINT      # "94.190.123.143"

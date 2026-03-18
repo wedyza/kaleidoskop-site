@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:13
+    image: postgres:17
     container_name: kaleidoskop_db
     restart: always
     env_file: ./.env
@@ -89,6 +89,8 @@ services:
       - ES_JAVA_OPTS=-Xms2g
     volumes:
       - es-data:/usr/share/elasticsearch/data
+    profiles:
+      - [donotstart]
 
   redis:
     image: redis
@@ -153,5 +155,5 @@ volumes:
  minio-storage:
  static:
  indexes:
- es-data:
+#  es-data:
  frontend_static:

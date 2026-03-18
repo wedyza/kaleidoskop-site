@@ -9,7 +9,7 @@ from .permissions import ContainsAPIKey
 receiver_service = ReceiverService()
 
 class ReceiveNomenclaturesView(APIView):
-    swagger_schema = None
+    # swagger_schema = None
     permission_classes = (ContainsAPIKey,)
 
     def post(self, request):
@@ -21,7 +21,7 @@ class ReceiveNomenclaturesView(APIView):
     #     return Response(status=status.HTTP_200_OK)
 
 class ReceiveItemsView(APIView):
-    swagger_schema = None
+    # swagger_schema = None
     permission_classes = (ContainsAPIKey,)
 
     def post(self, request):
@@ -34,7 +34,7 @@ class ReceiveItemsView(APIView):
 
 
 class ReceiveRemainsView(APIView):
-    swagger_schema = None
+    # swagger_schema = None
     permission_classes = (ContainsAPIKey,)
 
 

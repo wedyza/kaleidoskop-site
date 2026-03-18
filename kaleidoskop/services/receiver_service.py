@@ -17,7 +17,7 @@ class ReceiverService:
     
     @multitasker
     @shared_task
-    def sync_nomenclatures_with_1C(self): 
+    def sync_nomenclatures_with_1C(self): # Надо будет сделать при помощи LIMIT|OFFSET и async зарпосы посылать сразу несколько и получать их, далее уже формировать на этой основе товары
         data = self._integration_service.sync_nomenclatures()
         self._nomenclature_service.fill_nomenclatures_from_1C(data)
         

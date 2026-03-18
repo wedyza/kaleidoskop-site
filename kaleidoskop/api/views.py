@@ -1,4 +1,3 @@
-import json
 
 from redis import StrictRedis
 from rest_framework import views, viewsets, permissions, status, mixins, filters
@@ -31,8 +30,6 @@ from .serializers import (
     ItemListSerializer
 )
 from .models import Banner, Cart, Category, Item, Comment, CartItem, Shop
-from search.views import PaginatedElasticSearchAPIView
-from search.documents import ItemDocument
 from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -51,7 +48,6 @@ from .filters import ItemFilter
 from django.utils import timezone
 
 User = get_user_model()
-# Может быть потом выделить сервисный слой и работать в нём?
 class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     queryset = Category.objects.filter(active=True).all()
     serializer_class = CategorySerializer
@@ -106,14 +102,14 @@ class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     def get_queryset(self):
         return self.like_service.get_likes_of_user(self.request.user.id)
 
-class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
+class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin): #paginatedeal...
     queryset = Item.objects.all()
     pagination_class = CustomPagination
     filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ['price']
     filterset_class = ItemFilter
     item_service = ItemService()
-    document_class = ItemDocument
+    # document_class = ItemDocument # Для Elasticsearch
     redis_service: StrictRedis = RedisService.initialize()
     
     def get_serializer_class(self) -> ItemDetailSerializer | ItemListSerializer:
@@ -126,10 +122,10 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             return ItemDetailSerializer(*args, **kwargs)
         return ItemListSerializer(*args, **kwargs)
 
-    def generate_q_expression(self, query) -> Q:
-        return Q(
-            "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
-        )
+    # def generate_q_expression(self, query) -> Q: # Для Elasticsearch
+    #     return Q(
+    #         "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
+    #     )
 
     def get_serializer_context(self) -> dict[str, Any]:
         context = super().get_serializer_context()
@@ -146,27 +142,16 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
             openapi.Parameter("ordering", openapi.IN_QUERY, description='Поля для сортировки: price', type=openapi.TYPE_STRING, enum=['price', '-price'])
         ]
     )
-    @action(detail=False, methods=["GET"], url_path="search/(?P<queryset>.*)") # Тут взаимодействие с другим сервисом, хз, надо ли выделять или я потом вообще на индексы в Postgresql перейду
-    def search(self, request, queryset=None):
-        try:
-            query = self.generate_q_expression(queryset)
-            search = self.document_class.search().query(query)
-            total = search.count()
-            response = search[0:total].to_queryset()
-            
-            items_ids = list(response.exclude(brand=None).values_list("brand_id", flat=True).distinct())
-            items_ids = json.dumps([str(i) for i in items_ids])
-            self.redis_service.set(hash(queryset), items_ids, 120)
-
-            filter = ItemFilter(request.GET, queryset=response)
-            if not filter.is_valid():
-                return Response(filter.errors, status=400)
-            response = self.filter_queryset(filter.queryset)
-            results = self.paginate_queryset(response)
-            serializer = self.serializer_class(results, context={"request": request}, many=True)
-            return self.get_paginated_response(serializer.data)
-        except Exception as e:
-            return Response({'detail': f"raised error {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    @action(detail=False, methods=["GET"], url_path="search/(?P<query>.*)")
+    def search(self, request, query=None):
+        items = self.item_service.get_items_queryset_by_query(query)
+        filter = ItemFilter(request.GET, queryset=items)
+        if not filter.is_valid():
+            return Response(filter.errors, status=400)
+        response = self.filter_queryset(filter.queryset)
+        results = self.paginate_queryset(response)
+        serializer = self.serializer_class(results, context={"request": request}, many=True)
+        return self.get_paginated_response(serializer.data)
 
     @action(
         detail=True,
@@ -211,7 +196,6 @@ class ItemViewSet(viewsets.ModelViewSet, PaginatedElasticSearchAPIView):
         amount = self.get_serializer(data=request.data)
         if not amount.is_valid():
             return Response(amount.errors, status=status.HTTP_400_BAD_REQUEST)
-        
         try:
             updated_cart_item = self.item_service.update_cart_item_amount(pk, self.request.user.id, amount.validated_data['amount'])
             return Response(CartItemSerializer(instance=updated_cart_item, context={"request": request}).data)
