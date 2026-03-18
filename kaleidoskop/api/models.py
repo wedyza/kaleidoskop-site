@@ -3,6 +3,10 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from enum import Enum
 import uuid
+from django.contrib.postgres.indexes import GinIndex
+from search.functions import Unaccent
+from django.db.models.functions import Lower
+from django.contrib.postgres.search import SearchVectorField
 from django.forms import ValidationError
 from .utils import slugify
 
@@ -138,7 +142,6 @@ class Item(UUIDModel):
     okdp = models.CharField('ОКДП', max_length=50, null=True, blank=True)
     price_group = models.CharField('Ценновая группа', max_length=100, default=PriceGroup.NOTHING, choices=PriceGroup.choices)
     barcode = models.CharField('Штрихкод', max_length=100, unique=True, null=False, blank=False)
-
     brand = models.ForeignKey(
         'Brand',
         on_delete=models.CASCADE,
@@ -148,9 +151,14 @@ class Item(UUIDModel):
         blank=True
     )
 
+    # search_vector = SearchVectorField(blank=True)
+
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = "Товары"
+        indexes = [
+            GinIndex(name="title_trgm_gin_ops", fields=["title"], opclasses=['gin_trgm_ops']), # Если что, то в будущем можно будет добавить search_vector и искать также по нему
+        ]
 
         
     @property

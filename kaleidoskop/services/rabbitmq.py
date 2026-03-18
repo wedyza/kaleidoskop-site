@@ -15,7 +15,8 @@ class RabbitMQ:
         self.channel = None
         self.queue_name = "notifications"
         self.logger = logging.getLogger(__name__)
-        self.connect()
+        if settings.CONTAINER_LAUNCHER:
+            self.connect()
 
     def connect(self):
         """Создает новое подключение с retry логикой"""

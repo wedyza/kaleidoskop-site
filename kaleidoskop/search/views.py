@@ -1,12 +1,7 @@
 import abc
 
 from rest_framework.response import Response
-from django.http import HttpResponse
-from elasticsearch_dsl import Q
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.views import APIView
 from django_elasticsearch_dsl import Document
-from .documents import ItemDocument
 
 
 class PaginatedElasticSearchAPIView:  # Общий клаасс для поиска

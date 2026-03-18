@@ -1,5 +1,4 @@
 from typing import Iterable
-
 from api.models import CartItem, Item
 from repositories.item_repository import ItemRepository
 from .like_service import LikeService
@@ -7,6 +6,7 @@ from .cart_item_service import CartItemService
 from .cart_service import CartService
 from exceptions.exceptions import NotFoundException
 from uuid import UUID
+
 
 class ItemService:
     _like_service = LikeService()
@@ -37,3 +37,6 @@ class ItemService:
 
     def get_items_from_ids(self, ids: list[str]) -> Iterable[Item]:
         return self._item_repository.get_items_from_ids(ids)
+    
+    def get_items_queryset_by_query(self, query: str) -> Iterable[Item]:
+        return self._item_repository.search_items_by_query(query)

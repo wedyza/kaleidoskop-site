@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_elasticsearch_dsl",
+    "django.contrib.postgres",
+    # "django_elasticsearch_dsl",
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -60,7 +61,8 @@ INSTALLED_APPS = [
     "receiver.apps.ReceiverConfig",
     "search.apps.SearchConfig",
     "recomendation_system.apps.RecomendationSystemConfig",
-    "admin_panel.apps.AdminPanelConfig"
+    "admin_panel.apps.AdminPanelConfig",
+    "django_extensions"
 ]
 
 MIDDLEWARE = [
@@ -204,14 +206,14 @@ SIMPLE_JWT = {
     'REFRESH_COOKE_SECURE': True
 }
 
-ELASTICSEARCH_DSL = {
-    "default": {
-        "hosts": "http://localhost:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
-        "http_auth": ("elastic", "MyPassword"),
-        "verify_certs": False,
-        "ca_certs": None,
-    }
-}
+# ELASTICSEARCH_DSL = {
+#     "default": {
+#         "hosts": "http://localhost:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
+#         "http_auth": ("elastic", "MyPassword"),
+#         "verify_certs": False,
+#         "ca_certs": None,
+#     }
+# }
 
 LANGUAGE_CODE = 'ru-RU'
 
