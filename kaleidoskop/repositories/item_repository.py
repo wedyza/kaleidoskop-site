@@ -2,7 +2,8 @@ from typing import Iterable
 from django.contrib.postgres.search import SearchVector, TrigramSimilarity, TrigramDistance
 from search.functions import Unaccent
 from django.db.models.functions import Lower
-from django.db.models import Value, Q, F
+from django.db.models import Value, Q, F, Case, When
+from django.db import models
 from api.models import Item, Nomenclature
 from uuid import UUID
 
@@ -43,12 +44,21 @@ class ItemRepository:
         """
         normalized_query = query.lower()
         qs = Item.objects.extra(
-            where=['lower(%s) <%% lower(title)'],
-            params=[query]
+            where=['search_vector @@ plainto_tsquery(%s)::tsquery OR %s <%% lower(title)'],
+            params=[normalized_query, normalized_query]
         ).annotate(
-            similarity=TrigramSimilarity(
-                Value(normalized_query),
-                Lower('title')
-            )
-        ).order_by('-similarity')
+        full_text_match=Case(
+            When(search_vector=query, then=Value(1)),
+            default=Value(0),
+            output_field=models.IntegerField()
+        ),
+        trigram_similarity=TrigramSimilarity(
+            Value(query.lower()),
+            Lower('title')
+        ),
+        priority_score=Case(
+            When(full_text_match=1, then=Value(2)),
+            default=F('trigram_similarity'),
+            output_field=models.FloatField()
+        )).order_by('-priority_score', '-trigram_similarity')
         return qs

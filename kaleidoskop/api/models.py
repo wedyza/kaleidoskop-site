@@ -151,13 +151,14 @@ class Item(UUIDModel):
         blank=True
     )
 
-    # search_vector = SearchVectorField(blank=True)
+    search_vector = SearchVectorField(null=True, editable=False)
 
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = "Товары"
         indexes = [
             GinIndex(name="title_trgm_gin_ops", fields=["title"], opclasses=['gin_trgm_ops']), # Если что, то в будущем можно будет добавить search_vector и искать также по нему
+            GinIndex(fields=["search_vector"])
         ]
 
         

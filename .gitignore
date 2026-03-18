@@ -212,3 +212,5 @@ __marimo__/
 .index
 *.xml
 *.csv
+kaleidoskop-site/.env.development
+kaleidoskop-site/.env.production
