@@ -143,6 +143,9 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
 
     @action(methods=['DELETE'], url_path='delete_from_category/(?P<category_id>[^/.]+)', detail=True)
     def delete_from_category(self, request, pk, category_id):
+        """
+        Удаляет связь Nomenclatures <=> Categories
+        """
         try:
             self.nomenclature_service.remove_nomenclature_from_category(category_pk=category_id, nomenclature_pk=pk)
             return Response({'detail': 'success'})
@@ -164,15 +167,10 @@ class CompilationViewSet(viewsets.ModelViewSet):
     @action(methods=['POST'], url_path='attach_nomenclature', detail=True)
     def attach_item(self, request, pk):
         try:
-            compilation = Compilation.objects.get(id=pk)
-        except Exception as e:
-            print(e)
-            return Response({'detail': 'Не найдено'}, status=status.HTTP_404_NOT_FOUND)
-        
-        nomenclatures = NomenclatureRelatedSerializer(data=request.data)
-        nomenclatures.is_valid(raise_exception=True)
-        nomenclature = nomenclatures.validated_data['nomenclature']
-        compilation.nomenclatures.add(nomenclature)
+            compilation = self.compilation_service.attach_category(pk, request.data)
+        except NotFoundException as e:
+            print(e.args)
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
         return Response(CompilationSerializer(instance=compilation).data)
 
     @swagger_auto_schema(request_body=CompilationQueueSerializer(many=True), responses={404: DetailSerializer, 200: CompilationSerializer(many=True)})
