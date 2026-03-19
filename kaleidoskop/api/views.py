@@ -113,7 +113,7 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
     # document_class = ItemDocument # Для Elasticsearch
     redis_service: StrictRedis = RedisService.initialize()
     
-    def get_serializer_class(self) -> ItemDetailSerializer | ItemListSerializer:
+    def get_serializer_class(self) -> type[ItemDetailSerializer] | type[ItemListSerializer]:
         if self.action == 'retrieve':
             return ItemDetailSerializer
         return ItemListSerializer
@@ -157,6 +157,25 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response(filter.errors, status=400)
         response = self.filter_queryset(filter.queryset)
         results = self.paginate_queryset(response)
+        serializer = self.serializer_class(results, context={"request": request}, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
+            openapi.Parameter("page", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
+        ]
+    )
+    @action(detail=True, methods=["GET"], url_path="recommendations")
+    def get_recommendations(self, request, pk):
+        try:
+            items = self.item_service.get_recommended_items_queryset(pk)
+        except NotFoundException:
+            return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        results = self.paginate_queryset(items)
         serializer = self.serializer_class(results, context={"request": request}, many=True)
         return self.get_paginated_response(serializer.data)
 

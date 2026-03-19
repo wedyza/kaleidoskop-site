@@ -32,7 +32,7 @@ class ItemRepository:
                 continue
         Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)
         
-    def get_items_from_ids(self, ids: list[UUID]) -> Union[QuerySet, List[Item]]:
+    def get_items_from_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
         return Item.objects.filter(id__in=ids).all()
 
 
@@ -60,4 +60,14 @@ class ItemRepository:
             default=F('trigram_similarity'),
             output_field=models.FloatField()
         )).order_by('-priority_score', '-trigram_similarity')
+        return qs
+
+
+    def get_recommended_items_by_item_title(self, item: Item) -> Union[QuerySet, list[Item]]:
+        qs = Item.objects.extra(
+            where=['lower(%s) %% lower(title)'],
+            params=[item.title]
+        ).annotate(
+            similarity=TrigramSimilarity(Value(item.title), Lower('title'))
+        ).exclude(pk=item.pk).order_by('-similarity')[:50] # Может потом еще поменять
         return qs

@@ -1,13 +1,18 @@
 FROM python:3.12
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-RUN pip install gunicorn==20.1.0
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project
 
-COPY requirements.txt .
+COPY . /app
 
-RUN pip install -r requirements.txt --no-cache-dir
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
 
-COPY . .
+ENV PATH="/app/.venv/bin:$PATH"
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "kaleidoskop.wsgi"] 
+CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "kaleidoskop.wsgi:application"]

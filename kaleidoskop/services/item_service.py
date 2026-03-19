@@ -20,16 +20,22 @@ class ItemService:
         if created:
             self._item_repository.fillup_items_with_parents()
     
+    def get_item_by_id(self, item_pk: UUID):
+        try:
+            return self._item_repository.get_item_by_id(item_pk)
+        except:  # noqa: E722
+            raise NotFoundException
+    
     def switch_wishlist_to_item(self, item_pk:UUID, user_pk: UUID, status: bool) -> bool:
         return self._like_service.switch_like(item_pk, user_pk, status)
 
     def add_item_to_cart(self, item_pk: UUID, user_pk: UUID, status: bool) -> bool:
         cuurent_cart = self._cart_service.get_cart_by_user(user_pk)
-        item = self._item_repository.get_item_by_id(item_pk)
+        item = self.get_item_by_id(item_pk)
         return self._cart_item_service.create_or_delete_cart_item(item, cuurent_cart, status)
     
     def update_cart_item_amount(self, item_pk: UUID, user_pk: UUID, amount: int) -> CartItem:
-        item = self._item_repository.get_item_by_id(item_pk)
+        item = self.get_item_by_id(item_pk)
         current_cart = self._cart_service.get_cart_by_user(user_pk)
         cart_item = self._cart_item_service.get_item_of_cart(item, current_cart)
         if cart_item is None:
@@ -41,3 +47,7 @@ class ItemService:
     
     def get_items_queryset_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
         return self._item_repository.search_items_by_query(query)
+
+    def get_recommended_items_queryset(self, item_pk: UUID) -> Union[QuerySet, List[Item]]: # 
+        item = self.get_item_by_id(item_pk)
+        return self._item_repository.get_recommended_items_by_item_title(item)
