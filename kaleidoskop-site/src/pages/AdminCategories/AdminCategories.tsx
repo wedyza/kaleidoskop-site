@@ -3,7 +3,6 @@ import './AdminCategories.scss'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchAdminCategories } from '../../features/admin/adminCategoriesSlice';
 import { Link } from 'react-router-dom';
-import Toggle from '../../components/ui/Toggle/Toggle';
 
 const AdminCategories = () => {
   const [activeTab, setActivetab] = useState<'cat' | 'subcat'>('cat');

@@ -1,3 +1,5 @@
+@use '../../../styles/common.scss';
+
 .service-process {
   background-color: var(--white);
   padding: 30px 40px;
@@ -45,4 +47,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 650px) {
+  .service-process_cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: common.$breakpoint-mobile) {
+  .service-process {
+    padding: 20px;
+    padding-bottom: 40px;
+  }
 }

@@ -34,7 +34,7 @@ const AboutPage = () => {
                 <span className='service-page_item-number'>
                   1
                 </span>
-                <span className='service-page_item-text'>
+                <span className='about-page_item-text'>
                   Ежемесячно обслуживает более 15 000 частных лиц, промышленных 
                   предприятий, розничных магазинов, строительных и отделочных бригад
                 </span>
@@ -43,7 +43,7 @@ const AboutPage = () => {
                 <span className='service-page_item-number'>
                   2
                 </span>
-                <span className='service-page_item-text'>
+                <span className='about-page_item-text'>
                   Ассортимент из более 36 000 номенклатурных позиций, 80 товарных 
                   групп, 28 000 номенклатурных позиций постоянно поддерживается 
                   на складах, обеспечивая потребности наших покупателей.
@@ -53,7 +53,7 @@ const AboutPage = () => {
                 <span className='service-page_item-number'>
                   3
                 </span>
-                <span className='service-page_item-text'>
+                <span className='about-page_item-text'>
                   Открыты <span className='inter14-600'>4 розничных магазина</span> общей площадью 
                   3 400 кв.м., отдельный общий склад площадью 2 860 кв.м.
                 </span>
@@ -62,7 +62,7 @@ const AboutPage = () => {
                 <span className='service-page_item-number'>
                   4
                 </span>
-                <span className='service-page_item-text'>
+                <span className='about-page_item-text'>
                   Ежемесячно вводятся в ассортимент новые номенклатурные 
                   позиции и осваиваются современные технологии ведения бизнеса
                 </span>

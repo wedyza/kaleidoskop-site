@@ -1,4 +1,3 @@
-// productMixin.ts
 import { toggleWishlist } from './productItemSlice';
 import { toggleBasketItem, updateBasketItemAmount } from '../basket/basketSlice';
 

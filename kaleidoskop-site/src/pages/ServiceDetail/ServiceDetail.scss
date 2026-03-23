@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .service-page_content {
   display: flex;
   flex-direction: column;
@@ -103,4 +105,20 @@
   height: 100%;
   display: flex;
   align-items: center;
+}
+
+
+@media (max-width: common.$breakpoint-mobile) {
+  .services-page_prices {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .services-page_price {
+    width: 100%;
+    justify-content: start;
+  }
+  .service-page_info {
+    padding: 20px;
+    padding-bottom: 40px;
+  }
 }

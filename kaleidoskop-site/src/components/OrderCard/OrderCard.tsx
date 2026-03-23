@@ -5,7 +5,6 @@ import type { Order } from '../../features/orders/ordersSlice';
 import type React from 'react';
 import { formatDate } from '../../utils/dateUtils';
 import { formatPrice } from '../../utils/formatPrice';
-import { useEffect } from 'react';
 
 interface OrderCardProps {
   order: Order;
