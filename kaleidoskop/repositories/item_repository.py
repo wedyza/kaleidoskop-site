@@ -68,6 +68,6 @@ class ItemRepository:
             where=['lower(%s) %% lower(title)'],
             params=[item.title]
         ).annotate(
-            similarity=TrigramSimilarity(Value(item.title), Lower('title'))
+            similarity=TrigramSimilarity(Value(item.title.lower), Lower('title'))
         ).exclude(pk=item.pk).order_by('-similarity')[:50] # Может потом еще поменять
         return qs

@@ -18,7 +18,7 @@ class UUIDModel(models.Model):
 
 
 class Nomenclature(UUIDModel):
-    title = models.CharField("Название", max_length=100)
+    title = models.CharField("Название", max_length=250)
     parent = models.ForeignKey(
         "self",
         null=True,
@@ -27,8 +27,10 @@ class Nomenclature(UUIDModel):
         on_delete=models.SET_NULL,
         related_name="daughter",
     )
-    code = models.CharField("Код", max_length=20, unique=True, null=False)
+    code = models.CharField("Код", max_length=20, unique=False, null=True)
     parent_code = models.CharField("Код родителя", max_length=20, null=True)
+    associative = models.BooleanField("Ассоциативная номенклатура", default=False)
+    imported = models.BooleanField("Импортированно из 1С", default=True, null=False)
     categories = models.ManyToManyField(
         'Category',
         through='NomenclatureCategory',
