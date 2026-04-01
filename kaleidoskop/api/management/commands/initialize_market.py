@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand
-from api.models import Brand, ItemImage, Item, Parameter, ParameterItem, Shop
+from api.models import Brand, ItemImage, Item, Parameter, ParameterItem, Shop, Warehouse
 from django.core.files.base import ContentFile
 import xml.etree.ElementTree as ET
 import httpx
 from django.db.models import Q
 import pandas as pd
+from django.db import transaction
 from pathlib import Path
 
 class Command(BaseCommand):
@@ -26,7 +27,7 @@ class Command(BaseCommand):
 
 
     def parse_xml_file(self): # Надо будет придумать путь до файлов, возможно надо будет поместить их внутрь django приложения (дополнительный вес незачем, но это нужно для парсинга и инициализации приложения)
-        tree = ET.parse('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/file.xml') # Пока что заглушка
+        tree = ET.parse('C:/Users/Moose/Desktop/projects/kaleidoskop project/file.xml') # Пока что заглушка
         root = tree.getroot()
 
         # Перейти к offers
@@ -49,12 +50,13 @@ class Command(BaseCommand):
                     break
             db_product = Item.objects.filter(Q(barcode=barcode) | Q(article=product['article'])).first()
             if db_product is not None:
+                print('is not none')
                 c = 0
                 for i in db_product.images.all():
                     i.delete()
                 for url in product['pictures']:   
                     c += 1         
-                    self.save_image(url, f'{db_product.slug}-{c}.png', db_product, self.client)
+                    self.save_image(url, f'{db_product.slug}-{c}.png', db_product)
                 if db_product.description is None:
                     db_product.description = product['description']
                 for param in product['params']:
@@ -72,7 +74,7 @@ class Command(BaseCommand):
 
 
     def parse_garden_characteristics_file(self):
-        tree = ET.parse('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/export_universal_2026-01-14_1768374852_6624003807.xml')  # Замените на путь к вашему XML-файлу
+        tree = ET.parse('C:/Users/Moose/Desktop/projects/kaleidoskop project/export_universal_2025-12-02_1764703254_6624003807.xml')  # Замените на путь к вашему XML-файлу
         root = tree.getroot()
 
         offers = root.findall('offer')
@@ -107,7 +109,7 @@ class Command(BaseCommand):
     
 
     def parse_garden_media_file(self):
-        df = pd.read_csv('C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/export_media_2026-01-14_1768374900_6624003807.csv', delimiter=';')
+        df = pd.read_csv('C:/Users/Moose/Desktop/projects/kaleidoskop project/export_media_2025-11-27_1764259311_6624003807.csv', delimiter=';')
         for index, row in df.iterrows():
             product = Item.objects.filter(okdp=row['okdp']).first()
             if product is not None:
@@ -204,7 +206,15 @@ class Command(BaseCommand):
 
             # характеристики ETIM как список словарей
 
+    def initialize_warehouses(self):
+        if Warehouse.objects.all().count() > 0:
+            return
+        data = ['Склад Малышева', 'Склад ТРЦ', 'Склад Выставка', 'Склад Сервисный Центр', 'Склад Скорынина 6', 'Склад Мальского Лесной', 'Склад Оптовый Ленина 117', 'Склад Ленина', 'Склад База Малышева', 'Основной склад']
+        warehouses = [Warehouse.objects.create(name=n, custom_name=n) for n in data]
+    
     def initialize_shops(self):
+        if Shop.objects.all().count() > 0:
+            return
         data = [
             {
                 'city': 'Нижняя Тура',
@@ -241,7 +251,7 @@ class Command(BaseCommand):
         ]
         cities = [Shop.objects.create(**shop) for shop in data]
 
-
+    @transaction.atomic
     def handle(self, *args, **options):
         self.stdout.write(self.style.NOTICE("Начало инициализации:"))
         try:
@@ -264,13 +274,14 @@ class Command(BaseCommand):
         
         try:
             self.stdout.write(self.style.NOTICE("Начало третьего этапа:"))
-            self.parse_catalog_xml(path='C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/PRODAT_369147_1233114904.xml')
-            self.parse_catalog_xml(path='C:/Users/Wedyza/Desktop/projects/kaleidoskop-site/PRODAT_369147_1233126057.xml')
+            self.parse_catalog_xml(path='C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221079811.xml')
+            self.parse_catalog_xml(path='C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221092775.xml')
             self.stdout.write(self.style.SUCCESS("Успешно пройден третий этап"))            
         except Exception as e:
             self.stdout.write(self.style.ERROR("Возникла ошибка во время парсинга третьего этапа!"))
             raise e
 
-        self.stdout.write(self.style.NOTICE("Начало инициализации магазинов:"))
-        self.initialize_shops()
+        # self.stdout.write(self.style.NOTICE("Начало инициализации магазинов:")) # Перестроить также синхронизацию
+        # self.initialize_warehouses()
+        # self.initialize_shops()
         self.stdout.write(self.style.SUCCESS("Успешное завершение полной инициализации"))            
