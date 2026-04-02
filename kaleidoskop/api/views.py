@@ -1,5 +1,3 @@
-import json
-
 from redis import StrictRedis
 from rest_framework import views, viewsets, permissions, status, mixins, filters
 from django_filters import rest_framework as rf_filters
@@ -103,7 +101,7 @@ class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     def get_queryset(self):
         return self.like_service.get_likes_of_user(self.request.user.id)
 
-class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin): #paginatedeal...
+class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     queryset = Item.objects.all()
     pagination_class = CustomPagination
     filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter]
@@ -123,10 +121,6 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return ItemDetailSerializer(*args, **kwargs)
         return ItemListSerializer(*args, **kwargs)
 
-    # def generate_q_expression(self, query) -> Q: # Для Elasticsearch
-    #     return Q(
-    #         "multi_match", query=query, fields=["title", "category"], fuzziness="auto"
-    #     )
 
     def get_serializer_context(self) -> dict[str, Any]:
         context = super().get_serializer_context()
@@ -146,12 +140,6 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
     @action(detail=False, methods=["GET"], url_path="search/(?P<query>.*)")
     def search(self, request, query=None):
         items = self.item_service.get_items_queryset_by_query(query)
-        
-        # DEPRECTATED 
-        # brand_ids = list(items.exclude(brand=None).values_list('brand_id', flat=True).distinct()) # Сравнить по оперативе, может быть дешевле будет заново провести поиск, учитывая, что это теперь это достаточно дешевая операция поиска по индексу (скорее всего это будет более верным решением)
-        # brand_ids = json.dumps([str(i) for i in brand_ids]) 
-        # self.redis_service.set(hash(self.queryset), brand_ids, 120)
-
         filter = ItemFilter(request.GET, queryset=items)
         if not filter.is_valid():
             return Response(filter.errors, status=400)
@@ -232,7 +220,6 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 class CommentViewSet(
     viewsets.GenericViewSet,
     mixins.CreateModelMixin,
@@ -289,7 +276,6 @@ class UsersViewSet(
         )
         if serializer.is_valid():
             serializer.save()
-            # update_user_1c(request.user.id)
             self.integration_service.sync_user_with_1C(self.request.user.id)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors)
@@ -413,7 +399,7 @@ class BrandViewSet(viewsets.GenericViewSet): # Закончил тут
         
         
 class ShopViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
-    queryset = Shop.objects.all() # Для этого не буду делать сервис, он и так тонкий
+    queryset = Shop.objects.all()
     serializer_class = ShopSerializer
     permission_classes = (permissions.AllowAny,)
 
@@ -469,4 +455,3 @@ class PublicCompilationViewSet(viewsets.GenericViewSet):
         qs = self.get_queryset()
         if qs.count > 3:
             return qs[3]
-    

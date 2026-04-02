@@ -30,6 +30,18 @@ services:
       interval: 30s  
       timeout: 20s  
       retries: 3
+
+  # createbuckets: # Создает бакет
+  #   image: minio/mc
+  #   depends_on:
+  #     - minio
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #     /usr/bin/mc alias set myminio http://minio:9000 miniouser admin123;
+  #     /usr/bin/mc mb myminio/local;
+  #     /usr/bin/mc policy set public myminio/local;
+  #     exit 0;
+  #     "
   
   rabbitmq:
     image: rabbitmq:4.2-management
