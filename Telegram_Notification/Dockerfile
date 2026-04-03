@@ -1,9 +1,18 @@
 FROM python:3.12
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-COPY requirements.txt .
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project
 
-RUN pip install -r requirements.txt --no-cache-dir  
+COPY . /app
 
-COPY __init__.py .env bot.py rabbitmq.py config.json ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD [ "uv", "run", "bot.py" ]

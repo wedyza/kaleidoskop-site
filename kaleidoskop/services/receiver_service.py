@@ -14,7 +14,7 @@ class ReceiverService:
     _item_service = ItemService()
     _remains_service = RemainsService()
     _order_service = OrderService()
-    
+    # Позже переделаю на инициализацию в BaseCommand, поэтому не меняю
     @multitasker
     @shared_task
     def sync_nomenclatures_with_1C(self): # Надо будет сделать при помощи LIMIT|OFFSET и async зарпосы посылать сразу несколько и получать их, далее уже формировать на этой основе товары

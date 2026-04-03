@@ -2,7 +2,7 @@ from rest_framework import views, status, viewsets, permissions, mixins, filters
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, CreateNomenclatureCategorySerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, NomenclatureSerializer, AdminCategorySerializer
+from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, CreateNomenclatureCategorySerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureDetailSerializer, NomenclatureListSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, AdminCategorySerializer
 from django.core.exceptions import ValidationError
 from exceptions.exceptions import NotFoundException
 from services.compilation_service import CompilationService
@@ -94,14 +94,21 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
 
 class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
-    serializer_class = NomenclatureSerializer
-    queryset = Nomenclature.objects.all()
+    # queryset = Nomenclature.objects.all()
     permission_classes = [permissions.IsAdminUser]
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter, IsAssignedFilter]
     search_fields = ['title', 'code']
     nomenclature_service = NomenclatureService()
-
+    
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return NomenclatureListSerializer
+        return NomenclatureDetailSerializer
+    
+    def get_queryset(self):
+        return Nomenclature.objects.filter(associative=False)
+    
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter("assigned", openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False, description='Привязан к категории или нет')
     ])
@@ -109,14 +116,13 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
         return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(manual_parameters=[
-            openapi.Parameter('level_of_nesting', openapi.IN_QUERY, description='Уровень вложенности, дефолт = 0', type=openapi.TYPE_INTEGER),
+            # openapi.Parameter('level_of_nesting', openapi.IN_QUERY, description='Уровень вложенности, дефолт = 0', type=openapi.TYPE_INTEGER),
             openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
             openapi.Parameter("page", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
         ])
-    @action(methods=['GET'], url_path='by_nesting', detail=False)
+    @action(methods=['GET'], url_path='root', detail=False)
     def get_by_nesting(self, request):
-        level_of_nesting = int(request.GET['level_of_nesting']) if 'level_of_nesting' in request.GET else 0
-        nomenclatures = self.nomenclature_service.get_nomenclatures(level_of_nesting)
+        nomenclatures = self.nomenclature_service.get_nomenclatures(0)
         page = self.paginate_queryset(nomenclatures)
 
         if page is not None:
@@ -135,7 +141,7 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
         """
         Связывает номенклатуру с категорией. В этом роуте можно добавлять сразу много номенклатур/категорий, чтобы не делать много запросов и оптимизировать все запросы к БД. Просто передаешь их через массив
         """
-        serializer = self.get_serializer(data=request.data, many=True)
+        serializer = CreateNomenclatureCategorySerializer(data=request.data, many=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

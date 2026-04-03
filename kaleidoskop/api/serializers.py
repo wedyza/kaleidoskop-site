@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from .models import Banner, Brand, Category, Item, Cart, CartItem, ItemImage, Like, Comment, Order, Parameter, ParameterItem, Remains, Shop
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
 from .functions import get_daughter_nomenclatures
 from admin_panel.models import Compilation
 
 User = get_user_model()
-
 
 class CategorySerializer(serializers.ModelSerializer):
     parent = "self"
@@ -16,7 +16,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('title', 'id', 'parent', 'image', 'slug', 'items_count')
         read_only_fields = ('id', 'slug', 'items_count')
 
-    def get_items_count(self, obj):
+    def get_items_count(self, obj) -> int:
         nomenclatures = get_daughter_nomenclatures(obj.nomenclatures.all())
         return Item.objects.filter(nomenclature__in=nomenclatures).count()
 
@@ -55,12 +55,14 @@ class BrandSerializer(serializers.ModelSerializer):
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):
-    remains = ItemRemainsSerializer(many=True, read_only=True)
+    # remains = ItemRemainsSerializer(many=True, read_only=True)
+    remains = serializers.SerializerMethodField("get_remains", read_only=True)
     in_wishlist = serializers.SerializerMethodField("get_in_wishlist", read_only=True)
     cart_count = serializers.SerializerMethodField("get_cart_count", read_only=True)
     images = ItemImageSerializer(many=True, read_only=True)
     parameters = ParameterItemSerializer(many=True, read_only=True)
     brand = BrandSerializer(read_only=True)
+    associatives = serializers.SerializerMethodField("get_associatives", read_only=True)
 
     class Meta:
         model = Item
@@ -78,10 +80,11 @@ class ItemDetailSerializer(serializers.ModelSerializer):
             'images',
             'parameters',
             'brand',
+            'associatives'
         )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
 
     
-    def get_in_wishlist(self, obj):
+    def get_in_wishlist(self, obj) -> bool:
         user = self.context["request"].user
         if user.is_anonymous:
             return False
@@ -90,7 +93,7 @@ class ItemDetailSerializer(serializers.ModelSerializer):
 
         return wishlist is not None
 
-    def get_cart_count(self, obj):
+    def get_cart_count(self, obj) -> int:
         user = self.context["request"].user
         if user.is_anonymous:
             return None
@@ -100,6 +103,18 @@ class ItemDetailSerializer(serializers.ModelSerializer):
         if cart_item is None:
             return cart_item
         return cart_item.amount
+    
+    def get_remains(self, obj: Item) -> int:
+        s = obj.remains.aggregate(Sum('count'))
+        if s['count__sum']:
+            return int(s['count__sum'])
+        return 0
+    
+    def get_associatives(self, obj: Item) -> list:
+        if obj.nomenclature.associative:
+            return ItemListSerializer(instance=Item.objects.filter(nomenclature=obj.nomenclature).exclude(id=obj.id), many=True, context=self.context).data
+        return []
+        
 
 class ItemListSerializer(ItemDetailSerializer): # Завтра проверить характеристики, также подключить их для фильтров в категории?
     class Meta:
@@ -116,7 +131,7 @@ class ItemListSerializer(ItemDetailSerializer): # Завтра проверит�
         )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
 
     
-    def get_in_wishlist(self, obj):
+    def get_in_wishlist(self, obj) -> bool:
         user = self.context["request"].user
         if user.is_anonymous:
             return False
@@ -125,7 +140,7 @@ class ItemListSerializer(ItemDetailSerializer): # Завтра проверит�
 
         return wishlist is not None
 
-    def get_cart_count(self, obj):
+    def get_cart_count(self, obj) -> int:
         user = self.context["request"].user
         if user.is_anonymous:
             return None
@@ -283,8 +298,8 @@ class PublicCompilationSerializer(serializers.ModelSerializer):
         fields = ('items', 'title', 'public_queue', 'start_time', 'end_time')
         read_only_fields = ['items', 'title', 'public_queue', 'start_time', 'end_time']
 
-    def get_items(self, obj):
+    def get_items(self, obj): # Это надо еще доделать вместе с полиной
         ...
 
-    def get_public_queue(self, obj):
+    def get_public_queue(self, obj): # И это тоже
         ...

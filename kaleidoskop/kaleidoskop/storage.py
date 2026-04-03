@@ -11,8 +11,8 @@ class MinioDualStorage(S3Boto3Storage):
             else "http://localhost:9000" # Тут локальный адрес, обычно localhost
         )
 
-        self.public_host = dj.SERVER_ENDPOINT      # "94.190.123.143"
-        self.public_prefix = "/media"              # как в nginx
+        self.public_host = dj.SERVER_ENDPOINT      
+        self.public_prefix = "/media"              
 
         super().__init__(
             endpoint_url=internal,
@@ -29,8 +29,8 @@ class MinioDualStorage(S3Boto3Storage):
         # НИЧЕГО не трогаем в path и query, меняем только схему+host+префикс
         return urlunparse((
             "https",
-            self.public_host,                     # 94.190.123.143
-            f"{self.public_prefix}{p.path}",      # /media/local/categories/icon.png
+            self.public_host,      
+            f"{self.public_prefix}{p.path}",
             p.params,
             p.query,
             p.fragment,

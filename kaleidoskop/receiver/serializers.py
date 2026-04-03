@@ -70,9 +70,7 @@ class ListRemainsReceiveSerializer(serializers.ListSerializer): # Тут удо�
         remains_to_update = []
         remains_to_create = []
 
-        # print("start to create")
         for remain in validated_data:
-            print(remain)
             another_remain, is_created = get_or_create_remain(remain)
             if another_remain is None:
                 continue
@@ -80,12 +78,10 @@ class ListRemainsReceiveSerializer(serializers.ListSerializer): # Тут удо�
                 remains_to_create.append(another_remain)
             else:
                 remains_to_update.append(another_remain)
-        # print("ended to create")
         created_remains = Remains.objects.bulk_create(
             remains_to_create, ignore_conflicts=True
         )
         Remains.objects.bulk_update(remains_to_update, ["count"])
-        # print("returned")
         return created_remains
 
 
@@ -108,18 +104,11 @@ class RemainsReceiveSerializer(serializers.Serializer):
         count = data.get("count")
         warehouse_name = data.get("warehouse")
 
-        # КОСТЫЛЬ
-
-        # try:
-        #     item = Item.objects.get(code=code)
-        # except Item.DoesNotExist:
-        #     raise serializers.ValidationError(f"Товар с кодом {code} не найден")
-
         try:
             warehouse = Warehouse.objects.get(name=warehouse_name)
         except Warehouse.DoesNotExist:
             raise serializers.ValidationError(
-                f"Склад с именем {warehouse_name} не найден"
+                f"Склад с именем \"{warehouse_name}\" не найден"
             )
 
         if count < 0:

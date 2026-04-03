@@ -43,7 +43,14 @@ class BannerQueueSerializer(serializers.Serializer):
         return field
     
 
-class NomenclatureSerializer(serializers.ModelSerializer):
+class NomenclatureListSerializer(serializers.ModelSerializer):
+    categories = AdminCategorySerializer(many=True)
+
+    class Meta:
+        model = Nomenclature
+        fields = '__all__'
+
+class NomenclatureDetailSerializer(serializers.ModelSerializer):
     categories = AdminCategorySerializer(many=True)
     daughter = serializers.SerializerMethodField(read_only=True)
 
@@ -53,7 +60,7 @@ class NomenclatureSerializer(serializers.ModelSerializer):
 
     def get_daughter(self, obj):
         children = obj.daughter.all()
-        return NomenclatureSerializer(children, many=True).data
+        return NomenclatureListSerializer(children, many=True).data
 
 class ShortenedNomenclatureSerializer(serializers.ModelSerializer):
     class Meta:

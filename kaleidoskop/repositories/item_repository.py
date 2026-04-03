@@ -24,13 +24,20 @@ class ItemRepository:
         """
         Заполняет значения товаров и их номенклатур
         """
-        items = Item.objects.exclude(parent_code=None).filter(nomenclature=None).all()
+        items = Item.objects.exclude(parent_code=None)
         for item in items:
-            try:
-                item.nomenclature = Nomenclature.objects.get(code=item.parent_code)
-            except:  # noqa: E722
-                continue
+            # try:
+            item.nomenclature = Nomenclature.objects.get(code=item.parent_code)
+            # except:  # noqa: E722
+            #     continue
         Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)
+        
+    
+    def clearout_items_from_nomenclatures(self):
+        items = Item.objects.all()
+        items.update(nomenclature=None)
+        Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)
+    
         
     def get_items_from_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
         return Item.objects.filter(id__in=ids).all()
@@ -68,6 +75,6 @@ class ItemRepository:
             where=['lower(%s) %% lower(title)'],
             params=[item.title]
         ).annotate(
-            similarity=TrigramSimilarity(Value(item.title), Lower('title'))
+            similarity=TrigramSimilarity(Value(item.title.lower), Lower('title'))
         ).exclude(pk=item.pk).order_by('-similarity')[:50] # Может потом еще поменять
         return qs
