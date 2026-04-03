@@ -1,4 +1,4 @@
-version: 1.0.0
+version: '1'
 services:
   db:
     image: postgres:17
@@ -11,7 +11,7 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   minio:  
-    image: minio/minio
+    image: minio/minio:latest
     container_name: kaleidoskop_minio
     restart: unless-stopped  
     ports:
@@ -117,7 +117,7 @@ services:
       - static:/static/
       - frontend_static:/frontend_static/
 
-  telegram_bot:
+  telegram:
     build: ./Telegram_Notification
     container_name: telegram
     depends_on:
@@ -130,9 +130,6 @@ services:
       - type: bind
         source: ./Telegram_Notification/config.json
         target: /app/config.json
-    profiles:
-      - donotstart
-  
   frontend:
     image: wedyzza/kaleidoskop_frontend:latest
     command: cp -r /app/dist/. /frontend_static/
