@@ -5,8 +5,10 @@ from users.models import CustomAbstractUser
 class CartRepository:
     def get_or_create_user_cart(self, user_pk: UUID) -> Cart:
         cart = self.__get_user_cart(user_pk)
+        
         if cart is None:
             return self.__create_user_cart(user_pk)
+        return cart
         
     def __get_user_cart(self, user_pk: UUID) -> Cart:
         return Cart.objects.filter(order=None).filter(current_cart=True).filter(user_id=user_pk).first()

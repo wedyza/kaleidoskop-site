@@ -3,6 +3,7 @@ from api.models import Brand, ItemImage, Item, Parameter, ParameterItem, Shop, W
 from django.core.files.base import ContentFile
 import xml.etree.ElementTree as ET
 import httpx
+from uuid import uuid4
 from django.db.models import Q
 import pandas as pd
 from django.db import transaction
@@ -10,17 +11,26 @@ from pathlib import Path
 
 class Command(BaseCommand):
     help = "Парсит медиа дату для товаров"
-    client = httpx.Client(headers={
-        'User-Agent': '1',
-        'Host': 'b2b.utake.ru',
-    })
+    client = httpx.Client(headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive"
+    }, follow_redirects=True)
 
     def save_image(self, url, image_name, item:Item):
+        if '.jpg' not in url and '.png' not in url and '.jpeg' not in url:
+            return
         try:
             response = self.client.get(url)
             bytes = response.content
+            if response.status_code != 200:
+                print(url, image_name, item)
+                return
             content_file = ContentFile(bytes, name=image_name)
             image = ItemImage.objects.create(source=content_file, item=item) # Если надо куда-то дальше картинку
+            
         except Exception as e:
             print(e)
         return
@@ -50,7 +60,6 @@ class Command(BaseCommand):
                     break
             db_product = Item.objects.filter(Q(barcode=barcode) | Q(article=product['article'])).first()
             if db_product is not None:
-                print('is not none')
                 c = 0
                 for i in db_product.images.all():
                     i.delete()
@@ -115,7 +124,10 @@ class Command(BaseCommand):
             if product is not None:
                 for i in product.images.all():
                     i.delete()
-                self.save_image(row['url'], f'{product.slug}--{index}.png', product)
+                for url in row['url'].split(';'):
+                    print(url)
+                    self.save_image(url, f'{product.slug}-{uuid4()}.png', product)
+                    return
 
     
     def parse_catalog_xml(self, path: str):
@@ -126,8 +138,10 @@ class Command(BaseCommand):
             item = {}
             item["sender_code"] = (doc.findtext("SenderPrdCode") or "").strip()
             ean = doc.find('.//EAN/Value')
-            item['barcode'] = ean.text if ean is not None else ''
-            db_item = Item.objects.filter(Q(barcode=item['barcode']) | Q(article=item['sender_code'])).first()
+            item['barcode'] = ean.text if ean is not None else None
+            if item["barcode"] is None:
+                continue
+            db_item = Item.objects.filter(barcode=item['barcode']).first()
             if db_item is not None:
                 item["description"] = (doc.findtext("ProductDescription") or "").strip()
                 item["brand"] = (doc.findtext("Brand") or "").strip()
@@ -285,3 +299,4 @@ class Command(BaseCommand):
         # self.initialize_warehouses()
         # self.initialize_shops()
         self.stdout.write(self.style.SUCCESS("Успешное завершение полной инициализации"))            
+        

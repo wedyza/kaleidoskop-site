@@ -8,7 +8,6 @@ from exceptions.exceptions import NotFoundException
 from uuid import UUID
 from django.db.models import QuerySet
 
-
 class ItemService:
     _like_service = LikeService()
     _item_repository = ItemRepository()

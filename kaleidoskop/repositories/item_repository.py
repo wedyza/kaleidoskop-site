@@ -26,10 +26,10 @@ class ItemRepository:
         """
         items = Item.objects.exclude(parent_code=None)
         for item in items:
-            # try:
-            item.nomenclature = Nomenclature.objects.get(code=item.parent_code)
-            # except:  # noqa: E722
-            #     continue
+            try:
+                item.nomenclature = Nomenclature.objects.get(code=item.parent_code)
+            except:  # noqa: E722
+                continue
         Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)
         
     
@@ -40,13 +40,12 @@ class ItemRepository:
     
         
     def get_items_from_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
-        return Item.objects.filter(id__in=ids).all()
+        return Item.objects.filter(id__in=ids).filter(public=True).all()
 
 
     def search_items_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
         """
-        Выполняет поиск по индексу при помощи триграммной схожести (тут префиксной из-за <%). Т.е. больше имеет влияние начало названия, чем остальное (в нашем случае подходит).
-        Если будут жалобы, то можно будет использовать полнотекстовой поиск при помощи SearchVector, заранее сформировав их для всех товаров, а далее уже расширять и .distinct весь queryset
+        Выполняет поиск по индексу при помощи триграммной схожести (тут префиксной из-за <%) и search_vector (<- Имеет больший приоритет). Т.е. больше имеет влияние начало названия, чем остальное (в нашем случае подходит)
         """
         normalized_query = query.lower()
         qs = Item.objects.extra(
@@ -66,15 +65,19 @@ class ItemRepository:
             When(full_text_match=1, then=Value(2)),
             default=F('trigram_similarity'),
             output_field=models.FloatField()
-        )).order_by('-priority_score', '-trigram_similarity')
+        )).filter(public=True).order_by('-priority_score', '-trigram_similarity')
         return qs
 
 
     def get_recommended_items_by_item_title(self, item: Item) -> Union[QuerySet, list[Item]]:
+        """
+        Рекомендации на основе триграмм
+        """
+        
         qs = Item.objects.extra(
             where=['lower(%s) %% lower(title)'],
             params=[item.title]
         ).annotate(
-            similarity=TrigramSimilarity(Value(item.title.lower), Lower('title'))
-        ).exclude(pk=item.pk).order_by('-similarity')[:50] # Может потом еще поменять
+            similarity=TrigramSimilarity(Value(item.title.lower()), Lower('title'))
+        ).exclude(pk=item.pk).filter(public=True).order_by('-similarity')[:50] # Может потом еще поменять
         return qs

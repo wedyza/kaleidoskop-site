@@ -9,9 +9,9 @@ class LikeService:
 
     def switch_like(self, item_pk:UUID, user_pk: UUID, status: bool) -> bool:
         like = self._like_repository.filter_like_by_user_id_and_item_id(item_pk, user_pk)
-        if like is not None and not status:
+        if like is None and status:
             self._like_repository.create_like(item_pk, user_pk)
-        elif like is None and status:
+        elif like is not None and not status:
             self._like_repository.delete_like(like)
         return status
     

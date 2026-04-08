@@ -21,4 +21,4 @@ class CategoryRepository:
         category = self.get_category_by_id(category_pk)
         base_nomenclatures = self.__get_base_nomenclatures(category)
         nomenclatures = self._nomenclature_service.get_daughter_nomenclatures(base_nomenclatures)
-        return Item.objects.filter(nomenclature__in=nomenclatures)
+        return Item.objects.filter(nomenclature__in=nomenclatures).filter(public=True)

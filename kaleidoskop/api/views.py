@@ -14,7 +14,8 @@ from .serializers import (
     BrandSerializer,
     CartItemSerializer,
     CartSerializer,
-    CategorySerializer,
+    CategoryDetailSerializer,
+    CategoryListSerializer,
     ItemCartAmountSerialzier,
     ItemDetailSerializer,
     LikeSerializer,
@@ -49,13 +50,27 @@ from django.utils import timezone
 User = get_user_model()
 class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     queryset = Category.objects.filter(active=True).all()
-    serializer_class = CategorySerializer
+    # serializer_class = CategorySerializer
     category_service = CategoryService()
     pagination_class = CustomPagination
     permissions = (permissions.AllowAny, )
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     ordering_fields = ['price']
     search_fields = ("title",)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return CategoryListSerializer
+        elif self.action == 'get_items':
+            return ItemListSerializer
+        return CategoryDetailSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        if self.action == 'list':
+            return CategoryListSerializer(*args, **kwargs)
+        elif self.action == 'get_items':
+            return ItemListSerializer(*args, **kwargs)
+        return CategoryDetailSerializer(*args, **kwargs)
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -102,23 +117,30 @@ class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         return self.like_service.get_likes_of_user(self.request.user.id)
 
 class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
-    queryset = Item.objects.all()
+    queryset = Item.objects.filter(public=True)
     pagination_class = CustomPagination
     filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ['price']
     filterset_class = ItemFilter
     item_service = ItemService()
-    # document_class = ItemDocument # Для Elasticsearch
     redis_service: StrictRedis = RedisService.initialize()
     
-    def get_serializer_class(self) -> type[ItemDetailSerializer] | type[ItemListSerializer]:
+    def get_serializer_class(self) -> type[ItemDetailSerializer] | type[ItemListSerializer] | type[SwitchSerializer] | type[ItemCartAmountSerialzier]:
         if self.action == 'retrieve':
             return ItemDetailSerializer
+        elif self.action == 'switch_wishlist' or self.action == 'add_to_cart':
+            return SwitchSerializer
+        elif self.action == 'change_cart_count':
+            return ItemCartAmountSerialzier
         return ItemListSerializer
     
-    def serializer_class(self, *args, **kwargs) -> ItemDetailSerializer | ItemListSerializer:
+    def serializer_class(self, *args, **kwargs) -> ItemDetailSerializer | SwitchSerializer | ItemCartAmountSerialzier | ItemListSerializer:
         if self.action == 'retrieve':
             return ItemDetailSerializer(*args, **kwargs)
+        elif self.action == 'switch_wishlist' or self.action == 'add_to_cart':
+            return SwitchSerializer(*args, **kwargs)
+        elif self.action == 'change_cart_count':
+            return ItemCartAmountSerialzier(*args, **kwargs)
         return ItemListSerializer(*args, **kwargs)
 
 
@@ -228,7 +250,7 @@ class CommentViewSet(
     mixins.RetrieveModelMixin,
 ):
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,) #frozen for now
     
     def get_queryset(self):
         return Comment.objects.filter(user=self.request.user).all()
@@ -239,7 +261,7 @@ class CommentViewSet(
         if not comment.is_valid():
             return Response(comment.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        bought  = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=self.request.user).exclude(order=None).all())).values_list("item_id", flat=True).distinct() # Щас поменяю
+        bought  = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=self.request.user).exclude(order=None).all())).values_list("item_id", flat=True).distinct()
 
         if comment.initial_data["item"] not in bought:
             return Response(

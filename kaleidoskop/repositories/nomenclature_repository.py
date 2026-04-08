@@ -35,9 +35,9 @@ class NomenclatureRepository:
                 return returning
             
     def get_nomenclatures(self, level_of_nesting: int) -> Union[QuerySet, list[Nomenclature]]:
-        nomenclatures = Nomenclature.objects.filter(parent=None).all()
+        nomenclatures = Nomenclature.objects.filter(parent=None).filter(associative=False)
         while level_of_nesting != 0:
-            nomenclatures = Nomenclature.objects.filter(parent__in=nomenclatures).all()
+            nomenclatures = Nomenclature.objects.filter(parent__in=nomenclatures).filter(associative=False)
             level_of_nesting -= 1
         return nomenclatures
     

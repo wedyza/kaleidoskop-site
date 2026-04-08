@@ -1,6 +1,7 @@
 from rest_framework import views, status, viewsets, permissions, mixins, filters
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.decorators import action
 from .serializers import BannerQueueSerializer, CompilationCreateSerializer, CompilationQueueSerializer, CompilationSerializer, CreateNomenclatureCategorySerializer, DetailSerializer, NomenclatureCompilationSerializer, NomenclatureDetailSerializer, NomenclatureListSerializer, NomenclatureRelatedSerializer, SessionCodeSerializer, BannerSerializer, AdminCategorySerializer
 from django.core.exceptions import ValidationError
@@ -9,7 +10,7 @@ from services.compilation_service import CompilationService
 from api.models import Banner, Category, Nomenclature
 from .models import Compilation
 from drf_yasg import openapi
-from .filters import IsAssignedFilter
+from .filters import IsAssignedFilter, SubcategoryFilter
 from rest_framework.parsers import MultiPartParser
 from api.paginators import CustomPagination
 from services.nomenclature_service import NomenclatureService
@@ -91,7 +92,21 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all() # Не буду наверное менять
     serializer_class = AdminCategorySerializer
     parser_classes = [MultiPartParser]
+    filter_backends = [filters.SearchFilter, SubcategoryFilter]
     permission_classes = [permissions.IsAdminUser]
+    
+        
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter("subcategory", openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False, description='Является ли эта категория подкатегорий')
+    ])
+    def list(self, request, *args, **kwargs):
+        """
+        Добавил фильтры для поиска и выбора категорий / саб категорий
+        """
+        return super().list(request, *args, **kwargs)
+    
+    # @action(detail=False, methods=['GET'], url_path='search/')
+    # def get_categories_by_search(self, request, query)
 
 class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
     # queryset = Nomenclature.objects.all()

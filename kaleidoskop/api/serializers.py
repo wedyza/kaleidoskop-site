@@ -7,7 +7,16 @@ from admin_panel.models import Compilation
 
 User = get_user_model()
 
-class CategorySerializer(serializers.ModelSerializer):
+
+class CategoryListSerializer(serializers.ModelSerializer):
+    parent = "self"
+    
+    class Meta:
+        model = Category
+        fields = ('title', 'id', 'parent', 'image', 'slug')
+
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
     parent = "self"
     items_count = serializers.SerializerMethodField('get_items_count')
 
@@ -18,7 +27,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def get_items_count(self, obj) -> int:
         nomenclatures = get_daughter_nomenclatures(obj.nomenclatures.all())
-        return Item.objects.filter(nomenclature__in=nomenclatures).count()
+        return Item.objects.filter(nomenclature__in=nomenclatures).filter(public=True).count()
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):
