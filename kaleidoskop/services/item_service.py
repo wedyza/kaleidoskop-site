@@ -19,7 +19,7 @@ class ItemService:
         if created:
             self._item_repository.fillup_items_with_parents()
     
-    def get_item_by_id(self, item_pk: UUID):
+    def get_item_by_id(self, item_pk: UUID) -> Item:
         try:
             return self._item_repository.get_item_by_id(item_pk)
         except:  # noqa: E722

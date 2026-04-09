@@ -7,6 +7,7 @@ from users.models import CustomAbstractUser
 from typing import Union
 from exceptions.exceptions import OrderIsAgreed, UnknownUserException, EmptyCartException, ExceededRemainsException, UserUnauthorized
 from api.models import Order, Cart, Item
+from django.db import transaction
 from api.serializers import OrderSerializer, CartTo1CSerializer
 from services.integration_service import IntegrationService
 from django.db.models import QuerySet
@@ -102,8 +103,8 @@ class OrderService:
             return True
         raise OrderIsAgreed
     
+    @transaction.atomic
     def create_order(self, user_pk: UUID, order_data: OrderSerializer) -> Order:
-        # Обернуть это всё в транзакцию
         user = self._user_service.get_user_by_id(user_pk)
         cart = self._cart_service.get_cart_by_user(user)
         items_for_order = self._order_repository.get_items_for_order(cart)

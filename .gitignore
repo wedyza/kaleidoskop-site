@@ -214,3 +214,5 @@ __marimo__/
 *.csv
 kaleidoskop-site/.env.development
 kaleidoskop-site/.env.production
+dump.rdb
+redis

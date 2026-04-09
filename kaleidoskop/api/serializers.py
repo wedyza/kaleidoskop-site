@@ -27,7 +27,7 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
 
     def get_items_count(self, obj) -> int:
         nomenclatures = get_daughter_nomenclatures(obj.nomenclatures.all())
-        return Item.objects.filter(nomenclature__in=nomenclatures).filter(public=True).count()
+        return Item.objects.filter(nomenclature__in=nomenclatures).count()
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):

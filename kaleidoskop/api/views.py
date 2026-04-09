@@ -44,7 +44,7 @@ from services.order_service import OrderService
 from services.brand_service import BrandService
 from services.banner_service import BannerService
 from services.redis_service import RedisService
-from .filters import ItemFilter
+from .filters import ItemFilter, ItemImageFilter
 from django.utils import timezone
 
 User = get_user_model()
@@ -72,6 +72,12 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
             return ItemListSerializer(*args, **kwargs)
         return CategoryDetailSerializer(*args, **kwargs)
 
+    def get_serializer_context(self) -> dict[str, Any]:
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+    
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
@@ -101,10 +107,10 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
         page = self.paginate_queryset(items)
 
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = self.get_serializer(page, many=True, context=self.get_serializer_context())
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(items, many=True)
+        serializer = self.get_serializer(items, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
 
 
@@ -117,13 +123,19 @@ class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         return self.like_service.get_likes_of_user(self.request.user.id)
 
 class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
-    queryset = Item.objects.filter(public=True)
+    queryset = Item.objects.all()
     pagination_class = CustomPagination
-    filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter]
+    filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter, ItemImageFilter]
     ordering_fields = ['price']
     filterset_class = ItemFilter
     item_service = ItemService()
     redis_service: StrictRedis = RedisService.initialize()
+    
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter("with_images", openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False, description='Товары только с картинками / все')
+    ])
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
     
     def get_serializer_class(self) -> type[ItemDetailSerializer] | type[ItemListSerializer] | type[SwitchSerializer] | type[ItemCartAmountSerialzier]:
         if self.action == 'retrieve':

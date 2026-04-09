@@ -7,8 +7,6 @@ from api.models import Item, Nomenclature
 from uuid import UUID
 
 class ItemRepository:
-    # _vector = SearchVector(Unaccent(Lower('title')), weight='A')
-
     def get_item_by_id(self, id: UUID) -> Item:
         return Item.objects.get(id=id)
     
@@ -40,12 +38,13 @@ class ItemRepository:
     
         
     def get_items_from_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
-        return Item.objects.filter(id__in=ids).filter(public=True).all()
+        return Item.objects.filter(id__in=ids).all()
 
 
     def search_items_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
         """
-        Выполняет поиск по индексу при помощи триграммной схожести (тут префиксной из-за <%) и search_vector (<- Имеет больший приоритет). Т.е. больше имеет влияние начало названия, чем остальное (в нашем случае подходит)
+        Выполняет поиск по индексу при помощи триграммной схожести (тут префиксной из-за <%)
+        и search_vector (<- Имеет больший приоритет)
         """
         normalized_query = query.lower()
         qs = Item.objects.extra(
@@ -65,7 +64,7 @@ class ItemRepository:
             When(full_text_match=1, then=Value(2)),
             default=F('trigram_similarity'),
             output_field=models.FloatField()
-        )).filter(public=True).order_by('-priority_score', '-trigram_similarity')
+        )).order_by('-priority_score', '-trigram_similarity')
         return qs
 
 
@@ -79,5 +78,5 @@ class ItemRepository:
             params=[item.title]
         ).annotate(
             similarity=TrigramSimilarity(Value(item.title.lower()), Lower('title'))
-        ).exclude(pk=item.pk).filter(public=True).order_by('-similarity')[:50] # Может потом еще поменять
+        ).exclude(pk=item.pk).order_by('-similarity')[:50] # Может потом еще поменять
         return qs
