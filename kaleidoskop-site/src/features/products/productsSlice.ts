@@ -60,7 +60,7 @@ export const fetchProducts = createAsyncThunk(
       const page = state.products.page;
       const pageSize = state.products.pageSize;
 
-      const response = await api.get(`/items/?page=${page}&page_size=${pageSize}`);
+      const response = await api.get(`/items/?page=${page}&page_size=${pageSize}&with_images=true`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки продуктов');

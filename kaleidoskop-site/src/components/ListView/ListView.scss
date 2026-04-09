@@ -1,3 +1,5 @@
+@use '../../styles/common.scss';
+
 .list-container {
   display: grid;
   grid-template-columns: 205px 1fr;
@@ -100,4 +102,20 @@
 .list-sort,
 .list-sort_option {
   cursor: pointer;
+}
+
+@media (max-width: common.$breakpoint-laptop) {
+  .list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .list-filters-section {
+    gap: 20px;
+  }
+
+  .list_price-inputs {
+    margin-top: 10px;
+  }
 }

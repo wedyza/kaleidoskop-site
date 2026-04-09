@@ -56,6 +56,7 @@ const AddBannerModal: React.FC<AddBannerModalProps> = ({
       <div 
         className={'banner-addmodal_upload inter16-400'}
         onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
       >
         <input 
           type="file"

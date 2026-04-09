@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
 import './AdminCategories.scss'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { fetchAdminCategories } from '../../features/admin/adminCategoriesSlice';
+import { fetchAdminCategories, updateAdminCategory } from '../../features/admin/adminCategoriesSlice';
 import { Link } from 'react-router-dom';
+import Toggle from '../../components/ui/Toggle/Toggle';
 
 const AdminCategories = () => {
   const [activeTab, setActivetab] = useState<'cat' | 'subcat'>('cat');
@@ -41,6 +42,17 @@ const AdminCategories = () => {
     const parent = categories.find(cat => cat.id === parentId);
     return parent?.title || '-';
   };
+
+  const handleToggle = async (id: string, status: boolean) => {
+    const data = new FormData();
+
+    data.append('active', String(status));
+    try {
+      await dispatch(updateAdminCategory({id, data}));
+    }catch (error) {
+      console.error('Ошибка сохранения:', error);
+    }
+  } 
 
   return (
     <div className='admin-cat'>
@@ -151,12 +163,12 @@ const AdminCategories = () => {
                       {cat.daughter_count}
                     </div>
                     <div className={`admin-cat_table-cell inter12-600 admin-cat_table-status ${cat.active ? '' : 'admin-cat_table-status__inactive'}`}>
-                      {/* <Toggle
+                      <Toggle
                         isActive={cat.active}
-                        onToggle={() => handleToggle(banner)}
+                        onToggle={() => handleToggle(cat.id, !cat.active)}
                         activeText="Активный"
                         inactiveText="Отключен"
-                      /> */}
+                      />
                     </div>
                     <Link to={`/admin/categories/${cat.id}/edit`} className='admin-cat_table-cell inter12-600 admin-cat_table-act'>
                       <span>Редактировать</span>
@@ -200,7 +212,12 @@ const AdminCategories = () => {
                       {subcat.title}
                     </div>
                     <div className={`admin-cat_table-cell inter12-600 admin-cat_table-status ${subcat.active ? 'active' : 'inactive'}`}>
-                      {subcat.active ? 'Активная' : 'Отключена'}
+                      <Toggle
+                        isActive={subcat.active}
+                        onToggle={() => handleToggle(subcat.id, !subcat.active)}
+                        activeText="Активный"
+                        inactiveText="Отключен"
+                      />
                     </div>
                     <Link to={`/admin/subcategories/${subcat.id}/edit`} className='admin-cat_table-cell inter12-600 admin-cat_table-act'>
                       <span>Редактировать</span>

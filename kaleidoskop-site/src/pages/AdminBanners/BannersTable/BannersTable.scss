@@ -12,3 +12,13 @@
     text-align: center;
   }
 }
+
+.admin-banners_table-img {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  &__label {
+    border-bottom: 1px solid var(--black-g);
+  }
+}

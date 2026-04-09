@@ -22,7 +22,7 @@ export const fetchBrands = createAsyncThunk(
   'brands/fetchBrands',
   async (categoryId: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/brands/${categoryId}/`);
+      const response = await api.get(`/brands/category/${categoryId}/`);
       return response.data.results || response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки брендов');

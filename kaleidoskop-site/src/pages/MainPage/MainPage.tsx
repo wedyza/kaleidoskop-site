@@ -25,18 +25,18 @@ function MainPage () {
         <>
           <ItemsBlock 
             title={'Горячие предложения'}
-            items={products}
+            items={products.slice(0, 8)}
             icon
-            dates={'01.07 - 16.07'}
+            dates={'06.04 - 12.04'}
           />
           <Banners group='first' />
           <ItemsBlock 
             title={'Популярные товары'}
-            items={products}
+            items={products.slice(8, 14)}
           />
           <ItemsBlock 
             title={'Новинки'}
-            items={products}
+            items={products.slice(14)}
           />
         </>
       )}

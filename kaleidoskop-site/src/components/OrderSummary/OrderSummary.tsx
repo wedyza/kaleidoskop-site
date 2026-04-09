@@ -66,9 +66,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </div>
         </div>
         <div className='basket-placement_actions'>
-          <button className='basket-placement_gift grey-btn'>
+          {/* <button className='basket-placement_gift grey-btn'>
             <span className='inter14-600'>Подарочный сертификат</span>
-          </button>
+          </button> */}
           {isCheckoutVariant ? (
             <button 
               className='basket-placement_link accent-btn'

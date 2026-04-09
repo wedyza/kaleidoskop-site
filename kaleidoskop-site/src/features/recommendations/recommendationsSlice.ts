@@ -17,27 +17,20 @@ const initialState: RecommendationsState = {
 export const fetchContentBasedRecommendations = createAsyncThunk(
   'recommendations/fetchContentBased',
   async ({ 
-    productId, 
-    n 
+    productId
   }: { 
-    productId: string; 
-    n?: number 
+    productId: string
   }) => {
-    let url = `/recomendations/content_based/?product_id=${productId}`;
-    
-    if (n !== undefined) {
-      url += `&n=${n}`;
-    }
+    let url = `/items/${productId}/recommendations/`;
     
     const response = await api.get(url);
     const data = response.data.results || response.data;
     
-    // Если элементы массива содержат поле 'item', извлекаем его
     if (Array.isArray(data) && data.length > 0 && data[0].item) {
       return data.map(item => item.item);
     }
     
-    return data; // Если структура уже правильная, возвращаем как есть
+    return data;
   }
 );
 

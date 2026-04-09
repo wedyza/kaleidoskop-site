@@ -166,21 +166,10 @@
 
 .admin-cat_table-status {
   width: fit-content;
-  padding: 0 10px;
   height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(162, 211, 167, 0.2);
-  border: 2px solid rgba(17, 172, 33, 0.5);
-  border-radius: 5px;
-  color: #077812;
-}
-
-.admin-cat_table-status__inactive {
-  background-color: rgba(249, 168, 185, 0.2);
-  border-color: rgba(237, 34, 34, 0.5);
-  color: #ED2222;
 }
 
 .admin-subcat_table-row {
@@ -198,4 +187,13 @@
     height: 100%;
     width: 100%;
   }
+}
+
+.admin-cat_search-input {
+  width: 100%;
+}
+
+.category-icon {
+  width: 20px;
+  height: 20px;
 }

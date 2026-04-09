@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import CatalogModal from "../components/CatalogModal/CatalogModal";
 
 export const AppLayout = () => {
-  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [isCatalogOpen, setIsCatalogOpen] = useState(true);
   const location = useLocation();
 
   useEffect(() => {

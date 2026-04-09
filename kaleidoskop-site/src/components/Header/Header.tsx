@@ -76,9 +76,9 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
             <img src={logo} alt="КАЛЕЙДОСКОП" />
           </Link>
           <nav className='header-info_nav inter13-400__ls'>
-            <div className="header-info_link">
+            <Link to={'about'} className="header-info_link">
               О нас
-            </div>
+            </Link>
             <div className="header-info_link">
               Магазины
             </div>
@@ -273,20 +273,22 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
             Главная
           </span>
         </Link>
-        <Link 
-          to={'/'}
+        <button 
+          //to={'/'}
           //className={`header-nav-item ${location.pathname === '/' ? 'header-nav-item__active' : ''}`}
-          className={`header-nav-item`}
+          className='header-nav-item header-nav-item__btn'
+          onClick={onCatalogClick}
         >
-          <div className="header-nav_icon">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M3.04151 13.9689C2.63984 14.3986 2.38825 14.9695 2.38825 15.5989C2.38825 16.9173 3.47075 18 4.79019 18C6.10963 18 7.19329 16.9173 7.19329 15.5989C7.19329 15.1604 7.06409 14.7541 6.85552 14.399H11.134C10.9254 14.7541 10.7974 15.1604 10.7974 15.5989C10.7974 16.9173 11.8799 18 13.1993 18C14.5187 18 15.6024 16.9173 15.6024 15.5989C15.6024 14.2806 14.5187 13.199 13.1993 13.199H4.19205C3.84898 13.199 3.58603 12.9395 3.59039 12.5909C3.59468 12.2486 3.85323 11.9991 4.19205 11.9991L13.7974 11.9956C14.5305 11.9956 15.1984 11.55 15.4722 10.8659L17.8742 4.86502C18.3398 3.70166 17.4532 2.39953 16.2006 2.39953H13.7986C12.9869 2.38819 12.9869 3.61058 13.7986 3.59947H16.2006C16.6457 3.59947 16.9248 4.00809 16.76 4.41975L14.3581 10.4207C14.2669 10.6484 14.0473 10.7956 13.7974 10.7956L4.19205 10.798C3.98112 10.798 3.78059 10.8427 3.59156 10.9105V3.59947H11.3967C12.2084 3.61081 12.2084 2.38841 11.3967 2.39953H3.58922V1.79838C3.58922 0.811606 2.77773 0.000805464 1.79011 0.000805464H0.587972C0.567266 -0.000268488 0.546519 -0.000268488 0.525813 0.000805464C-0.212708 0.0934491 -0.156181 1.1804 0.587972 1.19606H1.79011C2.13316 1.19606 2.38821 1.45563 2.38825 1.79838L2.38942 12.585C2.38948 13.1464 2.6463 13.6368 3.04151 13.9689ZM4.79019 14.399C5.46057 14.399 5.99115 14.9291 5.99115 15.5989C5.99115 16.2688 5.46057 16.8001 4.79019 16.8001C4.1198 16.8001 3.58922 16.2688 3.58922 15.5989C3.58922 14.9291 4.1198 14.399 4.79019 14.399ZM13.1993 14.399C13.8697 14.399 14.4003 14.9291 14.4003 15.5989C14.4003 16.2688 13.8697 16.8001 13.1993 16.8001C12.5289 16.8001 11.9983 16.2688 11.9983 15.5989C11.9983 14.9291 12.5289 14.399 13.1993 14.399Z" fill="black"/>
+          <div className="header-nav_icon header-nav_icon__stroke">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 15.5L21 21" stroke="#262626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 10C3 13.866 6.13401 17 10 17C11.9363 17 13.6891 16.2138 14.9563 14.9432C16.2192 13.6769 17 11.9296 17 10C17 6.13401 13.866 3 10 3C6.13401 3 3 6.13401 3 10Z" stroke="#262626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
           <span className="header-nav_text">
             Каталог
           </span>
-        </Link>
+        </button>
         <Link 
           to={'/basket'}
           className={`header-nav-item ${location.pathname === '/basket' ? 'header-nav-item__active' : ''}`}

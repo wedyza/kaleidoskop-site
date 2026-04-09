@@ -10,6 +10,7 @@ export interface Category {
   parent: string | null;
   items_count: number;
   slug: string;
+  image?: string;
 }
 
 interface CategoriesState {

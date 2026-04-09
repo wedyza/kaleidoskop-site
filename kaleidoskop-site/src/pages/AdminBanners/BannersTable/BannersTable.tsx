@@ -5,6 +5,7 @@ import { deleteAdminBanner, fetchAdminFirstGroupBanners, fetchAdminSecondGroupBa
 import { formatToDDMMYYYYHHMM } from '../../../utils/dateUtils';
 import Toggle from '../../../components/ui/Toggle/Toggle';
 import AddBannerModal from '../AddBannerModal/AddBannerModal';
+import Modal from '../../../components/Modal/Modal';
 
 interface BannersTableProps {
   group: 'first' | 'second';
@@ -12,6 +13,7 @@ interface BannersTableProps {
 
 const BannersTable = ({ group }: BannersTableProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeImg, setActiveImg] = useState<Banner | null>(null);
   const dispatch = useAppDispatch();
   const banners = useAppSelector(state => 
     group === 'first' ? state.adminBanners.firstGroup.items : state.adminBanners.secondGroup.items
@@ -80,7 +82,7 @@ const BannersTable = ({ group }: BannersTableProps) => {
         <div className='admin-banners_table-row admin-banners_table-head'>
           <div className='admin-banners_table-cell'>№ в карусели</div>
           <div className='admin-banners_table-cell'>Дата и время загрузки</div>
-          <div className='admin-banners_table-cell'>Ссылка</div>
+          {/* <div className='admin-banners_table-cell'>Ссылка</div> */}
           <div className='admin-banners_table-cell'>Изображение</div>
           <div className='admin-banners_table-cell'>Статус</div>
           <div className='admin-banners_table-cell'>Действия</div>
@@ -90,8 +92,20 @@ const BannersTable = ({ group }: BannersTableProps) => {
             <div className='admin-banners_table-row' key={banner.id}>
               <div className='admin-banners_table-cell'>{banner.queue}</div>
               <div className='admin-banners_table-cell'>{formatToDDMMYYYYHHMM(banner.created_at)}</div>
-              <div className='admin-banners_table-cell'>- нет</div>
-              <div className='admin-banners_table-cell'>картинка</div>
+              {/* <div className='admin-banners_table-cell'>- нет</div> */}
+              <div className='admin-banners_table-cell'>
+                <button 
+                  className='admin-banners_table-img'
+                  onClick={() => setActiveImg(banner)}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5 13.5V2.5H2.5V13.5H13.5ZM14.5 13.6C14.5 14.0971 14.0971 14.5 13.6 14.5H2.4C1.90294 14.5 1.5 14.0971 1.5 13.6V2.4C1.5 1.90294 1.90294 1.5 2.4 1.5H13.6C14.0971 1.5 14.5 1.90294 14.5 2.4V13.6Z" fill="#161616"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.46959 8.20705C6.59884 8.15166 6.74544 8.15325 6.87345 8.21144L14.2068 11.5448C14.4582 11.659 14.5693 11.9555 14.4551 12.2069C14.3408 12.4582 14.0444 12.5694 13.793 12.4551L6.66061 9.21315L2.19684 11.1262C1.94303 11.235 1.64909 11.1174 1.54031 10.8636C1.43153 10.6098 1.54911 10.3158 1.80292 10.207L6.46959 8.20705Z" fill="#161616"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.6667 4.5C11.1269 4.5 11.5 4.8731 11.5 5.33333C11.5 5.79357 11.1269 6.16667 10.6667 6.16667C10.2064 6.16667 9.83333 5.79357 9.83333 5.33333C9.83333 4.8731 10.2064 4.5 10.6667 4.5ZM12.5 5.33333C12.5 4.32081 11.6792 3.5 10.6667 3.5C9.65414 3.5 8.83333 4.32081 8.83333 5.33333C8.83333 6.34586 9.65414 7.16667 10.6667 7.16667C11.6792 7.16667 12.5 6.34586 12.5 5.33333Z" fill="#161616"/>
+                  </svg>
+                  <span className='admin-banners_table-img__label'>Посмотреть баннер</span>
+                </button>
+              </div>
               <div className='admin-banners_table-cell'>
                 <Toggle
                   isActive={banner.active}
@@ -137,6 +151,13 @@ const BannersTable = ({ group }: BannersTableProps) => {
           )}
         </div>
       </div>
+      <Modal
+        isOpen={!!activeImg}
+        onClose={() => setActiveImg(null)}
+        className=''
+      >
+        <img src={activeImg?.source} alt="" />
+      </Modal>
       <AddBannerModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onUpload={handleUpload} />
     </div>
   );
