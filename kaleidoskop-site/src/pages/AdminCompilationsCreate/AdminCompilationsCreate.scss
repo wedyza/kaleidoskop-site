@@ -1,0 +1,56 @@
+.admin-comp_dates-inputs {
+  display: flex;
+  gap: 5px;
+}
+
+.admin-comp_dates-input {
+  height: 35px;
+  background-color: var(--grey50);
+  border: 1px solid var(--grey100);
+  padding: 0 15px;
+  border-radius: var(--border-radius);
+  width: 150px;
+}
+
+.admin-comp_acts {
+  display: flex;
+  gap: 5px;
+}
+
+.comp-search {
+  background-color: var(--grey50);
+  border: 1px solid var(--grey200);
+  width: 483px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 5px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+.comp-search_btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-comp_noms {
+  padding: 20px;
+}
+
+.admin-cat_table-row.admin-comp_table-row {
+  grid-template-columns: 20% 1fr 30%;
+  gap: 15px;
+
+  .admin-nom_cat-select {
+    height: 24px;
+  }
+}
+
+.admin-comp_table {
+  width: 614px;
+}

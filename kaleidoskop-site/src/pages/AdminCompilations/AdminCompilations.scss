@@ -1,0 +1,33 @@
+.admin-comp_add-btn {
+  margin-left: auto;
+}
+
+.admin-nom_head.admin-comp_head {
+  grid-template-columns: 1fr 30%;
+}
+
+.admin-nom_head-main.admin-comp_head-main {
+  border-radius: 15px;
+}
+
+.admin-nom_row.admin-comp_row {
+  grid-template-columns: 8% 1fr 14% 14% 13.5% 14% 210px;
+}
+
+.admin-comp_cell-status {
+  color: #077812;
+  background-color: rgba(162, 211, 167, 0.2);
+  border: 1.5px solid rgba(17, 172, 33, 0.5);
+  border-radius: 5px;
+  height: 28px;
+  padding: 0 34px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-cat_table-act.admin-comp_table-act {
+  width: fit-content;
+  padding: 0 16px 0 20px;
+}

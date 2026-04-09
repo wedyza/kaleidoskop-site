@@ -46,6 +46,8 @@ import AboutPage from './pages/AboutPage/AboutPage';
 import LoyaltyCardsPage from './pages/LoyaltyCardsPage/LoyaltyCardsPage';
 import ContactsPage from './pages/ContactsPage/ContactsPage';
 import AdminBanners from './pages/AdminBanners/AdminBanners';
+import AdminCompilations from './pages/AdminCompilations/AdminCompilations';
+import AdminCompilationsCreate from './pages/AdminCompilationsCreate/AdminCompilationsCreate';
 
 function App() {
   const isLoading = useAppSelector(selectGlobalLoading);
@@ -75,6 +77,9 @@ function App() {
               <Route path="/admin/nomenclatures/connections" element={<AdminAssignedNomenclatures />} />
               <Route path="/admin/telegram" element={<AdminTelegram />} />
               <Route path="/admin/banners" element={<AdminBanners />} />
+              <Route path="/admin/compilations" element={<AdminCompilations />} />
+              <Route path="/admin/compilations/create" element={<AdminCompilationsCreate />} />
+              <Route path="/admin/compilations/:id/edit" element={<AdminCompilationsCreate />} />
     
               <Route path="/admin/categories/create" element={<AdminCategoryCreate />} />
               <Route path="/admin/categories/:id/edit" element={<AdminCategoryEdit />} />
