@@ -3,18 +3,8 @@ from django.conf import settings
 from celery import shared_task
 from services.user_service import UserService
 import httpx
+from api.decorators import multitasker
 
-def multitasker(f): #Позволяет не бегать туда сюда и менять лишь 1 значение
-    """
-    Декоратор, который управляет запуском тасков
-    Если settings.CONTAINER_LAUNCHER = True, то запускает их в Celery Worker,
-    Иначе как обычную функцию
-    """
-    def wrapper(*args, **kwargs):
-        if settings.CONTAINER_LAUNCHER:
-            return f.delay(*args, **kwargs)
-        return f(*args, **kwargs)
-    return wrapper
 
 class IntegrationService:
     _user_service = UserService()

@@ -2,10 +2,12 @@ from uuid import UUID
 from users.models import CustomAbstractUser
 from django.utils import timezone
 from exceptions.exceptions import NotFoundException, OTPTimedOutException, WrongOTPPassedException
+from api.decorators import cache_queryset
 
 class UserRepository:
-    def get_by_id(self, user_pk: UUID) -> CustomAbstractUser:
-        return CustomAbstractUser.objects.get(id=user_pk)
+    @cache_queryset(cache_key="user")
+    def get_by_id(self, pk: UUID) -> CustomAbstractUser:
+        return CustomAbstractUser.objects.get(pk=pk)
     
     def fill_user_with_1c_data(self, user: CustomAbstractUser, code: str, existed: bool):
         if user.code is None:

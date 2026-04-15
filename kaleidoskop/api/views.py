@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from api.permissions import IsUserHimself
+from services.compilation_service import CompilationService
 from .paginators import CustomPagination
 from admin_panel.models import Compilation
 from typing import Any
@@ -50,7 +51,6 @@ from django.utils import timezone
 User = get_user_model()
 class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     queryset = Category.objects.filter(active=True).all()
-    # serializer_class = CategorySerializer
     category_service = CategoryService()
     pagination_class = CustomPagination
     permissions = (permissions.AllowAny, )
@@ -58,6 +58,10 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
     ordering_fields = ['price']
     search_fields = ("title",)
 
+    # @cache_page(60 * 15)
+    # def list(self, request, *args, **kwargs):
+    #     return super().list(request, *args, **kwargs)
+    
     def get_serializer_class(self):
         if self.action == 'list':
             return CategoryListSerializer
@@ -301,7 +305,7 @@ class UsersViewSet(
         permission_classes=(permissions.IsAuthenticated,),
         url_path="me",
     )
-    def active_user(self, request): # Тут не буду сильно менять структуру, только IntegrationService выделю
+    def active_user(self, request):
         if request.method == "GET":
             serializer = self.serializer_class(request.user)
             return Response(serializer.data)
@@ -460,11 +464,10 @@ class PublicBannerViewSet(viewsets.GenericViewSet):
 class PublicCompilationViewSet(viewsets.GenericViewSet):
     serializer_class = PublicCompilationSerializer
     permission_classes = permissions.AllowAny
-
+    compilation_service = CompilationService()
+    
     def get_queryset(self):
-        today = timezone.now()
-        queryset = Compilation.objects.filter(active=True).filter(Q(end_time=None) | Q(end_time__lte=today)).order_by('-queue') # Тут тоже наверное
-        return queryset
+        return self.compilation_service.get_public_queryset()
 
     @action(methods=['GET'], url_path='first', detail=False)
     def get_first(self, request):

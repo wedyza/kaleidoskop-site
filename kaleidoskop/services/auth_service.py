@@ -1,6 +1,6 @@
 from services.user_service import UserService
 from users.models import CustomAbstractUser
-from services.async_service import multitasker
+from api.decorators import multitasker
 from celery import shared_task
 import string
 from django.core.mail import EmailMultiAlternatives

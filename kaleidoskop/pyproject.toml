@@ -34,6 +34,7 @@ dependencies = [
     "django-enum==2.2.2",
     "django-extensions==4.1",
     "django-filter==23.1",
+    "django-redis>=6.0.0",
     "django-rest-elasticsearch==0.4.2",
     "django-storages==1.14.6",
     "django-templated-mail==1.1.1",

@@ -1,6 +1,6 @@
 from recomendation_system.serializers import ItemToAIModel
 from api.models import Item
-from services.integration_service import multitasker
+from api.decorators import multitasker
 from celery import shared_task
 from services.rabbitmq import RabbitMQ
 import json

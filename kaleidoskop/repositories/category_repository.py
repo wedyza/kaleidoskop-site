@@ -3,12 +3,13 @@ from api.models import Item, Category, Nomenclature
 from services.nomenclature_service import NomenclatureService
 from django.db.models import QuerySet
 from uuid import UUID
+from api.decorators import cache_queryset
 
 class CategoryRepository:
     _nomenclature_service = NomenclatureService()
     
-    def get_category_by_id(self, id: UUID) -> Category:
-        return Category.objects.get(id=id)
+    def get_category_by_pk(self, pk: UUID) -> Category:
+        return Category.objects.get(pk=pk)
 
     def __get_base_nomenclatures(self, category: Category) -> Union[QuerySet, list[Nomenclature]]:
         daughter_categories = category.daughter.all()
@@ -17,8 +18,9 @@ class CategoryRepository:
             base_nomenclatures |= daughter.nomenclatures.all()
         return base_nomenclatures
 
-    def get_items_of_category(self, category_pk: UUID) -> Union[QuerySet, list[Item]]:
-        category = self.get_category_by_id(category_pk)
+    @cache_queryset(cache_key='items_of_category')
+    def get_items_of_category(self, pk: UUID) -> Union[QuerySet, list[Item]]:
+        category = self.get_category_by_pk(pk)
         base_nomenclatures = self.__get_base_nomenclatures(category)
         nomenclatures = self._nomenclature_service.get_daughter_nomenclatures(base_nomenclatures)
         return Item.objects.filter(nomenclature__in=nomenclatures)
