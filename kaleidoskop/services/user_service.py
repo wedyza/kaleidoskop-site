@@ -15,7 +15,7 @@ class UserService:
         self._user_repository.fill_user_with_1c_data(user=user, code=code, existed=existed)
     
     def get_user_cart(self, user_pk: UUID) -> Cart:
-        return self._cart_service.get_cart_by_user(user_pk=user_pk)
+        return self._cart_service.get_cart_by_user(pk=user_pk)
     
     def get_user_by_email(self, email: str) -> CustomAbstractUser:
         return self._user_repository.get_user_by_email(email=email)

@@ -29,7 +29,7 @@ class LinkTelegrammView(views.APIView):
         try:
             chat_id = self.admin_service.link_telegram(code.data['code'])
         except NotFoundException:
-            return Response({'detaail': 'did not found any code'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'did not found any code'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'chat_id': chat_id}, status=status.HTTP_201_CREATED)
 
 
@@ -105,8 +105,6 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
         """
         return super().list(request, *args, **kwargs)
     
-    # @action(detail=False, methods=['GET'], url_path='search/')
-    # def get_categories_by_search(self, request, query)
 
 class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
     # queryset = Nomenclature.objects.all()
@@ -188,7 +186,7 @@ class CompilationViewSet(viewsets.ModelViewSet):
     @action(methods=['POST'], url_path='attach_nomenclature', detail=True)
     def attach_item(self, request, pk):
         try:
-            compilation = self.compilation_service.attach_category(pk, request.data)
+            compilation = self.compilation_service.attach_nomenclature(pk, request.data)
         except NotFoundException as e:
             print(e.args)
             return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)

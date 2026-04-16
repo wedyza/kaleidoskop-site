@@ -17,3 +17,6 @@ class LikeService:
     
     def get_likes_of_user(self, user_pk: UUID) -> Union[QuerySet, list[Like]]:
         return self._like_repository.get_likes_of_user(user_pk)
+
+    def is_user_liked_item(self, user_pk: UUID, item_pk: UUID) -> bool:
+        return self._like_repository.is_user_liked_item(user_pk, item_pk)

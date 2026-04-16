@@ -39,7 +39,6 @@ urlpatterns = [
     path("receive/", include("receiver.urls")),
     path("auth/", include("users.urls")),
     path("admin_panel/", include("admin_panel.urls")),
-    path('recomendations/', include('recomendation_system.urls'))
 ]
 
 schema_view = get_schema_view(

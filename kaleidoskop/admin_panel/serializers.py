@@ -4,6 +4,9 @@ from .models import Compilation
 from django.db.models import Q
 from services.nomenclature_service import NomenclatureService
 from django.utils import timezone
+from services.compilation_service import CompilationService
+
+compilation_service = CompilationService()
 
 nomenclature_service = NomenclatureService()
 
@@ -99,13 +102,10 @@ class CompilationSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'nomenclatures', 'created_at', 'item_count', 'public_queue']
 
-    def get_item_count(self, obj:Compilation):
-        base_nomenclatures = obj.nomenclatures.all()
-        nomenclatures = nomenclature_service.get_daughter_nomenclatures(base_nomenclatures)
-        return Item.objects.filter(nomenclature__in=nomenclatures).count()
-
+    def get_item_count(self, obj:Compilation) -> int:
+        return compilation_service.get_compilation_items_count(obj.id)
     
-    def get_public_queue(self, obj:Banner):
+    def get_public_queue(self, obj:Compilation):
         if not obj.active:
             return 'Неактивно'
         today = timezone.now()

@@ -1,3 +1,6 @@
+from django.db.models import QuerySet
+from api.decorators import cache_queryset
+from api.enums import CacheKeyType
 from api.models import Like
 from uuid import UUID
 
@@ -25,5 +28,9 @@ class LikeRepository:
         like = self.filter_like_by_user_id_and_item_id(item_pk, user_pk)
         return self.__create_or_delete_like(like, status, item_pk, user_pk)
     
-    def get_likes_of_user(self, user_pk: UUID):
+    def get_likes_of_user(self, user_pk: UUID) -> QuerySet:
         return Like.objects.filter(user_id=user_pk).all()
+    
+    @cache_queryset(cache_key="liked_user_item", cache_key_type=CacheKeyType.BUILDING)
+    def is_user_liked_item(self, user_pk: UUID, item_pk: UUID) -> bool:
+        return Like.objects.filter(user_id=user_pk).filter(item_id=item_pk).exists()

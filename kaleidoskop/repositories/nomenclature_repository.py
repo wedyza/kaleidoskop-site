@@ -1,6 +1,7 @@
 from uuid import UUID
-from api.models import Nomenclature
+from api.models import Item, Nomenclature
 from django.db.models import QuerySet
+from api.decorators import cache_queryset
 from typing import Union
 
 class NomenclatureRepository:
@@ -43,3 +44,7 @@ class NomenclatureRepository:
     
     def get_nomenclature_by_id(self, pk: UUID) -> Nomenclature:
         return Nomenclature.objects.get(id=pk)
+    
+    @cache_queryset('item_from_associative')
+    def get_items_from_associative_nomenclature(self, pk: UUID) -> Union[QuerySet, list[Item]]:
+        return Item.objects.filter(nomenclature_id=pk)

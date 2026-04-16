@@ -2,7 +2,8 @@ from typing import Union
 from django.db.models import Exists, OuterRef, QuerySet
 from admin_panel.models import Compilation
 from uuid import UUID
-from api.models import Nomenclature
+from api.models import Item, Nomenclature
+from api.decorators import cache_queryset
 
 class CompilationRepository:
     def get_by_id(self, id: UUID) -> Compilation:
@@ -28,3 +29,8 @@ class CompilationRepository:
         return Nomenclature.objects.annotate(
             status=Exists(compilation.nomenclatures.filter(id=OuterRef('pk')))
         ).order_by('-status', 'title')
+
+    @cache_queryset('items_of_compilation')
+    def get_compilation_items(self, pk: UUID) -> Union[QuerySet, list[Item]]:
+        nomenclatures = self.get_nomenclatures_queryset(pk)
+        return Item.objects.filter(nomenclature_in=nomenclatures)

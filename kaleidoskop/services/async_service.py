@@ -1,4 +1,3 @@
-from recomendation_system.serializers import ItemToAIModel
 from api.models import Item
 from api.decorators import multitasker
 from celery import shared_task

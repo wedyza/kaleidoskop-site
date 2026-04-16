@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "receiver.apps.ReceiverConfig",
     "search.apps.SearchConfig",
-    "recomendation_system.apps.RecomendationSystemConfig",
     "admin_panel.apps.AdminPanelConfig",
     "django_extensions"
 ]
@@ -255,7 +254,6 @@ SWAGGER_SETTINGS = {
     # другие опции...
 }
 LOCAL_TZ = zoneinfo.ZoneInfo('Asia/Yekaterinburg')
-RECOMENDATIONS_URL = "localhost:8082" if not CONTAINER_LAUNCHER else "recommendation_system:8000"
 
 
 

@@ -50,3 +50,6 @@ class ItemService:
     def get_recommended_items_queryset(self, item_pk: UUID) -> Union[QuerySet, List[Item]]: # 
         item = self.get_item_by_id(item_pk)
         return self._item_repository.get_recommended_items_by_item_title(item)
+
+    def get_item_remains(self, item: Item) -> int:
+        return self._item_repository.get_item_remains(pk=item.id)

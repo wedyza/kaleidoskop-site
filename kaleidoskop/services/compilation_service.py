@@ -3,6 +3,7 @@ from django.db.models import Q
 from admin_panel.models import Compilation, Nomenclature
 from admin_panel.serializers import CompilationCreateSerializer, NomenclatureRelatedSerializer
 from exceptions.exceptions import NotFoundException
+from kaleidoskop.api.models import Item
 from repositories.compilation_repository import CompilationRepository
 from uuid import UUID
 from django.db.models import QuerySet
@@ -11,7 +12,7 @@ from django.utils import timezone
 class CompilationService:
     _compilation_repository = CompilationRepository()
 
-    def get_public_queryset(self):
+    def get_public_queryset(self) -> Union[QuerySet, list[Compilation]]:
         today = timezone.now()
         queryset = Compilation.objects.filter(active=True).filter(Q(end_time=None) | Q(end_time__lte=today)).order_by('-queue')
         return queryset
@@ -27,7 +28,7 @@ class CompilationService:
         serializer.save(queue=max_queue + 1)
         return serializer
     
-    def attach_category(self, compilation_pk: UUID, request_data: dict[str, str]) -> Compilation: # Костыль наверн
+    def attach_nomenclature(self, compilation_pk: UUID, request_data: dict[str, str]) -> Compilation: # Костыль наверн
         try:
             compilation = Compilation.objects.get(id=compilation_pk)
         except:  # noqa: E722
@@ -38,3 +39,9 @@ class CompilationService:
         nomenclature = nomenclatures.validated_data['nomenclature']
         compilation.nomenclatures.add(nomenclature)
         return compilation
+
+    def get_compilation_items(self, pk: UUID) -> Union[QuerySet, list[Item]]:
+        return self._compilation_repository.get_compilation_items(pk=pk)
+    
+    def get_compilation_items_count(self, pk: UUID)-> int:
+        return self._compilation_repository.get_compilation_items(pk=pk).count()

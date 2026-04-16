@@ -17,29 +17,3 @@ class Compilation(UUIDModel):
     end_time = models.DateTimeField('Конец активности', null=True, blank=True)
     active = models.BooleanField('Активно', default=False, null=False, blank=False)
     queue = models.IntegerField('Очередь', null=False, blank=False, validators=[MinValueValidator(1)])
-
-    # @property
-    # def active_usage(self):
-    #     return self.start_time != None or self.end_time != None
-    
-    # @property
-    # def public_active(self):
-
-
-"""
-    {
-        "settings": {
-            "banners_1": [
-                uuid1,
-                uuid2,
-                uuid3
-            ],
-            "special_category": category_id,
-            "banners_2": [
-                uuid4,
-                uuid5,
-                uuid6
-            ]
-        }
-    }
-"""

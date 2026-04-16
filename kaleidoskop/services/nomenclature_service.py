@@ -22,3 +22,6 @@ class NomenclatureService:
         category = Category.objects.get(id=category_pk)
         nomenclature = self._nomenclature_repository.get_nomenclature_by_id(nomenclature_pk)
         category.nomenclatures.remove(nomenclature)
+
+    def get_items_from_associative_nomenclature(self, pk: UUID):
+        return self._nomenclature_repository.get_items_from_associative_nomenclature(pk=pk)

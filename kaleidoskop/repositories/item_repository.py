@@ -1,9 +1,10 @@
 from typing import List, Union
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models.functions import Lower
-from django.db.models import QuerySet, Value, F, Case, When
+from django.db.models import QuerySet, Value, F, Case, When, Sum
 from django.db import models
 from api.models import Item, Nomenclature
+from api.decorators import cache_queryset
 from uuid import UUID
 
 class ItemRepository:
@@ -80,3 +81,10 @@ class ItemRepository:
             similarity=TrigramSimilarity(Value(item.title.lower()), Lower('title'))
         ).exclude(pk=item.pk).order_by('-similarity')[:50] # Может потом еще поменять
         return qs
+
+    @cache_queryset('item_remains')
+    def get_item_remains(self, pk: UUID) -> int:
+        s = Item.objects.get(pk=pk).remains.aggregate(Sum('count'))['count__sum']
+        if s:
+            return s
+        return 0

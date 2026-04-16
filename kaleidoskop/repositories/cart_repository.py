@@ -1,6 +1,7 @@
 from api.models import Cart
 from uuid import UUID
 from users.models import CustomAbstractUser
+from api.decorators import cache_queryset
 
 class CartRepository:
     def get_or_create_user_cart(self, user_pk: UUID) -> Cart:
@@ -9,7 +10,8 @@ class CartRepository:
         if cart is None:
             return self.__create_user_cart(user_pk)
         return cart
-        
+    
+    @cache_queryset('user_cart')
     def __get_user_cart(self, user_pk: UUID) -> Cart:
         return Cart.objects.filter(order=None).filter(current_cart=True).filter(user_id=user_pk).first()
     

@@ -2,10 +2,22 @@ from rest_framework import serializers
 from .models import Banner, Brand, Category, Item, Cart, CartItem, ItemImage, Like, Comment, Order, Parameter, ParameterItem, Remains, Shop
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from .functions import get_daughter_nomenclatures
 from admin_panel.models import Compilation
+from services.category_service import CategoryService
+from services.like_service import LikeService
+from services.cart_item_service import CartItemService
+from services.item_service import ItemService
+from services.nomenclature_service import NomenclatureService
+from services.compilation_service import CompilationService
 
 User = get_user_model()
+
+category_service = CategoryService()
+like_service = LikeService()
+cart_item_service = CartItemService()
+item_service = ItemService()
+nomenclature_service = NomenclatureService()
+compilation_service = CompilationService()
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
@@ -26,8 +38,7 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'slug', 'items_count')
 
     def get_items_count(self, obj) -> int:
-        nomenclatures = get_daughter_nomenclatures(obj.nomenclatures.all())
-        return Item.objects.filter(nomenclature__in=nomenclatures).count()
+        return category_service.count_category_items()
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):
@@ -64,7 +75,6 @@ class BrandSerializer(serializers.ModelSerializer):
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):
-    # remains = ItemRemainsSerializer(many=True, read_only=True)
     remains = serializers.SerializerMethodField("get_remains", read_only=True)
     in_wishlist = serializers.SerializerMethodField("get_in_wishlist", read_only=True)
     cart_count = serializers.SerializerMethodField("get_cart_count", read_only=True)
@@ -90,42 +100,34 @@ class ItemDetailSerializer(serializers.ModelSerializer):
             'parameters',
             'brand',
             'associatives'
-        )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
+        )
 
     
     def get_in_wishlist(self, obj) -> bool:
         user = self.context["request"].user
         if user.is_anonymous:
             return False
-        
-        wishlist = Like.objects.filter(user=user).filter(item=obj).first()
-
-        return wishlist is not None
+        return like_service.is_user_liked_item(user.pk, obj.id)
 
     def get_cart_count(self, obj) -> int:
         user = self.context["request"].user
         if user.is_anonymous:
             return None
-        
-        cart_item = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=user).filter(current_cart=True))).filter(item=obj).first()
-
-        if cart_item is None:
-            return cart_item
-        return cart_item.amount
-    
-    def get_remains(self, obj: Item) -> int:
-        s = obj.remains.aggregate(Sum('count'))
-        if s['count__sum']:
-            return int(s['count__sum'])
-        return 0
+        return cart_item_service.get_cart_count(obj, user.pk)
+            
+    def get_remains(self, obj: Item) -> int: # Не знаю, насколько это надо кэшировать.
+        return item_service.get_item_remains(obj)
     
     def get_associatives(self, obj: Item) -> list:
         if obj.nomenclature.associative:
-            return ItemListSerializer(instance=Item.objects.filter(nomenclature=obj.nomenclature).exclude(id=obj.id), many=True, context=self.context).data
+            return ItemListSerializer(
+                instance=nomenclature_service.get_items_from_associative_nomenclature(obj.id).exclude(id=obj.id),
+                many=True, 
+                context=self.context
+            ).data
         return []
-        
 
-class ItemListSerializer(ItemDetailSerializer): # Завтра проверить характеристики, также подключить их для фильтров в категории?
+class ItemListSerializer(ItemDetailSerializer):
     class Meta:
         model = Item
         fields = (
@@ -137,29 +139,19 @@ class ItemListSerializer(ItemDetailSerializer): # Завтра проверит�
             "in_wishlist",
             "cart_count",
             'images',
-        )  # тут на основе некоторых полей, надо будет решать возвращать / не возвращать значения
+        )
 
-    
     def get_in_wishlist(self, obj) -> bool:
         user = self.context["request"].user
         if user.is_anonymous:
             return False
-        
-        wishlist = Like.objects.filter(user=user).filter(item=obj).first()
-
-        return wishlist is not None
+        return like_service.is_user_liked_item(user.pk, obj.id)
 
     def get_cart_count(self, obj) -> int:
         user = self.context["request"].user
         if user.is_anonymous:
             return None
-        
-        cart_item = CartItem.objects.filter(cart__in=(Cart.objects.filter(user=user).filter(current_cart=True))).filter(item=obj).first()
-
-        if cart_item is None:
-            return cart_item
-        return cart_item.amount
-
+        return cart_item_service.get_cart_count(obj, user.pk)
 
 class CartItemSerializer(serializers.ModelSerializer):
     item = ItemDetailSerializer(read_only=True)
@@ -199,7 +191,7 @@ class SwitchSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "first_name", "last_name", "email", "sex", "avatar", "is_superuser", "phone_number", "middle_name")  # avatar
+        fields = ("id", "first_name", "last_name", "email", "sex", "avatar", "is_superuser", "phone_number", "middle_name")
         read_only_fields = ('id', 'is_superuser')
 
 class AddressSerializer(serializers.Serializer):
@@ -222,8 +214,8 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ("user", "cart", "id", "code", "status", 'created_at')
 
     def create(self, validated_data):
-        shop = validated_data.pop('shop', None)
-        address_data = validated_data.pop('address', None)
+        validated_data.pop('shop', None)
+        validated_data.pop('address', None)
         return super().create(validated_data)
 
     def validate(self, attrs):
@@ -249,6 +241,8 @@ class OrderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
 
         return super().validate(attrs)
+
+
 class ListCartItemSerializer(serializers.Serializer):
     ids = serializers.ListField(
         child=serializers.UUIDField()
@@ -287,12 +281,6 @@ class ShopSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class BrandSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Brand
-#         fields = '__all__'
-
-
 class PublicBannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banner
@@ -301,14 +289,10 @@ class PublicBannerSerializer(serializers.ModelSerializer):
 
 class PublicCompilationSerializer(serializers.ModelSerializer):
     items = serializers.SerializerMethodField('get_items')
-    public_queue = serializers.SerializerMethodField('get_public_queue')
     class Meta:
         model = Compilation
-        fields = ('items', 'title', 'public_queue', 'start_time', 'end_time')
-        read_only_fields = ['items', 'title', 'public_queue', 'start_time', 'end_time']
-
-    def get_items(self, obj): # Это надо еще доделать вместе с полиной
-        ...
-
-    def get_public_queue(self, obj): # И это тоже
-        ...
+        fields = ('items', 'title', 'start_time', 'end_time')
+        read_only_fields = ['items', 'title', 'start_time', 'end_time']
+    
+    def get_items(self, obj):
+        return compilation_service.get_compilation_items(obj.pk)
