@@ -265,3 +265,26 @@ CACHES = {
         "LOCATION": "redis://redis:6379" if CONTAINER_LAUNCHER else "redis://localhost:6379"
     }
 }
+
+SHELL_PLUS_PRE_IMPORTS = {
+    ('services.item_service', 'ItemService'),
+    ('services.admin_service', 'AdminService'),
+    ('services.async_service', 'AsyncService'),
+    ('services.auth_service', 'AuthService'),
+    ('services.banner_service', 'BannerService'),
+    ('services.brand_service', 'BrandService'),
+    ('services.cart_item_service', 'CartItemService'),
+    ('services.cart_service', 'CartService'),
+    ('services.compilation_service', 'CompilationService'),
+    ('services.integration_service', 'IntegrationService'),
+    ('services.like_service', 'LikeService'),
+    ('services.nomenclature_service', 'NomenclatureService'),
+    ('services.order_service', 'OrderService'),
+    ('services.category_service', 'CategoryService'),
+    ('services.rabbitmq', 'RabbitMQ'),
+    ('services.receiver_service', 'ReceiverService'),
+    ('services.remains_service', 'RemainsService'),
+    ('services.user_service', 'UserService'),
+    ('repositories.category_repository', 'CategoryRepository'),
+    ('repositories.nomenclature_repository', 'NomenclatureRepository')
+}

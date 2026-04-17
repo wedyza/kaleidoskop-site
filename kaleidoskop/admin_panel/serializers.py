@@ -18,7 +18,7 @@ class AdminCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'slug']
 
 class BannerSerializer(serializers.ModelSerializer):
     public_queue = serializers.SerializerMethodField('get_public_queue')

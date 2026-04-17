@@ -26,15 +26,24 @@ class NomenclatureRepository:
                 pass
         Nomenclature.objects.bulk_update(nomenclatures, fields=["parent"])
         
-    def get_daughter_nomenclatures(self, nomenclatures: Union[QuerySet, list[Nomenclature]]) -> Union[QuerySet, list[Nomenclature]]:
-        returning = nomenclatures
-        while True:
-            past = returning.count()
-            returning |= Nomenclature.objects.filter(parent__in=returning).exclude(id__in=returning.values_list('id', flat=True)).all()
-            now = returning.count() 
-            if past - now == 0:
-                return returning
-            
+    def get_daughter_nomenclatures(self, nomenclatures: list[Nomenclature]) -> Union[QuerySet, list[Nomenclature]]:
+        root_ids = [str(n.id) for n in nomenclatures]
+        
+        with_recursive = """
+        WITH RECURSIVE nomenclature_tree AS (
+            SELECT id FROM api_nomenclature WHERE id = ANY(%s::uuid[])
+            UNION ALL
+            SELECT c.id
+            FROM api_nomenclature c
+            INNER JOIN nomenclature_tree ct ON c.parent_id = ct.id
+        )
+        SELECT DISTINCT id FROM nomenclature_tree
+        """
+        
+        qs = Nomenclature.objects.raw(with_recursive, [root_ids])
+        
+        return list(qs)
+
     def get_nomenclatures(self, level_of_nesting: int) -> Union[QuerySet, list[Nomenclature]]:
         nomenclatures = Nomenclature.objects.filter(parent=None).filter(associative=False)
         while level_of_nesting != 0:

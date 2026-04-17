@@ -34,7 +34,6 @@ from .models import Banner, Cart, Category, Item, Comment, CartItem, Shop
 from elasticsearch_dsl import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-# from .functions import get_daughter_nomenclatures, get_items_queryset_of_category
 from services.category_service import CategoryService
 from services.item_service import ItemService
 from services.integration_service import IntegrationService
@@ -49,7 +48,7 @@ from .filters import ItemFilter, ItemImageFilter
 from django.utils import timezone
 
 User = get_user_model()
-class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin): #Retrieve - deprecated
     queryset = Category.objects.filter(active=True).all()
     category_service = CategoryService()
     pagination_class = CustomPagination
@@ -58,9 +57,6 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
     ordering_fields = ['price']
     search_fields = ("title",)
 
-    # @cache_page(60 * 15)
-    # def list(self, request, *args, **kwargs):
-    #     return super().list(request, *args, **kwargs)
     
     def get_serializer_class(self):
         if self.action == 'list':
@@ -69,6 +65,7 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
             return ItemListSerializer
         return CategoryDetailSerializer
 
+
     def get_serializer(self, *args, **kwargs):
         if self.action == 'list':
             return CategoryListSerializer(*args, **kwargs)
@@ -76,10 +73,23 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
             return ItemListSerializer(*args, **kwargs)
         return CategoryDetailSerializer(*args, **kwargs)
 
+
     def get_serializer_context(self) -> dict[str, Any]:
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+    
+    
+    @action(detail=False, methods=["GET"], url_path="retrieve/(?P<slug>[^/.]+)")    
+    def retrieve_slug(self, request, slug=None):
+        try:
+            item = self.category_service.find_by_slug(slug)
+            serializer = self.get_serializer(instance=item)
+            return Response(serializer.data)
+        except NotFoundException:
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        except BaseException as e:
+            raise e
 
     
     @swagger_auto_schema(
@@ -126,11 +136,12 @@ class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     def get_queryset(self):
         return self.like_service.get_likes_of_user(self.request.user.id)
 
-class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin): #Retrieve - deprecated
     queryset = Item.objects.all()
     pagination_class = CustomPagination
     filter_backends = [rf_filters.DjangoFilterBackend, filters.OrderingFilter, ItemImageFilter]
     ordering_fields = ['price']
+    lookup_field='id'
     filterset_class = ItemFilter
     item_service = ItemService()
     redis_service: StrictRedis = RedisService.initialize()
@@ -142,7 +153,7 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         return super().list(request, *args, **kwargs)
     
     def get_serializer_class(self) -> type[ItemDetailSerializer] | type[ItemListSerializer] | type[SwitchSerializer] | type[ItemCartAmountSerialzier]:
-        if self.action == 'retrieve':
+        if self.action == 'retrieve_slug' or self.action == 'retrieve':
             return ItemDetailSerializer
         elif self.action == 'switch_wishlist' or self.action == 'add_to_cart':
             return SwitchSerializer
@@ -151,7 +162,7 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         return ItemListSerializer
     
     def serializer_class(self, *args, **kwargs) -> ItemDetailSerializer | SwitchSerializer | ItemCartAmountSerialzier | ItemListSerializer:
-        if self.action == 'retrieve':
+        if self.action == 'retrieve' or self.action == 'retrieve_slug':
             return ItemDetailSerializer(*args, **kwargs)
         elif self.action == 'switch_wishlist' or self.action == 'add_to_cart':
             return SwitchSerializer(*args, **kwargs)
@@ -165,6 +176,17 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         context["request"] = self.request
         return context
 
+    @action(detail=False, methods=["GET"], url_path="retrieve/(?P<slug>[^/.]+)")    
+    def retrieve_slug(self, request, slug=None):
+        try:
+            item = self.item_service.find_by_slug(slug)
+            serializer = self.get_serializer(instance=item)
+            return Response(serializer.data)
+        except NotFoundException:
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        except BaseException as e:
+            raise e
+    
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),
@@ -177,7 +199,7 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
     )
     @action(detail=False, methods=["GET"], url_path="search/(?P<query>.*)")
     def search(self, request, query=None):
-        items = self.item_service.get_items_queryset_by_query(query)
+        items = self.item_service.find_by_query(query)
         filter = ItemFilter(request.GET, queryset=items)
         if not filter.is_valid():
             return Response(filter.errors, status=400)

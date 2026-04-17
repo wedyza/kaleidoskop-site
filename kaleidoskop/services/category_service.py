@@ -16,3 +16,6 @@ class CategoryService:
 
     def count_category_items(self, pk: UUID) -> int:
         return len(self._category_repository.get_items_of_category(pk=pk))
+    
+    def find_by_slug(self, slug:str) -> Category:
+        return self._category_repository.find_by_slug(slug)

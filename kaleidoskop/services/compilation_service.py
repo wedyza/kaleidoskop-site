@@ -1,9 +1,8 @@
 from typing import Union
 from django.db.models import Q
 from admin_panel.models import Compilation, Nomenclature
-from admin_panel.serializers import CompilationCreateSerializer, NomenclatureRelatedSerializer
 from exceptions.exceptions import NotFoundException
-from kaleidoskop.api.models import Item
+from api.models import Item
 from repositories.compilation_repository import CompilationRepository
 from uuid import UUID
 from django.db.models import QuerySet
@@ -23,12 +22,13 @@ class CompilationService:
     def get_nomenclatures_queryset(self, pk: UUID) -> Union[QuerySet, list[Nomenclature]]:
         return self._compilation_repository.get_nomenclatures_queryset(pk=pk)
 
-    def create(self, serializer: CompilationCreateSerializer) -> CompilationCreateSerializer:
+    def create(self, serializer):
         max_queue = self._compilation_repository.get_max_queue()
         serializer.save(queue=max_queue + 1)
         return serializer
     
     def attach_nomenclature(self, compilation_pk: UUID, request_data: dict[str, str]) -> Compilation: # Костыль наверн
+        from admin_panel.serializers import NomenclatureRelatedSerializer
         try:
             compilation = Compilation.objects.get(id=compilation_pk)
         except:  # noqa: E722

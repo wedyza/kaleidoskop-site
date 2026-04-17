@@ -121,7 +121,7 @@ class ItemDetailSerializer(serializers.ModelSerializer):
     def get_associatives(self, obj: Item) -> list:
         if obj.nomenclature.associative:
             return ItemListSerializer(
-                instance=nomenclature_service.get_items_from_associative_nomenclature(obj.id).exclude(id=obj.id),
+                instance=nomenclature_service.get_items_from_associative_nomenclature(obj.id),
                 many=True, 
                 context=self.context
             ).data
