@@ -38,7 +38,7 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'slug', 'items_count')
 
     def get_items_count(self, obj) -> int:
-        return category_service.count_category_items()
+        return category_service.count_category_items(obj.id)
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):

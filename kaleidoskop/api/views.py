@@ -48,7 +48,7 @@ from .filters import ItemFilter, ItemImageFilter
 from django.utils import timezone
 
 User = get_user_model()
-class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin): #Retrieve - deprecated
+class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin): #Retrieve - deprecated
     queryset = Category.objects.filter(active=True).all()
     category_service = CategoryService()
     pagination_class = CustomPagination
@@ -57,7 +57,6 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
     ordering_fields = ['price']
     search_fields = ("title",)
 
-    
     def get_serializer_class(self):
         if self.action == 'list':
             return CategoryListSerializer
@@ -80,16 +79,16 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
         return context
     
     
-    @action(detail=False, methods=["GET"], url_path="retrieve/(?P<slug>[^/.]+)")    
-    def retrieve_slug(self, request, slug=None):
-        try:
-            item = self.category_service.find_by_slug(slug)
-            serializer = self.get_serializer(instance=item)
-            return Response(serializer.data)
-        except NotFoundException:
-            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
-        except BaseException as e:
-            raise e
+    # @action(detail=False, methods=["GET"], url_path="retrieve/(?P<slug>[^/.]+)")    
+    # def retrieve_slug(self, request, slug=None):
+    #     try:
+    #         category = self.category_service.find_by_slug(slug)
+    #         serializer = self.get_serializer(instance=item)
+    #         return Response(serializer.data)
+    #     except NotFoundException:
+    #         return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+    #     except BaseException as e:
+    #         raise e
 
     
     @swagger_auto_schema(
@@ -107,13 +106,19 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
     )
     @action(
         methods=["GET"],
-        detail=True,
-        url_path="items",
+        detail=False,
+        url_path="(?P<slug>[^/.]+)/items",
         pagination_class=CustomPagination,
         serializer_class=ItemListSerializer,
     )
-    def get_items(self, request, pk):
-        items = self.category_service.get_items_of_category(pk)
+    def get_items(self, request, slug):
+        try:
+            category = self.category_service.find_by_slug(slug)
+        except NotFoundException:
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            raise e
+        items = self.category_service.get_items_of_category(category.id)
         filter = ItemFilter(request.GET, queryset=items)
         if not filter.is_valid():
             return Response(filter.errors, status=400)
@@ -152,6 +157,7 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
     
+    
     def get_serializer_class(self) -> type[ItemDetailSerializer] | type[ItemListSerializer] | type[SwitchSerializer] | type[ItemCartAmountSerialzier]:
         if self.action == 'retrieve_slug' or self.action == 'retrieve':
             return ItemDetailSerializer
@@ -160,6 +166,7 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         elif self.action == 'change_cart_count':
             return ItemCartAmountSerialzier
         return ItemListSerializer
+    
     
     def serializer_class(self, *args, **kwargs) -> ItemDetailSerializer | SwitchSerializer | ItemCartAmountSerialzier | ItemListSerializer:
         if self.action == 'retrieve' or self.action == 'retrieve_slug':
