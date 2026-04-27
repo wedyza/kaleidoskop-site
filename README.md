@@ -1,4 +1,4 @@
-# Kaleidoskop — Медиа-менеджмент система с интеграцией 1С
+# Kaleidoskop — Интернет магазин с интеграцией с 1С
 
 ![Django](https://img.shields.io/badge/Django-4.2-blue)
 ![DRF](https://img.shields.io/badge/REST%20API-Yes-green)
@@ -68,7 +68,7 @@
 
 ```bash
 # Клонировать репозиторий и скопировать .env.example в .env
-git clone <repo-url>
+git clone https://github.com/wedyza/kaleidoskop-site
 cd kaleidoskop-site
 cp .env.example .env
 cp .env.example kaleidoskop/kaleidoskop/.env
