@@ -21,5 +21,5 @@ class BrandService:
 
     
     def get_queryset_of_search_query(self, query: str) -> Union[QuerySet, list[Brand]]:
-        items = self._item_service.get_items_queryset_by_query(query)
+        items = self._item_service.find_by_query(query)
         return self._brand_repository.get_brands_from_items_queryset(items)

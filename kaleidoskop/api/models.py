@@ -3,10 +3,9 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from enum import Enum
 import uuid
-from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.indexes import GinIndex, BTreeIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.forms import ValidationError
-from .utils import slugify
 
 User = get_user_model()
 
@@ -69,15 +68,14 @@ class Category(UUIDModel):
     )
     active = models.BooleanField("Активно", default=False)
     image = models.FileField("Картинка", null=True, upload_to="categories")
+    slug = models.CharField("Слаг", max_length=200)
     
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = "Категории"
-
-    @property
-    def slug(self):
-        return f'{slugify(self.title)}--{self.id}'
-    
+        indexes = [
+            BTreeIndex(fields=['slug'])
+        ]    
 
     def __str__(self):
         return self.title
@@ -124,10 +122,10 @@ class Item(UUIDModel):
     price = models.FloatField("Цена", null=False)
     article = models.CharField(
         "Артикул", max_length=40, unique=True, null=False
-    )  # MUST BE UNIQUE (produmat)
+    )
     code = models.CharField(
         "Код", max_length=20, unique=True, null=False
-    )  # MUST BE UNIQUE (produmat)
+    )
     volume_UOM = models.CharField("Объем Единицы Измерения", max_length=5, null=True)
     volume_size = models.FloatField("Объем", null=True)
     UOM = models.CharField("Единица измерения", max_length=15, null=True)
@@ -148,22 +146,17 @@ class Item(UUIDModel):
         null=True,
         blank=True
     )
-
     search_vector = SearchVectorField(null=True, editable=False)
+    slug = models.CharField("Слаг названия", max_length=200) # TODO: сделать слаги, как придешь и продолжить оптимизировать запросы
 
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = "Товары"
         indexes = [
-            GinIndex(name="title_trgm_gin_ops", fields=["title"], opclasses=['gin_trgm_ops']), # Если что, то в будущем можно будет добавить search_vector и искать также по нему
-            GinIndex(fields=["search_vector"])
+            GinIndex(name="title_trgm_gin_ops", fields=["title"], opclasses=['gin_trgm_ops']),
+            GinIndex(fields=["search_vector"]),
+            BTreeIndex(fields=['slug'])
         ]
-
-        
-    @property
-    def slug(self):
-        return f"{slugify(self.title)}--{self.id}"
-    
     
     def __str__(self):
         return self.title

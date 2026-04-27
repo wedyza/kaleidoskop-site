@@ -1,7 +1,8 @@
 from typing import Union
 from api.models import Item, Category, Nomenclature
+from exceptions.exceptions import NotFoundException
 from services.nomenclature_service import NomenclatureService
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Prefetch
 from uuid import UUID
 from api.decorators import cache_queryset
 
@@ -12,10 +13,16 @@ class CategoryRepository:
         return Category.objects.get(pk=pk)
 
     def __get_base_nomenclatures(self, category: Category) -> Union[QuerySet, list[Nomenclature]]:
-        daughter_categories = category.daughter.all()
-        base_nomenclatures = category.nomenclatures.all()
+        daughter_categories = Category.objects.prefetch_related(
+            Prefetch(
+                "nomenclatures",
+                Nomenclature.objects.all(),
+                to_attr="category_nomenclatures"
+            )
+        ).filter(parent=category)
+        base_nomenclatures = list(category.nomenclatures.all())
         for daughter in daughter_categories:
-            base_nomenclatures |= daughter.nomenclatures.all()
+            base_nomenclatures.extend(daughter.category_nomenclatures)
         return base_nomenclatures
 
     @cache_queryset(cache_key='items_of_category')
@@ -24,3 +31,9 @@ class CategoryRepository:
         base_nomenclatures = self.__get_base_nomenclatures(category)
         nomenclatures = self._nomenclature_service.get_daughter_nomenclatures(base_nomenclatures)
         return Item.objects.filter(nomenclature__in=nomenclatures)
+
+    def find_by_slug(self, slug: str) -> Category:
+        category = Category.objects.filter(slug=slug).first()
+        if category is None:
+            raise NotFoundException
+        return category

@@ -6,6 +6,7 @@ from django.db import models
 from api.models import Item, Nomenclature
 from api.decorators import cache_queryset
 from uuid import UUID
+from exceptions.exceptions import NotFoundException
 
 class ItemRepository:
     def get_item_by_id(self, id: UUID) -> Item:
@@ -38,11 +39,11 @@ class ItemRepository:
         Item.objects.bulk_update(items, fields=["nomenclature"], batch_size=1000)
     
         
-    def get_items_from_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
+    def find_by_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
         return Item.objects.filter(id__in=ids).all()
 
 
-    def search_items_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
+    def find_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
         """
         Выполняет поиск по индексу при помощи триграммной схожести (тут префиксной из-за <%)
         и search_vector (<- Имеет больший приоритет)
@@ -88,3 +89,12 @@ class ItemRepository:
         if s:
             return s
         return 0
+
+    # def get_associatives(self, item: Item) -> Union[QuerySet, list[Item]]:
+    #     return Item.objects.filter(nomenclature=item.nomenclature).exclude(id=item.id)
+    
+    def find_by_slug(self, slug: str) -> Item:
+        item = Item.objects.filter(slug=slug).first()
+        if item is None:
+            raise NotFoundException
+        return item

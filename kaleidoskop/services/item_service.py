@@ -41,11 +41,11 @@ class ItemService:
             raise NotFoundException
         return self._cart_item_service.update_amount_of_cart_item(cart_item, amount)
 
-    def get_items_from_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
-        return self._item_repository.get_items_from_ids(ids)
+    def find_by_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
+        return self._item_repository.find_by_ids(ids)
     
-    def get_items_queryset_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
-        return self._item_repository.search_items_by_query(query)
+    def find_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
+        return self._item_repository.find_by_query(query)
 
     def get_recommended_items_queryset(self, item_pk: UUID) -> Union[QuerySet, List[Item]]: # 
         item = self.get_item_by_id(item_pk)
@@ -53,3 +53,6 @@ class ItemService:
 
     def get_item_remains(self, item: Item) -> int:
         return self._item_repository.get_item_remains(pk=item.id)
+    
+    def find_by_slug(self, slug: str) -> Item:
+        return self._item_repository.find_by_slug(slug)
