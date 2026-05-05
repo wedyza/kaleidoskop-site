@@ -27,11 +27,11 @@ export const fetchProductByArticle = createAsyncThunk(
   }
 );
 
-export const fetchProductById = createAsyncThunk(
-  'products/fetchProductById',
-  async (id: string, { rejectWithValue }) => {
+export const fetchProductBySlug = createAsyncThunk(
+  'products/fetchProductBySlug',
+  async (slug: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/items/${id}/`);
+      const response = await api.get(`/items/retrieve/${slug}/`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки продуктов');
@@ -69,15 +69,15 @@ const productItemSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(fetchProductById.pending, (state) => {
+      .addCase(fetchProductBySlug.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchProductById.fulfilled, (state, action) => {
+      .addCase(fetchProductBySlug.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedItem = action.payload;
       })
-      .addCase(fetchProductById.rejected, (state, action) => {
+      .addCase(fetchProductBySlug.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

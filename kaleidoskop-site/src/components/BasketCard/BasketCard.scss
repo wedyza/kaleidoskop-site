@@ -1,11 +1,10 @@
-@use '../../styles/common.scss';
+@use "../../styles/common.scss";
 
 .basket-card {
   display: grid;
   grid-template-areas:
-    'input img info price'
-    '. . act .'
-  ;
+    "input img info price"
+    ". . act .";
   grid-template-columns: auto auto auto 1fr;
   padding-top: 30px;
   padding-bottom: 50px;
@@ -92,7 +91,7 @@
   background-color: var(--grey100);
 
   svg path {
-    fill: var(--grey950)
+    fill: var(--grey950);
   }
 }
 
@@ -141,15 +140,20 @@
   color: var(--grey500);
 }
 
+.basket-card_btn__active {
+  color: var(--orange400);
 
+  svg path {
+    fill: var(--orange400);
+  }
+}
 
 @media (max-width: common.$breakpoint-laptop) {
   .basket-card {
     grid-template-areas:
-      'img info input'
-      'img info act'
-      '. price .'
-    ;
+      "img info input"
+      "img info act"
+      ". price .";
     grid-template-columns: min-content auto min-content;
     padding: 15px 10px 20px 15px;
     column-gap: 15px;

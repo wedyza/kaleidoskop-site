@@ -1,31 +1,36 @@
-import './ItemCardBig.scss'
-import itemImg from '../../assets/empty_imgs.jpg'
-import { Link } from 'react-router-dom';
-import type { Product } from '../../features/products/productsSlice';
-import ItemsActions from '../ItemsActions/ItemsActions';
-import { formatPrice } from '../../utils/formatPrice';
-import { useAppDispatch } from '../../app/hooks';
-import ToBasket from '../ToBasket/ToBasket';
-import { toggleBasketItem, updateBasketItemAmount } from '../../features/basket/basketSlice';
+import "./ItemCardBig.scss";
+import itemImg from "../../assets/empty_imgs.jpg";
+import { Link } from "react-router-dom";
+import type { Product } from "../../features/products/productsSlice";
+import ItemsActions from "../ItemsActions/ItemsActions";
+import { formatPrice } from "../../utils/formatPrice";
+import { useAppDispatch } from "../../app/hooks";
+import ToBasket from "../ToBasket/ToBasket";
+import {
+  toggleBasketItem,
+  updateBasketItemAmount,
+} from "../../features/basket/basketSlice";
 
 interface ItemCardBigProps {
   product: Product;
+  categorySlug?: string;
 }
 
-const ItemCardBig: React.FC<ItemCardBigProps> = ({product}) => {
+const ItemCardBig: React.FC<ItemCardBigProps> = ({ product, categorySlug }) => {
   const dispatch = useAppDispatch();
+  const productUrl = categorySlug
+    ? `/category/${categorySlug}/product/${product.slug}`
+    : `/product/${product.slug}`;
 
   return (
-    <Link to={`/product/${product.slug}`} className='item-card item-card__big'>
+    <Link to={productUrl} className="item-card item-card__big">
       <div className="item-card_img">
         {product.images && product.images.length > 0 ? (
           <img src={product.images[0].source} alt="" />
         ) : (
-          <img className='img-empty' src={itemImg} alt="" />
+          <img className="img-empty" src={itemImg} alt="" />
         )}
-        <span className="item-card_discount inter13-500">
-          - 25%
-        </span>
+        <span className="item-card_discount inter13-500">- 25%</span>
         <div className="item-card_actions">
           <ItemsActions product={product} />
         </div>
@@ -36,36 +41,39 @@ const ItemCardBig: React.FC<ItemCardBigProps> = ({product}) => {
             {formatPrice(product.price)} ₽
           </p>
           <p className="item-card_original-price inter14-500">
-            {formatPrice(product.price * 4/3)} ₽
+            {formatPrice((product.price * 4) / 3)} ₽
           </p>
         </div>
         <div className="item-card_name-container">
-          <p className="item-card_name inter13-400">
-            {product.title}
-          </p>
+          <p className="item-card_name inter13-400">{product.title}</p>
         </div>
       </div>
       <div className="item-card_actions__big">
         <div className="item-card_actions-cart__big">
           <ToBasket
             product={product}
-            classBtn='grey-btn'
-            onAdd={() => dispatch(toggleBasketItem({ id: product.id, enable: true }))}
-
-            onRemove={() => dispatch(toggleBasketItem({ id: product.id, enable: false }))}
-
-            onIncrease={() =>
-              dispatch(updateBasketItemAmount({
-                id: product.id!,
-                amount: product.cart_count! + 1
-              }))
+            classBtn="grey-btn"
+            onAdd={() =>
+              dispatch(toggleBasketItem({ id: product.id, enable: true }))
             }
-
+            onRemove={() =>
+              dispatch(toggleBasketItem({ id: product.id, enable: false }))
+            }
+            onIncrease={() =>
+              dispatch(
+                updateBasketItemAmount({
+                  id: product.id!,
+                  amount: product.cart_count! + 1,
+                }),
+              )
+            }
             onDecrease={() =>
-              dispatch(updateBasketItemAmount({
-                id: product.id!,
-                amount: product.cart_count! - 1
-              }))
+              dispatch(
+                updateBasketItemAmount({
+                  id: product.id!,
+                  amount: product.cart_count! - 1,
+                }),
+              )
             }
           />
         </div>
@@ -79,7 +87,7 @@ const ItemCardBig: React.FC<ItemCardBigProps> = ({product}) => {
         </div> */}
       </div>
     </Link>
-  )
-}
+  );
+};
 
 export default ItemCardBig;

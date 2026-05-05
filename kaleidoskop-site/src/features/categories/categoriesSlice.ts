@@ -1,13 +1,14 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { api } from '../../api/axiosInstance';
-import type { Product } from '../products/productsSlice';
-import { addProductHandlers } from '../products/productMixin';
-import type { SortOption } from '../../components/ListView/ListView';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../../api/axiosInstance";
+import type { Product } from "../products/productsSlice";
+import { addProductHandlers } from "../products/productMixin";
+import type { SortOption } from "../../components/ListView/ListView";
 
 export interface Category {
   id: string;
   title: string;
   parent: string | null;
+  parent_slug: string | null;
   items_count: number;
   slug: string;
   image?: string;
@@ -36,59 +37,66 @@ const initialState: CategoriesState = {
 };
 
 export const fetchCategories = createAsyncThunk(
-  'categories/fetchCategories',
+  "categories/fetchCategories",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/categories/');
+      const response = await api.get("/categories/");
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка получения категорий');
+      return rejectWithValue(
+        error.response?.data?.message || "Ошибка получения категорий",
+      );
     }
-  }
+  },
 );
 
 export const fetchCategoryProducts = createAsyncThunk(
-  'categories/fetchCategoryProducts',
-  async ({ 
-    categoryId,
-    minPrice,
-    maxPrice,
-    brands,
-    ordering,
-    pageSize 
-  }: { 
-    categoryId: string;
-    minPrice?: number;
-    maxPrice?: number;
-    brands?: string[];
-    ordering?: SortOption;
-    pageSize?: number;
-  }, { rejectWithValue, getState }) => {
+  "categories/fetchCategoryProducts",
+  async (
+    {
+      categorySlug,
+      minPrice,
+      maxPrice,
+      brands,
+      ordering,
+      pageSize,
+    }: {
+      categorySlug: string;
+      minPrice?: number;
+      maxPrice?: number;
+      brands?: string[];
+      ordering?: SortOption;
+      pageSize?: number;
+    },
+    { rejectWithValue, getState },
+  ) => {
     try {
       const params = new URLSearchParams();
-      
+
       if (minPrice !== undefined) {
-        params.append('min_price', minPrice.toString());
+        params.append("min_price", minPrice.toString());
       }
       if (maxPrice !== undefined) {
-        params.append('max_price', maxPrice.toString());
+        params.append("max_price", maxPrice.toString());
       }
       if (brands && brands.length > 0) {
-        params.append('brands', brands.join(','));
+        params.append("brands", brands.join(","));
       }
       if (ordering) {
-        params.append('ordering', ordering);
+        params.append("ordering", ordering);
       }
       if (pageSize !== undefined) {
-        params.append('page_size', pageSize.toString());
+        params.append("page_size", pageSize.toString());
       }
-      
-      const url = `/categories/${categoryId}/items/${params.toString() ? `?${params.toString()}` : ''}`;
+
+      const url = `/categories/${categorySlug}/items/${params.toString() ? `?${params.toString()}` : ""}`;
       const response = await api.get(url);
-      
+
       const state = getState() as any;
-      const category = state.categories.categories.find((cat: Category) => cat.id === categoryId);
-      
+      const category = state.categories.categories.find(
+        (cat: Category) => cat.slug === categorySlug,
+      );
+
       return {
         products: response.data.results || response.data,
         count: response.data.count || response.data.results?.length || 0,
@@ -96,16 +104,18 @@ export const fetchCategoryProducts = createAsyncThunk(
         previous: response.data.previous,
         category,
         ordering,
-        hasMore: !!response.data.next
+        hasMore: !!response.data.next,
       };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка получения товаров категории');
+      return rejectWithValue(
+        error.response?.data?.message || "Ошибка получения товаров категории",
+      );
     }
-  }
+  },
 );
 
 export const loadMoreCategoryProducts = createAsyncThunk(
-  'categories/loadMoreCategoryProducts',
+  "categories/loadMoreCategoryProducts",
   async (nextUrl: string, { rejectWithValue }) => {
     try {
       const response = await api.get(nextUrl);
@@ -113,28 +123,32 @@ export const loadMoreCategoryProducts = createAsyncThunk(
         products: response.data.results || response.data,
         next: response.data.next,
         previous: response.data.previous,
-        hasMore: !!response.data.next
+        hasMore: !!response.data.next,
       };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки товаров категории');
+      return rejectWithValue(
+        error.response?.data?.message || "Ошибка загрузки товаров категории",
+      );
     }
-  }
+  },
 );
 
-export const fetchCategoryById = createAsyncThunk(
-  'categories/fetchCategoryById',
-  async (categoryId: string, { rejectWithValue }) => {
+export const fetchCategoryBySlug = createAsyncThunk(
+  "categories/fetchCategoryBySlug",
+  async (categorySlug: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/categories/${categoryId}/`);
+      const response = await api.get(`/categories/retrieve/${categorySlug}/`);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка получения категории');
+      return rejectWithValue(
+        error.response?.data?.message || "Ошибка получения категории",
+      );
     }
-  }
+  },
 );
 
 const categoriesSlice = createSlice({
-  name: 'categories',
+  name: "categories",
   initialState,
   reducers: {
     clearCategories: (state) => {
@@ -180,7 +194,8 @@ const categoriesSlice = createSlice({
         state.next = action.payload.next;
         state.previous = action.payload.previous;
         state.hasMore = action.payload.hasMore;
-        state.currentCategory = action.payload.category || state.currentCategory;
+        state.currentCategory =
+          action.payload.category || state.currentCategory;
       })
       .addCase(fetchCategoryProducts.rejected, (state, action) => {
         state.loading = false;
@@ -202,27 +217,27 @@ const categoriesSlice = createSlice({
       .addCase(loadMoreCategoryProducts.rejected, (state, action) => {
         state.error = action.payload as string;
       })
-      .addCase(fetchCategoryById.pending, (state) => {
+      .addCase(fetchCategoryBySlug.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchCategoryById.fulfilled, (state, action) => {
+      .addCase(fetchCategoryBySlug.fulfilled, (state, action) => {
         state.loading = false;
         state.currentCategory = action.payload;
       })
-      .addCase(fetchCategoryById.rejected, (state, action) => {
+      .addCase(fetchCategoryBySlug.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
-    
+
     addProductHandlers(builder, (state: CategoriesState) => state.products);
   },
 });
 
-export const { 
-  clearCategories, 
+export const {
+  clearCategories,
   clearProducts,
-  setCurrentCategory, 
-  updateCurrentCategory 
+  setCurrentCategory,
+  updateCurrentCategory,
 } = categoriesSlice.actions;
 export default categoriesSlice.reducer;

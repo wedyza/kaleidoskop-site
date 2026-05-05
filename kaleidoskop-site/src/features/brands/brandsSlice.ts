@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { api } from '../../api/axiosInstance';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../../api/axiosInstance";
 
 export interface Brand {
   id: string;
@@ -18,33 +18,62 @@ const initialState: BrandsState = {
   error: null,
 };
 
-export const fetchBrands = createAsyncThunk(
-  'brands/fetchBrands',
+export const fetchBrandsByCategory = createAsyncThunk(
+  "brands/fetchBrandsByCategory",
   async (categoryId: string, { rejectWithValue }) => {
     try {
       const response = await api.get(`/brands/category/${categoryId}/`);
       return response.data.results || response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки брендов');
+      return rejectWithValue(
+        error.response?.data?.message || "Ошибка загрузки брендов",
+      );
     }
-  }
+  },
+);
+
+export const fetchBrandsByQuery = createAsyncThunk(
+  "brands/fetchBrandsByQuery",
+  async (query: string, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/brands/query/${query}/`);
+      return response.data.results || response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Ошибка загрузки брендов",
+      );
+    }
+  },
 );
 
 const brandsSlice = createSlice({
-  name: 'brands',
+  name: "brands",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchBrands.pending, (state) => {
+      .addCase(fetchBrandsByCategory.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchBrands.fulfilled, (state, action) => {
+      .addCase(fetchBrandsByCategory.fulfilled, (state, action) => {
         state.loading = false;
         state.brands = action.payload;
       })
-      .addCase(fetchBrands.rejected, (state, action) => {
+      .addCase(fetchBrandsByCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(fetchBrandsByQuery.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchBrandsByQuery.fulfilled, (state, action) => {
+        state.loading = false;
+        state.brands = action.payload;
+      })
+      .addCase(fetchBrandsByQuery.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

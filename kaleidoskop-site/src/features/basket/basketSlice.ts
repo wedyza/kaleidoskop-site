@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { Product } from '../products/productsSlice';
-import { api } from '../../api/axiosInstance';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { Product } from "../products/productsSlice";
+import { api } from "../../api/axiosInstance";
+import { toggleWishlist } from "../products/productItemSlice";
 
 export interface BasketEntry {
   id: string;
@@ -21,68 +22,72 @@ const initialState: BasketState = {
   error: null,
 };
 
-export const fetchBasket = createAsyncThunk<BasketEntry[], void, { rejectValue: string }>(
-  'cart/fetchBasket',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await api.get('/users/me/cart/');
-      return response.data.items;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Ошибка загрузки корзины');
-    }
+export const fetchBasket = createAsyncThunk<
+  BasketEntry[],
+  void,
+  { rejectValue: string }
+>("cart/fetchBasket", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get("/users/me/cart/");
+    return response.data.items;
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.message || "Ошибка загрузки корзины",
+    );
   }
-);
+});
 
 export const toggleBasketItem = createAsyncThunk<
   BasketEntry,
   { id: string; enable: boolean },
   { rejectValue: string }
->(
-  'cart/toggleBasketItem',
-  async ({ id, enable }, { rejectWithValue }) => {
-    try {
-      const response = await api.post(
-        `/items/${id}/add_to_cart/`, { enable });
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Ошибка обновления корзины');
-    }
+>("cart/toggleBasketItem", async ({ id, enable }, { rejectWithValue }) => {
+  try {
+    const response = await api.post(`/items/${id}/add_to_cart/`, { enable });
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.message || "Ошибка обновления корзины",
+    );
   }
-);
+});
 
 export const updateBasketItemAmount = createAsyncThunk<
   BasketEntry | null,
   { id: string; amount: number },
   { rejectValue: string }
 >(
-  'cart/updateBasketItemAmount',
+  "cart/updateBasketItemAmount",
   async ({ id, amount }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`/items/${id}/cart/update_amount/`, { amount });
+      const response = await api.patch(`/items/${id}/cart/update_amount/`, {
+        amount,
+      });
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Ошибка обновления количества');
+      return rejectWithValue(
+        err.response?.data?.message || "Ошибка обновления количества",
+      );
     }
-  }
+  },
 );
 
 export const moveToOrder = createAsyncThunk<
   void,
   { ids: string[]; enable: boolean },
   { rejectValue: string }
->(
-  'cart/moveToOrder',
-  async ({ ids, enable }, { rejectWithValue }) => {
-    try {
-      await api.post('/cart_items/switch_to_order/', { ids, enable });
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Ошибка перемещения в заказ');
-    }
+>("cart/moveToOrder", async ({ ids, enable }, { rejectWithValue }) => {
+  try {
+    await api.post("/cart_items/switch_to_order/", { ids, enable });
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.message || "Ошибка перемещения в заказ",
+    );
   }
-);
+});
 
 const basketSlice = createSlice({
-  name: 'cart',
+  name: "cart",
   initialState,
   reducers: {
     clearBasketError(state) {
@@ -115,6 +120,23 @@ const basketSlice = createSlice({
         }
       })
       .addCase(toggleBasketItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(toggleWishlist.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(toggleWishlist.fulfilled, (state, action) => {
+        state.loading = false;
+        const { id, enable } = action.meta.arg;
+        const basketEntry = state.items.find((entry) => entry.item.id === id);
+        if (basketEntry) {
+          basketEntry.item.in_wishlist = enable;
+        }
+      })
+      .addCase(toggleWishlist.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -151,9 +173,9 @@ const basketSlice = createSlice({
       })
       .addCase(moveToOrder.fulfilled, (state, action) => {
         state.loading = false;
-        
+
         const { ids, enable } = action.meta.arg;
-        state.items.forEach(item => {
+        state.items.forEach((item) => {
           if (ids.includes(item.id)) {
             item.marked_for_order = enable;
           }
