@@ -28,4 +28,7 @@ class CartItemService:
 
     def get_cart_count(self, item: Item, user_pk: UUID) -> int:
         cart = self._cart_service.get_cart_by_user(pk=user_pk)
-        return self.get_item_of_cart(item, cart).amount
+        cart_item = self.get_item_of_cart(item, cart)
+        if cart_item:
+            return cart_item.amount
+        return 0

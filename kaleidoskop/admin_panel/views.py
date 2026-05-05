@@ -161,12 +161,12 @@ class AdminNomenclaturesViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=['DELETE'], url_path='delete_from_category/(?P<category_id>[^/.]+)', detail=True)
-    def delete_from_category(self, request, pk, category_id):
+    def delete_from_category(self, request, id, category_id):
         """
         Удаляет связь Nomenclatures <=> Categories
         """
         try:
-            self.nomenclature_service.remove_nomenclature_from_category(category_pk=category_id, nomenclature_pk=pk)
+            self.nomenclature_service.remove_nomenclature_from_category(category_pk=category_id, nomenclature_pk=id)
             return Response({'detail': 'success'})
         except Exception as e:
             print(e)
@@ -184,9 +184,9 @@ class CompilationViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(responses={404: DetailSerializer, 200: CompilationSerializer}, request_body=NomenclatureRelatedSerializer)
     @action(methods=['POST'], url_path='attach_nomenclature', detail=True)
-    def attach_item(self, request, pk):
+    def attach_item(self, request, id):
         try:
-            compilation = self.compilation_service.attach_nomenclature(pk, request.data)
+            compilation = self.compilation_service.attach_nomenclature(id, request.data)
         except NotFoundException as e:
             print(e.args)
             return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -202,9 +202,9 @@ class CompilationViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(responses={404: DetailSerializer, 200: NomenclatureCompilationSerializer(many=True)})
     @action(methods=['GET'], url_path='list_nomenclatures', detail=True, serializer_class=NomenclatureCompilationSerializer)
-    def get_list_nomenclatures(self, request, pk):
+    def get_list_nomenclatures(self, request, id):
         try: 
-            qs = self.compilation_service.get_nomenclatures_queryset(pk)
+            qs = self.compilation_service.get_nomenclatures_queryset(id)
             return Response(NomenclatureCompilationSerializer(instance=qs, many=True).data)
         except Exception as e:
             print(e)
