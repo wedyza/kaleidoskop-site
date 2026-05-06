@@ -216,3 +216,4 @@ kaleidoskop-site/.env.development
 kaleidoskop-site/.env.production
 dump.rdb
 redis
+.opencode
