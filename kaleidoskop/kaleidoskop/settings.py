@@ -288,3 +288,5 @@ SHELL_PLUS_PRE_IMPORTS = {
     ('repositories.category_repository', 'CategoryRepository'),
     ('repositories.nomenclature_repository', 'NomenclatureRepository')
 }
+
+USE_CACHE=True

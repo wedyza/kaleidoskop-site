@@ -34,7 +34,7 @@ class OrderService:
                 reformed_status = Order.OrderStatus.ON_REALISATION
             case 'Отменен':
                 reformed_status = Order.OrderStatus.CANCELED
-        self._order_repository.update_order_status(order, reformed_status)
+        self._order_repository.update_order_status(order, reformed_status) #type: ignore
     
     def get_order_by_code(self, code: str) -> Order:
         return self._order_repository.get_order_by_code(code)
@@ -47,7 +47,7 @@ class OrderService:
             raise UnknownUserException
         return True
         
-    def __validate_cart(self, items_for_order: Union[QuerySet, list[Item]]) -> float:
+    def __validate_cart(self, items_for_order: QuerySet) -> float:
         if items_for_order.count() == 0:
             raise EmptyCartException
         total_sum = self._order_repository.validate_cart(items_for_order)
@@ -57,12 +57,12 @@ class OrderService:
             raise ExceededRemainsException(item_list=self._order_repository.get_exceeded_items(items_for_order))
         return total_sum
         
-    def __validate_order(self, user: CustomAbstractUser, items_for_order: Union[QuerySet, list[Item]]) -> float:
+    def __validate_order(self, user: CustomAbstractUser, items_for_order: QuerySet) -> float:
         total_sum = self.__validate_cart(items_for_order) 
         self.__validate_user(user)
         return total_sum
     
-    def __create_cart(self, user: CustomAbstractUser, items_for_order: Union[QuerySet, list[Item]]) -> Cart:
+    def __create_cart(self, user: CustomAbstractUser, items_for_order: QuerySet) -> Cart:
         cart = self._cart_service.create_empty_cart_for_user(user)
         cart.items.add(*items_for_order.all())
         return cart
@@ -85,15 +85,15 @@ class OrderService:
             'user_code': user.code
         }
     
-    def __create_order(self, user: CustomAbstractUser, items_for_order: Union[QuerySet, list[Item]], order_data: OrderSerializer, cart: Cart, total_sum: float) -> Order:
+    def __create_order(self, user: CustomAbstractUser, items_for_order: QuerySet, order_data: OrderSerializer, cart: Cart, total_sum: float) -> Order:
         order_cart = self.__create_cart(user, items_for_order)
-        data_to_1C = self.__fill_order_data_to_1C(order_cart, user)        
+        data_to_1C = self.__fill_order_data_to_1C(order_cart, user, order_data)        
         response = self._integration_service.create_order_1c(data_to_1C)
         return self._order_repository.save_order_and_update_order_cart(order_data, cart, response['code'], total_sum, user)
     
     def delete_order(self, user_pk: UUID, order_pk: UUID) -> bool:
         user = self._user_service.get_user_by_id(user_pk)
-        order = self._order_repository.get_order_by_code(order_pk)
+        order = self._order_repository.get_order_by_pk(order_pk)
         if user != order.user:
             raise UserUnauthorized
         

@@ -7,7 +7,7 @@ from api.models import Nomenclature, Category
 class NomenclatureService:
     _nomenclature_repository = NomenclatureRepository()
     
-    def fill_nomenclatures_from_1C(self, data: dict[str, str|int]):
+    def fill_nomenclatures_from_1C(self, data: list):
         created = self._nomenclature_repository.create_new_nomenclatures(data)
         if created:
             self._nomenclature_repository.fillup_nomenclatures_with_parents()

@@ -7,7 +7,7 @@ from api.decorators import cache_queryset
 class CartService:
     _cart_repository = CartRepository()
 
-    @cache_queryset('cart_of_user')
+    # @cache_queryset('cart_of_user')
     def get_cart_by_user(self, pk: UUID) -> Cart:
         return self._cart_repository.get_or_create_user_cart(pk)
     

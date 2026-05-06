@@ -69,7 +69,7 @@ class ValidateOTPView(APIView):
             )
         except NotFoundException:
             return Response(
-                {"error": "Пользователя с такой почтой не существует."},
+                {"error": "Что-то пошло не так"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 class ChangeEmailOTPView(APIView):

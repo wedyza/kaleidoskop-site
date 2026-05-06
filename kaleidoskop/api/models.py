@@ -250,6 +250,7 @@ class Like(UUIDModel):
 
     
     class Meta:
+        unique_together = ['item', 'user']
         verbose_name = 'Избранное'
         verbose_name_plural = "Избранное"
 

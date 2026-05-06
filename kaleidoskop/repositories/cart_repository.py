@@ -11,7 +11,7 @@ class CartRepository:
             return self.__create_user_cart(user_pk)
         return cart
     
-    @cache_queryset('user_cart')
+    # @cache_queryset('user_cart')
     def __get_user_cart(self, user_pk: UUID) -> Cart:
         return Cart.objects.filter(order=None).filter(current_cart=True).filter(user_id=user_pk).first()
     
