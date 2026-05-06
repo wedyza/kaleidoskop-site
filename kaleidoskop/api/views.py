@@ -222,9 +222,9 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         ]
     )
     @action(detail=True, methods=["GET"], url_path="recommendations")
-    def get_recommendations(self, request, pk):
+    def get_recommendations(self, request, id):
         try:
-            items = self.item_service.get_recommended_items_queryset(pk)
+            items = self.item_service.get_recommended_items_queryset(id)
         except NotFoundException:
             return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:

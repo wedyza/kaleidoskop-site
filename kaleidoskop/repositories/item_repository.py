@@ -89,9 +89,6 @@ class ItemRepository:
         if s:
             return s
         return 0
-
-    # def get_associatives(self, item: Item) -> Union[QuerySet, list[Item]]:
-    #     return Item.objects.filter(nomenclature=item.nomenclature).exclude(id=item.id)
     
     def find_by_slug(self, slug: str) -> Item:
         item = Item.objects.filter(slug=slug).first()
