@@ -36,7 +36,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 SERVER_ENDPOINT = os.getenv("SERVER_ENDPOINT")
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", SERVER_ENDPOINT]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", SERVER_ENDPOINT, "kaleidoskop-lesnoy.ru"]
 
 CONTAINER_LAUNCHER = os.getenv("CONTAINER_LAUNCH", False)
 

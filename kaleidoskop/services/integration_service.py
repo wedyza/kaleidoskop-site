@@ -47,11 +47,14 @@ class IntegrationService:
         """
         Отправляет заказ в 1С
         """
+        print(self._LINK_1C + '/orders')
+        print(order_serializer)
         response = self._client.post(
                 self._LINK_1C + '/orders/',
                 json= order_serializer,
                 timeout=15
             )
+        print(response)
         return response.json()
     
     

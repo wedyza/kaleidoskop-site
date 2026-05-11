@@ -21,11 +21,12 @@ class AuthService:
     
     @staticmethod
     @multitasker
-    @shared_task
+    @shared_task(autoretry_for=(Exception,), retry_backoff=True, max_retries=5)
     def _send_otp_email(email, otp):
         """
         Отправляет письмо на почту соответственно
         """
+        
         subject = "Ваш одноразовый пароль для авторизации"
         message = f"Ваш одноразовый пароль: {otp}"
         from_email = settings.EMAIL_HOST_USER

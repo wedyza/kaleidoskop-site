@@ -14,9 +14,6 @@ User = get_user_model()
 class TestOrderService(TestCase):    
     def setUp(self):
         self.user = User.objects.create(email='test_email@gmail.com', code='001', first_name='known', last_name='name', phone_number='+79012300092')
-        self.user.refresh_from_db()
-        # self.user.phone_number = '+79012300092'
-        # self.user.save()
         self.user_cart = Cart.objects.create(user=self.user, current_cart=True)
         self.item1 = Item.objects.create(
             title='Первый товар',

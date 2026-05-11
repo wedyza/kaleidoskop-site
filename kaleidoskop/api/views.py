@@ -241,12 +241,12 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         permission_classes=(permissions.IsAuthenticated,),
         serializer_class=SwitchSerializer,
     )
-    def switch_wishlist(self, request, pk):
+    def switch_wishlist(self, request, id):
         status = self.get_serializer(data=request.data)
         if not status.is_valid():
             return Response(status.errors)
         
-        result = self.item_service.switch_wishlist_to_item(item_pk=pk, user_pk=self.request.user.id, status=status.data["enable"])
+        result = self.item_service.switch_wishlist_to_item(item_pk=id, user_pk=self.request.user.id, status=status.data["enable"])
         return Response({"enable": result})
 
     @action(
@@ -256,12 +256,12 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         permission_classes=(permissions.IsAuthenticated,),
         serializer_class=SwitchSerializer,
     )
-    def add_to_cart(self, request, pk):
+    def add_to_cart(self, request, id):
         data = self.get_serializer(data=request.data)
         if not data.is_valid():
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
         enable = data.data["enable"]
-        result = self.item_service.add_item_to_cart(pk, self.request.user.id, enable)
+        result = self.item_service.add_item_to_cart(id, self.request.user.id, enable)
         return Response({"enabled": result}, status=status.HTTP_200_OK)
     
 
@@ -273,12 +273,12 @@ class ItemViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
         url_path="cart/update_amount",
         serializer_class=ItemCartAmountSerialzier
     )
-    def change_cart_count(self, request, pk):
+    def change_cart_count(self, request, id):
         amount = self.get_serializer(data=request.data)
         if not amount.is_valid():
             return Response(amount.errors, status=status.HTTP_400_BAD_REQUEST)
         try:
-            updated_cart_item = self.item_service.update_cart_item_amount(pk, self.request.user.id, amount.validated_data['amount'])
+            updated_cart_item = self.item_service.update_cart_item_amount(id, self.request.user.id, amount.validated_data['amount'])
             return Response(CartItemSerializer(instance=updated_cart_item, context={"request": request}).data)
         except NotFoundException:
             return Response({"detail": "This item is not currently in cart!"}, status=status.HTTP_400_BAD_REQUEST)
@@ -438,8 +438,8 @@ class OrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
     
     
     @action(methods=['DELETE'], detail=True, permission_classes=(permissions.IsAuthenticated,), url_path='cancel')
-    def cancel_order(self, request, pk):
-        status = self.order_service.delete_order(self.request.user.id, pk)
+    def cancel_order(self, request, id):
+        status = self.order_service.delete_order(self.request.user.id, id)
         if status:
             return Response({"detail": "success"})
         else:

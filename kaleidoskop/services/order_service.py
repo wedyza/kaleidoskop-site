@@ -43,6 +43,7 @@ class OrderService:
         return Order.objects.filter(user_id=user_pk).all()
     
     def __validate_user(self, user: CustomAbstractUser) -> bool:
+        # print(user.code, user.first_name, user.phone_number)
         if user.code is None or user.first_name is None or user.phone_number is None:
             raise UnknownUserException
         return True
