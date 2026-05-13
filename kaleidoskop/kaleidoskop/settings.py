@@ -289,4 +289,5 @@ SHELL_PLUS_PRE_IMPORTS = {
     ('repositories.nomenclature_repository', 'NomenclatureRepository')
 }
 
+SERVER_DOMAIN = "kaleydoskop-test.ru"
 USE_CACHE=True

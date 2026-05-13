@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
 
     def parse_xml_file(self): # Надо будет придумать путь до файлов, возможно надо будет поместить их внутрь django приложения (дополнительный вес незачем, но это нужно для парсинга и инициализации приложения)
-        tree = ET.parse('C:/Users/Moose/Desktop/projects/kaleidoskop project/file.xml') # Пока что заглушка
+        tree = ET.parse('~/projects/kaleidoskop-site/file.xml') # Пока что заглушка
         root = tree.getroot()
 
         # Перейти к offers
@@ -83,7 +83,7 @@ class Command(BaseCommand):
 
 
     def parse_garden_characteristics_file(self):
-        tree = ET.parse('C:/Users/Moose/Desktop/projects/kaleidoskop project/export_universal_2025-12-02_1764703254_6624003807.xml')  # Замените на путь к вашему XML-файлу
+        tree = ET.parse('~/projects/kaleidoskop-site/export_universal_2025-12-02_1764703254_6624003807.xml')  # Замените на путь к вашему XML-файлу
         root = tree.getroot()
 
         offers = root.findall('offer')
@@ -118,7 +118,7 @@ class Command(BaseCommand):
     
 
     def parse_garden_media_file(self):
-        df = pd.read_csv('C:/Users/Moose/Desktop/projects/kaleidoskop project/export_media_2025-11-27_1764259311_6624003807.csv', delimiter=';')
+        df = pd.read_csv('~/projects/kaleidoskop-site/export_media_2025-11-27_1764259311_6624003807.csv', delimiter=';')
         for index, row in df.iterrows():
             product = Item.objects.filter(okdp=row['okdp']).first()
             if product is not None:
@@ -288,15 +288,15 @@ class Command(BaseCommand):
         
         try:
             self.stdout.write(self.style.NOTICE("Начало третьего этапа:"))
-            self.parse_catalog_xml(path='C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221079811.xml')
-            self.parse_catalog_xml(path='C:/Users/Moose/Desktop/projects/kaleidoskop project/PRODAT_369147_1221092775.xml')
+            self.parse_catalog_xml(path='~/projects/kaleidoskop-site/PRODAT_369147_1221079811.xml')
+            self.parse_catalog_xml(path='~/projects/kaleidoskop-site/PRODAT_369147_1221092775.xml')
             self.stdout.write(self.style.SUCCESS("Успешно пройден третий этап"))            
         except Exception as e:
             self.stdout.write(self.style.ERROR("Возникла ошибка во время парсинга третьего этапа!"))
             raise e
 
-        # self.stdout.write(self.style.NOTICE("Начало инициализации магазинов:")) # Перестроить также синхронизацию
-        # self.initialize_warehouses()
-        # self.initialize_shops()
+        self.stdout.write(self.style.NOTICE("Начало инициализации магазинов:")) # Перестроить также синхронизацию
+        self.initialize_warehouses()
+        self.initialize_shops()
         self.stdout.write(self.style.SUCCESS("Успешное завершение полной инициализации"))            
         

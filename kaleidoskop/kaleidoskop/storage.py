@@ -11,7 +11,7 @@ class MinioDualStorage(S3Boto3Storage):
             else "http://localhost:9000" # Тут локальный адрес, обычно localhost
         )
 
-        self.public_host = dj.SERVER_ENDPOINT      
+        self.public_host = dj.SERVER_DOMAIN      
         self.public_prefix = "/media"              
 
         super().__init__(
