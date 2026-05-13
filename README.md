@@ -4,6 +4,12 @@
 ![DRF](https://img.shields.io/badge/REST%20API-Yes-green)
 ![Python](https://img.shields.io/badge/Python-3.12+-blue)
 ![Docker](https://img.shields.io/badge/Docker-Compose-lightgrey)
+![Minio](https://img.shields.io/badge/MinIO-lightgrey)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-orange)
+![Celery](https://img.shields.io/badge/Celery-green)
+![Nginx](https://img.shields.io/badge/Nginx-green)
+![aiogram](https://img.shields.io/badge/aiogram-blue)
 
 **Kaleidoskop-site** — это репозиторий для интернет-магазина для компании "Калейдоскоп". Он реализован на базе монолитной архитектуры и фреймворка Django Rest Framework, для работы также был разработан модуль для 1С Предприятия 8.3 11 редакции, без которого работа приложения не возможна.
 
