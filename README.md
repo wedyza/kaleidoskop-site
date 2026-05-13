@@ -5,11 +5,11 @@
 ![Python](https://img.shields.io/badge/Python-3.12+-blue)
 ![Docker](https://img.shields.io/badge/Docker-Compose-lightgrey)
 ![Minio](https://img.shields.io/badge/MinIO-lightgrey)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-orange)
-![Celery](https://img.shields.io/badge/Celery-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-4.2-orange)
+![Celery](https://img.shields.io/badge/Celery-5.5.2-green)
 ![Nginx](https://img.shields.io/badge/Nginx-green)
-![aiogram](https://img.shields.io/badge/aiogram-blue)
+![aiogram](https://img.shields.io/badge/aiogram-3.26.0-blue)
 
 **Kaleidoskop-site** — это репозиторий для интернет-магазина для компании "Калейдоскоп". Он реализован на базе монолитной архитектуры и фреймворка Django Rest Framework, для работы также был разработан модуль для 1С Предприятия 8.3 11 редакции, без которого работа приложения не возможна.
 
