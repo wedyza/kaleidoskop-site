@@ -22,20 +22,19 @@
 ### 💾 Архитектура хранения
 - **MinIO (S3-compatible)** — основное хранилище для медиаконтента
 - **PostgreSQL** — relational data
-- **Redis** — caching + Celery брокер
-- **RabbitMQ** — message queue для асинхронных задач
-- **Elasticsearch (опционально)** — полнотекстовый поиск контента
+- **Redis** — caching
+- **RabbitMQ** — message queue + Celery для асинхронных задач + 
 
 ### 📦 Основные функциональные модули
 
 | Модуль | Описание |
 |--------|----------|
-| **Items & Items** | Управление товарами с фото, категориями, branding |
+| **Items** | Управление товарами с фото, категориями, branding |
 | **Orders** | Заказы клиентов из Telegram/интерфейса |
 | **Cart Service** | Корзина и товары в заказе |
 | **Categories** | Структура каталогов (баннеры, бренды) |
 | **Remains** | Инвентаризация и остатки |
-| **Orders & Orders** | Полный жизненный цикл заказа (create → process → deliver → cancel) |
+| **Orders & Orders** | Полный жизненный цикл заказа (create → process → cancel) |
 | **Integration Service** | Связка с 1C через REST API |
 | **User Management** | Авторизация, куки-токены, RBAC |
 
@@ -56,15 +55,16 @@
 - **MinIO** — S3 для файловых данных
 
 ### Интеграции
-- **1C Enterprise REST API** — `/demohttp/hs/apiv1` - интеграция с удаленными системами
+- **1C Enterprise REST API** — интеграция с удаленными системами
 - **Telegram Bot API** — уведомления
 - **SMTP Gmail** — email рассылки
+- **Yomoney**  - Биллинг
 
 ---
 
 ## 🚀 Быстрый старт
 
-### Локальный запуск (Docker)
+### Локальный запуск (Docker) - данные берутся только из 1С
 
 ```bash
 # Клонировать репозиторий и скопировать .env.example в .env
@@ -102,8 +102,3 @@ docker-compose up -d
 | `telegram` | — | Notification bot |
 | `frontend` | — | Static files mount |
 
----
-
-## 📝 Лицензия
-
-Код распространяется под лицензией [MIT](LICENSE).
