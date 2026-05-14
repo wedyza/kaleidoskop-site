@@ -30,15 +30,21 @@ class CategoryListSerializer(serializers.ModelSerializer):
 
 class CategoryDetailSerializer(serializers.ModelSerializer):
     parent = "self"
+    parent_slug = serializers.SerializerMethodField('get_parent_slug', read_only=True)
     items_count = serializers.SerializerMethodField('get_items_count')
 
     class Meta:
         model = Category
-        fields = ('title', 'id', 'parent', 'image', 'slug', 'items_count')
-        read_only_fields = ('id', 'slug', 'items_count')
+        fields = ('title', 'id', 'parent', 'image', 'slug', 'items_count', 'parent_slug')
+        read_only_fields = ('id', 'slug', 'items_count', 'parent_slug')
 
     def get_items_count(self, obj) -> int:
         return category_service.count_category_items(obj.id)
+    
+    def get_parent_slug(self, obj: Category) -> str | None:
+        if obj.parent:
+            return obj.parent.slug
+        return None
 
 
 class ItemRemainsSerializer(serializers.ModelSerializer):
@@ -112,7 +118,7 @@ class ItemDetailSerializer(serializers.ModelSerializer):
     def get_cart_count(self, obj) -> int:
         user = self.context["request"].user
         if user.is_anonymous:
-            return None
+            return 0
         return cart_item_service.get_cart_count(obj, user.pk)
             
     def get_remains(self, obj: Item) -> int: # Не знаю, насколько это надо кэшировать.
@@ -126,6 +132,9 @@ class ItemDetailSerializer(serializers.ModelSerializer):
                 context=self.context
             ).data
         return []
+    
+    # def get_breadcrumbs(self, obj: Item) -> dict[str, dict[str, str]] | None:
+    #     return item_service.recover_categories_name(obj.id)
 
 class ItemListSerializer(ItemDetailSerializer):
     class Meta:
@@ -150,7 +159,7 @@ class ItemListSerializer(ItemDetailSerializer):
     def get_cart_count(self, obj) -> int:
         user = self.context["request"].user
         if user.is_anonymous:
-            return None
+            return 0
         return cart_item_service.get_cart_count(obj, user.pk)
 
 class CartItemSerializer(serializers.ModelSerializer):

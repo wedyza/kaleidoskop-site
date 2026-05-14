@@ -132,6 +132,17 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin): #Retrieve
         serializer = self.get_serializer(items, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
 
+    
+    @action(detail=False, methods=["GET"], url_path="retrieve/(?P<slug>[^/.]+)")    
+    def retrieve_slug(self, request, slug):
+        try:
+            category = self.category_service.find_by_slug(slug)
+        except NotFoundException:
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            raise e
+        return Response(self.get_serializer(instance=category).data)
+
 
 class WishlistViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     serializer_class = LikeSerializer

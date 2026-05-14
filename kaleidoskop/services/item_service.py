@@ -1,5 +1,5 @@
 from typing import Union, List
-from api.models import CartItem, Item
+from api.models import CartItem, Category, Item
 from repositories.item_repository import ItemRepository
 from .like_service import LikeService
 from .cart_item_service import CartItemService
@@ -56,3 +56,24 @@ class ItemService:
     
     def find_by_slug(self, slug: str) -> Item:
         return self._item_repository.find_by_slug(slug)
+    
+    def recover_categories_name(self, item_pk: UUID) -> dict[str, dict[str, str]] | None:
+        """
+        category : {'slug': str, 'name': str}, subcategory: {'slug': str, 'name': str}
+        """
+        subcategory = self._item_repository.find_subcategory(item_pk)
+        print(subcategory)
+        if subcategory:
+            d = {
+                "subcategory": {
+                    "title": subcategory.title,
+                    "slug": subcategory.slug
+                }
+            }
+            if subcategory.parent:
+                d["category"] = {
+                    "title": subcategory.parent.title,
+                    "slug": subcategory.parent.slug
+                }
+            return d
+        return None

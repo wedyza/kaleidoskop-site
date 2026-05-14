@@ -3,7 +3,7 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models.functions import Lower
 from django.db.models import QuerySet, Value, F, Case, When, Sum
 from django.db import models
-from api.models import Item, Nomenclature
+from api.models import Category, Item, Nomenclature, NomenclatureCategory
 from api.decorators import cache_queryset
 from uuid import UUID
 from exceptions.exceptions import NotFoundException
@@ -12,7 +12,7 @@ class ItemRepository:
     def get_item_by_id(self, id: UUID) -> Item:
         return Item.objects.get(id=id)
     
-    def create_new_items(self, data: dict[str, str]) -> bool:
+    def create_new_items(self, data: list) -> bool:
         """
         Создает не существующие в бд записи товаров
         """
@@ -95,3 +95,11 @@ class ItemRepository:
         if item is None:
             raise NotFoundException
         return item
+
+    
+    def find_subcategory(self, item_id: UUID) -> Category | None:
+        item = self.get_item_by_id(item_id)
+        links = NomenclatureCategory.objects.filter(nomenclature=item.nomenclature).first()
+        if links:
+            return links.category
+        return None

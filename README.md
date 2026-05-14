@@ -1,9 +1,15 @@
-# Kaleidoskop — Медиа-менеджмент система с интеграцией 1С
+# Kaleidoskop — Интернет магазин с интеграцией с 1С
 
 ![Django](https://img.shields.io/badge/Django-4.2-blue)
 ![DRF](https://img.shields.io/badge/REST%20API-Yes-green)
 ![Python](https://img.shields.io/badge/Python-3.12+-blue)
 ![Docker](https://img.shields.io/badge/Docker-Compose-lightgrey)
+![Minio](https://img.shields.io/badge/MinIO-lightgrey)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-4.2-orange)
+![Celery](https://img.shields.io/badge/Celery-5.5.2-green)
+![Nginx](https://img.shields.io/badge/Nginx-green)
+![aiogram](https://img.shields.io/badge/aiogram-3.26.0-blue)
 
 **Kaleidoskop-site** — это репозиторий для интернет-магазина для компании "Калейдоскоп". Он реализован на базе монолитной архитектуры и фреймворка Django Rest Framework, для работы также был разработан модуль для 1С Предприятия 8.3 11 редакции, без которого работа приложения не возможна.
 
@@ -22,20 +28,19 @@
 ### 💾 Архитектура хранения
 - **MinIO (S3-compatible)** — основное хранилище для медиаконтента
 - **PostgreSQL** — relational data
-- **Redis** — caching + Celery брокер
-- **RabbitMQ** — message queue для асинхронных задач
-- **Elasticsearch (опционально)** — полнотекстовый поиск контента
+- **Redis** — caching
+- **RabbitMQ** — message queue + Celery для асинхронных задач + 
 
 ### 📦 Основные функциональные модули
 
 | Модуль | Описание |
 |--------|----------|
-| **Items & Items** | Управление товарами с фото, категориями, branding |
+| **Items** | Управление товарами с фото, категориями, branding |
 | **Orders** | Заказы клиентов из Telegram/интерфейса |
 | **Cart Service** | Корзина и товары в заказе |
 | **Categories** | Структура каталогов (баннеры, бренды) |
 | **Remains** | Инвентаризация и остатки |
-| **Orders & Orders** | Полный жизненный цикл заказа (create → process → deliver → cancel) |
+| **Orders & Orders** | Полный жизненный цикл заказа (create → process → cancel) |
 | **Integration Service** | Связка с 1C через REST API |
 | **User Management** | Авторизация, куки-токены, RBAC |
 
@@ -56,19 +61,20 @@
 - **MinIO** — S3 для файловых данных
 
 ### Интеграции
-- **1C Enterprise REST API** — `/demohttp/hs/apiv1` - интеграция с удаленными системами
+- **1C Enterprise REST API** — интеграция с удаленными системами
 - **Telegram Bot API** — уведомления
 - **SMTP Gmail** — email рассылки
+- **Yomoney**  - Биллинг
 
 ---
 
 ## 🚀 Быстрый старт
 
-### Локальный запуск (Docker)
+### Локальный запуск (Docker) - данные берутся только из 1С
 
 ```bash
 # Клонировать репозиторий и скопировать .env.example в .env
-git clone <repo-url>
+git clone https://github.com/wedyza/kaleidoskop-site
 cd kaleidoskop-site
 cp .env.example .env
 cp .env.example kaleidoskop/kaleidoskop/.env
@@ -102,8 +108,3 @@ docker-compose up -d
 | `telegram` | — | Notification bot |
 | `frontend` | — | Static files mount |
 
----
-
-## 📝 Лицензия
-
-Код распространяется под лицензией [MIT](LICENSE).
