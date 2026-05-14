@@ -26,9 +26,9 @@ class CartItemService:
     def update_cart(self, ids: List[UUID], enable: bool):
         self._cart_item_repository.update_cart(ids, enable)
 
-    def get_cart_count(self, item: Item, user_pk: UUID) -> int:
+    def get_cart_count(self, item: Item, user_pk: UUID) -> int | None:
         cart = self._cart_service.get_cart_by_user(pk=user_pk)
         cart_item = self.get_item_of_cart(item, cart)
         if cart_item:
             return cart_item.amount
-        return 0
+        return None

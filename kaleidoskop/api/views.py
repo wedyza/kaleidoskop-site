@@ -79,6 +79,18 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin): #Retrieve
         return context
     
     
+    @action(detail=False, methods=["GET"], url_path="retrieve/(?P<slug>[^/.]+)")    
+    def retrieve_slug(self, request, slug=None):
+        try:
+            category = self.category_service.find_by_slug(slug)
+            serializer = self.get_serializer(instance=category)
+            return Response(serializer.data)
+        except NotFoundException:
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        except BaseException as e:
+            raise e
+
+    
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter("page_size", openapi.IN_QUERY, type=openapi.TYPE_NUMBER),

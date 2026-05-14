@@ -12,6 +12,8 @@ class CartItemRepository:
         return cart_item
     
     def update_amount_of_cart_item(self, cart_item: CartItem, amount: int) -> CartItem:
+        if amount < 0:
+            amount = 0
         cart_item.amount = amount
         cart_item.save()
         return cart_item

@@ -22,18 +22,20 @@ def cache_queryset(cache_key: str, cache_key_type: CacheKeyType = CacheKeyType.I
     """
     def cache_realisation(func) -> QuerySet:
         def wrapper(*args, **kwargs) -> QuerySet:
-            if cache_key_type == CacheKeyType.INDEX:
-                if 'pk' not in kwargs:
-                    raise NotFoundException("Кэш не будет работать, так как в репозиторий не передан PK объекта!")
-                local_key = (cache_key + '_%s') % kwargs['pk']
-            elif cache_key_type == CacheKeyType.RAW:
-                pass
-            elif cache_key_type == CacheKeyType.BUILDING:
-                local_key = (cache_key + '_%s') % (str(args[1]) + '-' + str(args[2]))
-            qs = cache.get(local_key)
-            if not qs:
-                qs = func(*args, **kwargs)
-                cache.set(local_key, qs, timeout=15 * 60)
-            return qs
+            if settings.USE_CACHE:
+                if cache_key_type == CacheKeyType.INDEX:
+                    if 'pk' not in kwargs:
+                        raise NotFoundException("Кэш не будет работать, так как в репозиторий не передан PK объекта!")
+                    local_key = (cache_key + '_%s') % kwargs['pk']
+                elif cache_key_type == CacheKeyType.RAW:
+                    pass
+                elif cache_key_type == CacheKeyType.BUILDING:
+                    local_key = (cache_key + '_%s') % (str(args[1]) + '-' + str(args[2]))
+                qs = cache.get(local_key)
+                if not qs:
+                    qs = func(*args, **kwargs)
+                    cache.set(local_key, qs, timeout=15 * 60)
+                return qs
+            return func(*args, **kwargs)
         return wrapper
     return cache_realisation

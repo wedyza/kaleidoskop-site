@@ -31,10 +31,10 @@ class UserRepository:
         return user
     
     def is_email_free(self, email: str) -> bool:
-        return not CustomAbstractUser.objects.filter(email=email.data["email"]).exists()
+        return not CustomAbstractUser.objects.filter(email=email).exists()
 
     def start_email_change(self, user: CustomAbstractUser, email: str, otp: str):
-        user.email_to_change = email.data["email"]
+        user.email_to_change = email
         user.otp_change_email = otp
         user.otp_expires_change_email = timezone.now() + timezone.timedelta(minutes=15)
         user.save()
@@ -60,4 +60,4 @@ class UserRepository:
             user.email_to_change = None
             user.save()
             return True
-        return WrongOTPPassedException
+        raise WrongOTPPassedException

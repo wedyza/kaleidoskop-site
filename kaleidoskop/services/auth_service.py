@@ -21,11 +21,12 @@ class AuthService:
     
     @staticmethod
     @multitasker
-    @shared_task
-    def __send_otp_email(email, otp):
+    @shared_task(autoretry_for=(Exception,), retry_backoff=True, max_retries=5)
+    def _send_otp_email(email, otp):
         """
         Отправляет письмо на почту соответственно
         """
+        
         subject = "Ваш одноразовый пароль для авторизации"
         message = f"Ваш одноразовый пароль: {otp}"
         from_email = settings.EMAIL_HOST_USER
@@ -43,7 +44,7 @@ class AuthService:
         user = self._user_service.get_or_create_user_by_email(email)
         otp = self.__generate_otp()
         self._user_service.fill_user_otp(user, otp)
-        AuthService.__send_otp_email(user.email, otp)
+        AuthService._send_otp_email(user.email, otp)
     
     
     def validate_otp(self, email: str, otp: str) -> RefreshToken:
@@ -57,7 +58,7 @@ class AuthService:
         if self._user_service.check_email_is_free(email):
             otp = self.__generate_otp()
             self._user_service.start_email_change(user, email, otp)
-            AuthService.__send_otp_email(email, otp)
+            AuthService._send_otp_email(email, otp)
         raise EmailIsNotFree
     
     

@@ -15,4 +15,4 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 ENV PATH="/app/.venv/bin:$PATH"
 
-CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "kaleidoskop.wsgi:application"]
+CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "--workers", "5", "kaleidoskop.wsgi:application"]

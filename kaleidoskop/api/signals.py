@@ -4,7 +4,7 @@ from .models import Item, Category
 from api.utils import slugify
 
 @receiver(post_save, sender=Category)
-def update_search_vector(sender, instance, **kwargs):
+def update_slug(sender, instance, **kwargs):
     Category.objects.filter(id=instance.id).update(
         slug=slugify(instance.title)
     )

@@ -23,4 +23,4 @@ __pycache__/
 
 # Локальные настройки
 *.sqlite3
-
+.opencode

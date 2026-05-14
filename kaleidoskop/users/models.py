@@ -36,10 +36,6 @@ class UserManager(BaseUserManager):  # pragma: no cover
 
 
 class CustomAbstractUser(AbstractUser):
-    # class UserType(Enum):
-    #     BUYER = "Покупатель"
-    #     ADMIN = "Администратор"
-
     class SexType(Enum):
         MALE = "Мужчина"
         FEMALE = "Женщина"
@@ -47,11 +43,6 @@ class CustomAbstractUser(AbstractUser):
     username = None
     USERNAME_FIELD = "email"
     objects = UserManager()
-    # user_type = models.TextField(
-    #     "Тип пользователя",
-    #     choices=[(utype.name, utype.value) for utype in UserType],
-    #     default="Покупатель",
-    # )
     email = models.EmailField(unique=True)
     last_login = None
     otp = models.CharField(max_length=6, null=True, blank=True)
@@ -74,8 +65,6 @@ class CustomAbstractUser(AbstractUser):
     avatar = models.ImageField("Аватар", upload_to="avatars", null=True)
     REQUIRED_FIELDS = []
     otp_expires = models.DateTimeField("Время жизни otp", null=True, blank=True)
-    # is_superuser = None
-    # is_staff = None
     date_joined = None
     first_name = models.CharField("Имя", max_length=30, null=True)
     last_name = models.CharField("Фамилия", max_length=30, null=True)
