@@ -5,7 +5,6 @@ from api.decorators import cache_queryset
 
 class CartRepository:
     
-    @cache_queryset('cart_of_user')
     def get_or_create_user_cart(self, pk: UUID) -> Cart:
         cart = self.__get_user_cart(pk=pk)
         
@@ -13,9 +12,8 @@ class CartRepository:
             return self.__create_user_cart(pk)
         return cart
     
-    # @cache_queryset('user_cart')
-    def __get_user_cart(self, user_pk: UUID) -> Cart:
-        return Cart.objects.filter(order=None).filter(current_cart=True).filter(user_id=user_pk).first()
+    def __get_user_cart(self, pk: UUID) -> Cart:
+        return Cart.objects.filter(order=None).filter(current_cart=True).filter(user_id=pk).first()
     
     def __create_user_cart(self, user_pk: UUID) -> Cart:
         cart = Cart.objects.create(user_id=user_pk)
