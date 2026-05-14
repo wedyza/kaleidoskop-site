@@ -151,5 +151,3 @@ class ValidateOTPChangeEmailViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(user.email, self.change_email)
-    
-# Проверка на пароль и истечение
