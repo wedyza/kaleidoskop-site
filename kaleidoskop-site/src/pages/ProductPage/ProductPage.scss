@@ -113,6 +113,12 @@
   margin-top: 60px;
 }
 
+@media (max-width: common.$breakpoint-laptop) {
+  .product-info {
+    grid-template-columns: minmax(200px, 600px) 1fr;
+  }
+}
+
 @media (max-width: common.$breakpoint-tablet) {
   .product-info {
     display: flex;
