@@ -16,13 +16,13 @@ class Command(BaseCommand):
         associated = []
         groups = 0
         for item in items:
-            if item.id in associated: # Надо будет ещще 
+            if item.id in associated: 
                 continue
 
             simillar = Item.objects.annotate(
                 similarity_score=TrigramSimilarity(Lower(Value(item.title)), Lower('title'))
             ).filter(similarity_score__gte=self.SIMILARITY_SCORE).exclude(id=item.id).filter(nomenclature=item.nomenclature).all()
-            if simillar.count() > 0: # Хэндлить товары не из одной номенклатуры наверное не буду
+            if simillar.count() > 0:
                 planning_associated = item.nomenclature
                 self.stdout.write(self.style.WARNING(f'Найдено совпадение, группа: {planning_associated}, предмет: {item}, его братья: {simillar}'))
                 items_count = Item.objects.filter(nomenclature=planning_associated).count()
@@ -50,4 +50,3 @@ class Command(BaseCommand):
                 groups += 1
 
         self.stdout.write(self.style.SUCCESS(f'Завершено построение ассоциативных групп, предметов {len(associated)}. Групп: {groups}'))
-        # raise BaseException

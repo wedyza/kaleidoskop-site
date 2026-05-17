@@ -28,7 +28,6 @@ class NomenclatureRepository:
         
     def get_daughter_nomenclatures(self, nomenclatures: list[Nomenclature]) -> Union[QuerySet, list[Nomenclature]]:
         root_ids = [str(n.id) for n in nomenclatures]
-        
         with_recursive = """
         WITH RECURSIVE nomenclature_tree AS (
             SELECT id FROM api_nomenclature WHERE id = ANY(%s::uuid[])
@@ -39,9 +38,7 @@ class NomenclatureRepository:
         )
         SELECT DISTINCT id FROM nomenclature_tree
         """
-        
         qs = Nomenclature.objects.raw(with_recursive, [root_ids])
-        
         return list(qs)
 
     def get_nomenclatures(self, level_of_nesting: int) -> Union[QuerySet, list[Nomenclature]]:

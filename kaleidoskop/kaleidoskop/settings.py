@@ -176,8 +176,8 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_S3_ADDRESSING_STYLE = "path"
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq//"  # Когда пакуешь в контейнер поменять localhost->rabbitmq
-BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq:5672//" # Когда пакуешь в контейнер поменять localhost->rabbitmq
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq//"  
+BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq:5672//" 
 
 API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
 USER_1C = os.getenv("USER_1C")
@@ -206,15 +206,6 @@ SIMPLE_JWT = {
     'REFRESH_COOKE_SECURE': True
 }
 
-# ELASTICSEARCH_DSL = {
-#     "default": {
-#         "hosts": "http://localhost:9200" if not CONTAINER_LAUNCHER else "http://elasticsearch:9200",
-#         "http_auth": ("elastic", "MyPassword"),
-#         "verify_certs": False,
-#         "ca_certs": None,
-#     }
-# }
-
 LANGUAGE_CODE = 'ru-RU'
 
 STATIC_URL = "/static/"
@@ -226,7 +217,6 @@ RABBIT_MQ_USER = os.getenv("RABBIT_MQ_USER")
 RABBIT_MQ_PASSWORD = os.getenv("RABBIT_MQ_PASSWORD")
 RABBIT_MQ_HOST = "localhost" if not CONTAINER_LAUNCHER else "rabbitmq"
 
-
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r"^/.*$"
 
@@ -234,12 +224,11 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") #only prod
 SECURE_SSL_REDIRECT = False
 
 CSRF_TRUSTED_ORIGINS = [
-    f"https://{SERVER_ENDPOINT}:8000",
-    f"https://{SERVER_ENDPOINT}",
+    f"https://{SERVER_DOMAIN}",
     "http://localhost:5173",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-]# костыль
+]
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {

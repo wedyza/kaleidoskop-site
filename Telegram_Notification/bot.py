@@ -86,8 +86,6 @@ def callback(ch, method, properties, body):
             )
             fut.add_done_callback(_done)
 
-        # print("тут мы отправляем сообщение с заказом пользователям")
-
 @dp.message(Command('disable'))
 async def dysable_notifications(message: Message) -> None:
     try:

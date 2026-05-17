@@ -16,7 +16,7 @@ def multitasker(f):
         return f(*args, **kwargs)
     return wrapper
 
-def cache_queryset(cache_key: str, cache_key_type: CacheKeyType = CacheKeyType.INDEX) ->QuerySet:
+def cache_queryset(cache_key: str, cache_key_type: CacheKeyType = CacheKeyType.INDEX, TTL: int = 15 * 60) ->QuerySet:
     """
     Самописный кэш-декоратор. Принимает на вход cache_key, по которому берет значения из кэша, а также cache_type для нестандартных реализаций ключа
     """
@@ -25,7 +25,7 @@ def cache_queryset(cache_key: str, cache_key_type: CacheKeyType = CacheKeyType.I
             if settings.USE_CACHE:
                 if cache_key_type == CacheKeyType.INDEX:
                     if 'pk' not in kwargs:
-                        raise NotFoundException("Кэш не будет работать, так как в репозиторий не передан PK объекта!")
+                        raise NotFoundException("Кэш не будет работать, так как в репозиторий не передан PK (primary key) объекта!")
                     local_key = (cache_key + '_%s') % kwargs['pk']
                 elif cache_key_type == CacheKeyType.RAW:
                     pass
@@ -34,7 +34,7 @@ def cache_queryset(cache_key: str, cache_key_type: CacheKeyType = CacheKeyType.I
                 qs = cache.get(local_key)
                 if not qs:
                     qs = func(*args, **kwargs)
-                    cache.set(local_key, qs, timeout=15 * 60)
+                    cache.set(local_key, qs, timeout=TTL)
                 return qs
             return func(*args, **kwargs)
         return wrapper
