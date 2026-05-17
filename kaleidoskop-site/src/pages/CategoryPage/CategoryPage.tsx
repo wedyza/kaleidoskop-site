@@ -8,6 +8,7 @@ import {
   fetchCategoryProducts,
   loadMoreCategoryProducts,
 } from "../../features/categories/categoriesSlice";
+import { Helmet } from "react-helmet-async";
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -50,6 +51,18 @@ const CategoryPage = () => {
   };
 
   if (!slug) {
+    <Helmet>
+      <title>Калейдоскоп — Категория {category?.title}</title>
+      <meta
+        name="description"
+        content="Калейдоскоп — интернет-магазин стройматериалов в Лесном и Нижней Туре"
+      />
+      <meta
+        name="keywords"
+        content="стройматериалы, строительные товары, магазин стройматериалов, купить стройматериалы, доставка стройматериалов, Лесной, Нижняя Тура"
+      />
+      <meta name="robots" content="index, follow" />
+    </Helmet>;
     return (
       <div className="page-category">
         <div className="page-path inter16-400">

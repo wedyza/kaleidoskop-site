@@ -17,6 +17,7 @@ import MainParameters from "../../components/MainParameters/MainParameters";
 import { fetchContentBasedRecommendations } from "../../features/recommendations/recommendationsSlice";
 import ItemsBlock from "../../components/ItemsBlock/ItemsBlock";
 import { fetchCategoryBySlug } from "../../features/categories/categoriesSlice";
+import { Helmet } from "react-helmet-async";
 
 function ProductPage() {
   const { slug, categorySlug } = useParams<{
@@ -95,6 +96,18 @@ function ProductPage() {
 
   return (
     <div className="page-product">
+      <Helmet>
+        <title>Калейдоскоп — Товар {selectedItem.title}</title>
+        <meta
+          name="description"
+          content="Калейдоскоп — интернет-магазин стройматериалов в Лесном и Нижней Туре"
+        />
+        <meta
+          name="keywords"
+          content="стройматериалы, строительные товары, магазин стройматериалов, купить стройматериалы, доставка стройматериалов, Лесной, Нижняя Тура"
+        />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
       <div className="page-path inter16-400">
         <Link to={"/"} className="main-link">
           Главная
@@ -211,24 +224,22 @@ function ProductPage() {
               </svg>
             </button> */}
           </div>
-          {/* <div className='product-info_availability inter13-400'>
-            <div className='product-info_availability-item'>
-              <span className='product-info_availability-day'>
-                Сегодня в 2 магазинах:
-              </span>
-              <Link to={''} className='product-info_availability-link'>
-                Посмотреть
+          <div className="product-info_availability inter13-400">
+            <div className="product-info_rem-item">
+              <span className="product-info_availability-day">В наличии:</span>
+              <Link to={""} className="product-info_availability-link">
+                {selectedItem.remains} шт
               </Link>
             </div>
-            <div className='product-info_availability-item'>
-              <span className='product-info_availability-day'>
+            {/* <div className="product-info_availability-item">
+              <span className="product-info_availability-day">
                 Завтра в 5 магазинах:
               </span>
-              <Link to={''} className='product-info_availability-link'>
+              <Link to={""} className="product-info_availability-link">
                 Посмотреть
               </Link>
-            </div>
-          </div> */}
+            </div> */}
+          </div>
 
           {selectedItem.parameters && selectedItem.parameters.length > 0 && (
             <div className="product-info_params">

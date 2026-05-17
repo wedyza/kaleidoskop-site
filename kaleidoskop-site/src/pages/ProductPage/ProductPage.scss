@@ -1,3 +1,5 @@
+@use "../../styles/common.scss";
+
 .product-info {
   padding: 40px;
   padding-bottom: 50px;
@@ -67,7 +69,7 @@
 
 .product_action__active {
   svg path {
-    fill: var(--orange500)
+    fill: var(--orange500);
   }
 }
 
@@ -75,6 +77,14 @@
   margin-top: 30px;
   display: flex;
   gap: 10px;
+}
+
+.product-info_rem-item {
+  display: flex;
+  gap: 10px;
+  background-color: var(--grey50);
+  border-radius: 10px;
+  padding: 22px;
 }
 
 .product-info_availability-item {
@@ -101,4 +111,11 @@
 
 .product-info_params {
   margin-top: 60px;
+}
+
+@media (max-width: common.$breakpoint-tablet) {
+  .product-info {
+    display: flex;
+    flex-direction: column;
+  }
 }

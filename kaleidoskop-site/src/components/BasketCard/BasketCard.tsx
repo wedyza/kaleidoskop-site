@@ -47,12 +47,14 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
   };
 
   const handleIncrease = () => {
-    dispatch(
-      updateBasketItemAmount({
-        id: item.item.id,
-        amount: item.amount + 1,
-      }),
-    );
+    if (item.item.remains && item.amount < item.item.remains) {
+      dispatch(
+        updateBasketItemAmount({
+          id: item.item.id,
+          amount: item.amount + 1,
+        }),
+      );
+    }
   };
 
   const handleDecrease = () => {
@@ -123,7 +125,10 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
 
           <span>{item.amount}</span>
 
-          <button className="basket-card_count-btn" onClick={handleIncrease}>
+          <button
+            className={`basket-card_count-btn ${item.item.remains && item.amount === item.item.remains ? "basket-card_count-btn__inactive" : ""}`}
+            onClick={handleIncrease}
+          >
             <svg width="6" height="6" viewBox="0 0 6 6" fill="none">
               <path d="M2.4 6V0H3.6V6H2.4ZM0 3.6V2.4H6V3.6H0Z" fill="white" />
             </svg>

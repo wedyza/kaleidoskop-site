@@ -1,11 +1,11 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { api } from '../../api/axiosInstance';
-import { addProductHandlers } from './productMixin';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../../api/axiosInstance";
+import { addProductHandlers } from "./productMixin";
 
-interface Remains {
-  warehouse: string;
-  count: number;
-}
+// interface Remains {
+//   warehouse: string;
+//   count: number;
+// }
 
 export interface ProductImage {
   source: string;
@@ -30,7 +30,7 @@ export interface Product {
   slug: string;
   images?: ProductImage[];
   description?: string;
-  remains?: Remains[];
+  remains?: number;
   in_wishlist: boolean;
   cart_count?: number;
   parameters?: ProductParameters[];
@@ -53,23 +53,27 @@ const initialState: ProductsState = {
 };
 
 export const fetchProducts = createAsyncThunk(
-  'products/fetchProducts',
+  "products/fetchProducts",
   async (_, { getState, rejectWithValue }) => {
     try {
       const state: any = getState();
       const page = state.products.page;
       const pageSize = state.products.pageSize;
 
-      const response = await api.get(`/items/?page=${page}&page_size=${pageSize}&with_images=true`);
+      const response = await api.get(
+        `/items/?page=${page}&page_size=${pageSize}&with_images=true`,
+      );
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки продуктов');
+      return rejectWithValue(
+        error.response?.data?.message || "Ошибка загрузки продуктов",
+      );
     }
-  }
+  },
 );
 
 const productsSlice = createSlice({
-  name: 'products',
+  name: "products",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -86,14 +90,14 @@ const productsSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
-      addProductHandlers(builder, (state: ProductsState) => state.items);
-      // .addCase(toggleWishlist.fulfilled, (state, action) => {
-      //   const id = action.meta.arg.id;
-      //   const index = state.items.findIndex((item) => item.id === id);
-      //   if (index !== -1) {
-      //     state.items[index].in_wishlist = !state.items[index].in_wishlist;
-      //   }
-      // });
+    addProductHandlers(builder, (state: ProductsState) => state.items);
+    // .addCase(toggleWishlist.fulfilled, (state, action) => {
+    //   const id = action.meta.arg.id;
+    //   const index = state.items.findIndex((item) => item.id === id);
+    //   if (index !== -1) {
+    //     state.items[index].in_wishlist = !state.items[index].in_wishlist;
+    //   }
+    // });
   },
 });
 
