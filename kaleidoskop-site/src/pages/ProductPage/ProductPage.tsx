@@ -136,14 +136,14 @@ function ProductPage() {
             {selectedItem?.title}
           </h1>
           <div className="product-info-price">
-            <div className="product-info_discount">
+            {/* <div className="product-info_discount">
               <span className="product-info_discount-value inter18-500">
                 {selectedItem && formatPrice((selectedItem.price * 4) / 3)} ₽
               </span>
               <span className="product-info_discount-percent inter11-600">
                 - 25%
               </span>
-            </div>
+            </div> */}
             <span className="product-info_price inter32-700">
               {selectedItem && formatPrice(selectedItem.price)} ₽{" "}
               <span className="product-info_price-label inter16-400">

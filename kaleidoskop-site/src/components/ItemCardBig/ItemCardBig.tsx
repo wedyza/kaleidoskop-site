@@ -30,7 +30,7 @@ const ItemCardBig: React.FC<ItemCardBigProps> = ({ product, categorySlug }) => {
         ) : (
           <img className="img-empty" src={itemImg} alt="" />
         )}
-        <span className="item-card_discount inter13-500">- 25%</span>
+        {/* <span className="item-card_discount inter13-500">- 25%</span> */}
         <div className="item-card_actions">
           <ItemsActions product={product} />
         </div>
@@ -40,9 +40,9 @@ const ItemCardBig: React.FC<ItemCardBigProps> = ({ product, categorySlug }) => {
           <p className="item-card_final-price inter20-600">
             {formatPrice(product.price)} ₽
           </p>
-          <p className="item-card_original-price inter14-500">
+          {/* <p className="item-card_original-price inter14-500">
             {formatPrice((product.price * 4) / 3)} ₽
-          </p>
+          </p> */}
         </div>
         <div className="item-card_name-container">
           <p className="item-card_name inter13-400">{product.title}</p>

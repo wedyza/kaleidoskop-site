@@ -1,26 +1,26 @@
-import './ItemCard.scss'
-import itemImg from '../../assets/empty_imgs.jpg'
-import { Link } from 'react-router-dom';
-import type { Product } from '../../features/products/productsSlice';
-import { formatPrice } from '../../utils/formatPrice';
-import ItemsActions from '../ItemsActions/ItemsActions';
+import "./ItemCard.scss";
+import itemImg from "../../assets/empty_imgs.jpg";
+import { Link } from "react-router-dom";
+import type { Product } from "../../features/products/productsSlice";
+import { formatPrice } from "../../utils/formatPrice";
+import ItemsActions from "../ItemsActions/ItemsActions";
 
 interface ItemCardProps {
   product: Product;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({product}) => {
+const ItemCard: React.FC<ItemCardProps> = ({ product }) => {
   return (
-    <Link to={`/product/${product.slug}`} className='item-card'>
+    <Link to={`/product/${product.slug}`} className="item-card">
       <div className="item-card_img">
         {product.images && product.images.length > 0 ? (
           <img src={product.images[0].source} alt="" />
         ) : (
-          <img className='img-empty' src={itemImg} alt="" />
+          <img className="img-empty" src={itemImg} alt="" />
         )}
-        <span className="item-card_discount inter13-500">
+        {/* <span className="item-card_discount inter13-500">
           - 25%
-        </span>
+        </span> */}
         <div className="item-card_actions item-card_actions__main">
           <ItemsActions product={product} />
         </div>
@@ -30,18 +30,16 @@ const ItemCard: React.FC<ItemCardProps> = ({product}) => {
           <p className="item-card_final-price inter20-600">
             {formatPrice(product.price)} ₽
           </p>
-          <p className="item-card_original-price inter14-500">
-            {formatPrice(product.price * 4/3)} ₽
-          </p>
+          {/* <p className="item-card_original-price inter14-500">
+            {formatPrice((product.price * 4) / 3)} ₽
+          </p> */}
         </div>
         <div className="item-card_name-container">
-          <p className="item-card_name inter13-400">
-            {product.title}
-          </p>
+          <p className="item-card_name inter13-400">{product.title}</p>
         </div>
       </div>
     </Link>
-  )
-}
+  );
+};
 
 export default ItemCard;

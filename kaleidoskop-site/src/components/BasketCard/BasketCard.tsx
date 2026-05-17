@@ -93,7 +93,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
         </span>
       </div>
       <div className="basket-card_info-price">
-        <div className="basket-card_discount">
+        {/* <div className="basket-card_discount">
           <span className="basket-card_discount-value inter14-500">
             {item.item.cart_count &&
               formatPrice(
@@ -104,7 +104,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
           <span className="basket-card_discount-percent inter11-600">
             - 25%
           </span>
-        </div>
+        </div> */}
         <span className="basket-card_price inter20-600">
           {item.item.cart_count &&
             formatPrice(item.item.price * item.item.cart_count)}{" "}
