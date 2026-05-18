@@ -1,12 +1,18 @@
-.notification {
+.notification-container {
   position: fixed;
   bottom: 30px;
   right: 30px;
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notification {
   display: flex;
   gap: 15px;
   padding: 25px;
   border-radius: 15px 15px 0 0;
-  width: 30%;
   overflow: hidden;
 }
 
@@ -42,11 +48,11 @@
 }
 
 .notification__success {
-  background-color: #E5F8EF;
+  background-color: #e5f8ef;
 }
 
 .notification__error {
-  background-color: #FEE3E5;
+  background-color: #fee3e5;
 }
 
 .notification__info {
@@ -54,7 +60,7 @@
 }
 
 .notification__warning {
-  background-color: #FFF8E1;
+  background-color: #fff8e1;
 }
 
 .notification-progress {
@@ -85,11 +91,11 @@
 }
 
 .notification-progress__success {
-  background-color: #11AC21;
+  background-color: #11ac21;
 }
 
 .notification-progress__error {
-  background-color: #ED2222;
+  background-color: #ed2222;
 }
 
 .notification-progress__info {
@@ -97,5 +103,5 @@
 }
 
 .notification-progress__warning {
-  background-color: #FBE576;
+  background-color: #fbe576;
 }

@@ -48,6 +48,8 @@ import ContactsPage from "./pages/ContactsPage/ContactsPage";
 import AdminBanners from "./pages/AdminBanners/AdminBanners";
 import AdminCompilations from "./pages/AdminCompilations/AdminCompilations";
 import AdminCompilationsCreate from "./pages/AdminCompilationsCreate/AdminCompilationsCreate";
+import { addNotification } from "./features/notifications/notificationsSlice";
+import { logout } from "./features/auth/authSlice";
 
 function App() {
   const isLoading = useAppSelector(selectGlobalLoading);
@@ -60,6 +62,26 @@ function App() {
       dispatch(fetchUserInfo());
     }
   }, [token]);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      dispatch(logout());
+      dispatch(
+        addNotification({
+          title: "Сессия истекла",
+          message:
+            "Не удалось обновить сессию, пожалуйста, авторизуйтесь заново",
+          type: "error",
+        }),
+      );
+    };
+
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+
+    return () => {
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
+    };
+  }, [dispatch]);
 
   const isAdmin = user?.is_superuser === true;
 

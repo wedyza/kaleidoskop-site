@@ -11,18 +11,15 @@ let isRefreshing = false;
 let pendingRequests: ((token?: string) => void)[] = [];
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 
 api.interceptors.response.use(
   (res) => res,
-
   async (error) => {
     const originalRequest = error.config;
 
@@ -44,23 +41,25 @@ api.interceptors.response.use(
       const response = await axios.post(
         `${API_URL}/auth/token/refresh/`,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       const newAccess = response.data.access;
-      localStorage.setItem('token', newAccess);
-      
+      localStorage.setItem("token", newAccess);
 
       pendingRequests.forEach((cb) => cb());
       pendingRequests = [];
 
       return api(originalRequest);
     } catch (refreshError) {
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
       pendingRequests = [];
+
+      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
+
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;
     }
-  }
+  },
 );
