@@ -56,24 +56,3 @@ class ItemService:
     
     def find_by_slug(self, slug: str) -> Item:
         return self._item_repository.find_by_slug(slug)
-    
-    def recover_categories_name(self, item_pk: UUID) -> dict[str, dict[str, str]] | None:
-        """
-        category : {'slug': str, 'name': str}, subcategory: {'slug': str, 'name': str}
-        """
-        subcategory = self._item_repository.find_subcategory(item_pk)
-        print(subcategory)
-        if subcategory:
-            d = {
-                "subcategory": {
-                    "title": subcategory.title,
-                    "slug": subcategory.slug
-                }
-            }
-            if subcategory.parent:
-                d["category"] = {
-                    "title": subcategory.parent.title,
-                    "slug": subcategory.parent.slug
-                }
-            return d
-        return None

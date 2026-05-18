@@ -106,7 +106,7 @@ services:
       - frontend_static:/frontend_static/
 
   telegram:
-    build: ./Telegram_Notification
+    build: ./notifications
     container_name: telegram
     depends_on:
       redis:
@@ -116,8 +116,11 @@ services:
     command: python bot.py
     volumes:
       - type: bind
-        source: ./Telegram_Notification/config.json
+        source: ./notifications/config.json
         target: /app/config.json
+    profiles:
+      - donotstart
+    
   frontend:
     image: wedyzza/kaleidoskop_frontend:latest
     command: cp -r /app/dist/. /frontend_static/
