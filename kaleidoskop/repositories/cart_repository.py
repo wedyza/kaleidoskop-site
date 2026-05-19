@@ -6,7 +6,7 @@ from api.decorators import cache_queryset
 class CartRepository:
     
     def get_or_create_user_cart(self, pk: UUID) -> Cart:
-        cart = self.__get_user_cart(pk=pk)
+        cart = self.__get_user_cart(pk)
         
         if cart is None:
             return self.__create_user_cart(pk)
