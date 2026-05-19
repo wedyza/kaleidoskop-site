@@ -90,7 +90,7 @@ class OrderService:
         order_cart = self.__create_cart(user, items_for_order)
         data_to_1C = self.__fill_order_data_to_1C(order_cart, user, order_data)        
         response = self._integration_service.create_order_1c(data_to_1C)
-        return self._order_repository.save_order_and_update_order_cart(order_data, cart, response['code'], total_sum, user)
+        return self._order_repository.save_order_and_update_order_cart(order_data, order_cart, response['code'], total_sum, user)
     
     def delete_order(self, user_pk: UUID, order_pk: UUID) -> bool:
         user = self._user_service.get_user_by_id(user_pk)
@@ -115,13 +115,8 @@ class OrderService:
             order_data={
                 'code': instance.code,
                 'created_at': timezone.now().astimezone(self._LOCAL_TZ).strftime("%d/%m/%Y, %H:%M:%S"),
-                'user': {
-                    'first_name': instance.user.first_name,
-                    'last_name': instance.user.last_name,
-                    'middle_name': instance.user.middle_name,
-                    'phone_number': instance.user.phone_number
-                },
                 'delivery_type': instance.delivery_method
             }
         )
+        # raise BaseException
         return instance

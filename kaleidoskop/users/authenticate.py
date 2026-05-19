@@ -7,7 +7,6 @@ from django.utils.decorators import method_decorator
     
 class CookieJWTAuthentication(JWTAuthentication):
     
-    # @method_decorator(enforce_csrf)
     def authenticate(self, request):
         header = self.get_header(request)
         

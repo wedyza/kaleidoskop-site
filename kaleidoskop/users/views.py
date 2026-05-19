@@ -12,6 +12,7 @@ from .utils import set_jwt_cookies
 from drf_yasg.utils import swagger_auto_schema
 from django.middleware.csrf import get_token
 from rest_framework import permissions
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
@@ -110,11 +111,13 @@ class CookieTokenRefreshView(JWTAuthentication, TokenRefreshView): # Тут по
         raw_acces_token = None
         data = {'access': raw_acces_token, 'refresh': raw_refresh_token}
         serializer = self.get_serializer(data=data)
+        
         try:
             serializer.is_valid(raise_exception=True)
         except TokenError as e:
             raise InvalidToken(e.args[0])
 
+        #Потом доделать
         response = Response(serializer.validated_data, status=status.HTTP_200_OK)
         
         access_token = response.data.get('access')
