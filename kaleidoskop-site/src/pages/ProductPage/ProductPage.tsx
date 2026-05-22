@@ -188,6 +188,7 @@ function ProductPage() {
             />
             <button
               onClick={handleToggleWishlist}
+              aria-label="В избранное"
               className={`product_fav product_action ${selectedItem && selectedItem.in_wishlist ? "product_action__active" : ""}`}
             >
               <svg

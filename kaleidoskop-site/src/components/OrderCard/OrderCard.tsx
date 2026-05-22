@@ -40,6 +40,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           <button
             className="item-block_btn scroll-arrow scroll-arrow__left"
             onClick={() => scroll("left")}
+            aria-label="Влево"
           >
             <svg
               width="8"
@@ -59,6 +60,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           <button
             className="item-block_btn scroll-arrow scroll-arrow__right"
             onClick={() => scroll("right")}
+            aria-label="Вправо"
           >
             <svg
               width="8"

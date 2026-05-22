@@ -21,18 +21,18 @@ interface AddressPickerProps {
   onSave?: () => void;
 }
 
-const AddressPicker: React.FC<AddressPickerProps> = ({ 
-  value = "", 
+const AddressPicker: React.FC<AddressPickerProps> = ({
+  value = "",
   addressDetails,
   onChange,
   onDetailsChange,
   isOpen = true,
-  onSave
+  onSave,
 }) => {
   const [address, setAddress] = useState(value);
   const [coords, setCoords] = useState<[number, number] | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
-  
+
   const [details, setDetails] = useState({
     apartment: addressDetails?.apartment || "",
     entrance: addressDetails?.entrance || "",
@@ -97,18 +97,18 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     if (!mapRef.current || mapInstance.current || !isOpen) return;
 
     mapInstance.current = new window.ymaps.Map(mapRef.current, {
-      center: [58.632513, 59.818630],
+      center: [58.632513, 59.81863],
       zoom: 13,
-      controls: ['zoomControl', 'fullscreenControl']
+      controls: ["zoomControl", "fullscreenControl"],
     });
 
     placemark.current = new window.ymaps.Placemark(
       mapInstance.current.getCenter(),
       {},
-      { 
+      {
         draggable: true,
-        preset: 'islands#redDotIcon'
-      }
+        preset: "islands#redDotIcon",
+      },
     );
 
     mapInstance.current.geoObjects.add(placemark.current);
@@ -118,7 +118,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
       updateCoords(newCoords);
     });
 
-    placemark.current.events.add('dragend', async () => {
+    placemark.current.events.add("dragend", async () => {
       const newCoords = placemark.current.geometry.getCoordinates();
       updateCoords(newCoords);
     });
@@ -141,7 +141,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   const handleDetailChange = (field: keyof typeof details, value: string) => {
     const newDetails = {
       ...details,
-      [field]: value
+      [field]: value,
     };
     setDetails(newDetails);
     onDetailsChange?.(newDetails);
@@ -173,10 +173,10 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   const reverseGeocode = async (coords: [number, number]) => {
     try {
       const response = await ymapsApi.get("", {
-        params: { 
-          geocode: `${coords[1]},${coords[0]}`, 
+        params: {
+          geocode: `${coords[1]},${coords[0]}`,
           format: "json",
-          kind: 'house'
+          kind: "house",
         },
       });
 
@@ -200,7 +200,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleBlur();
     }
   };
@@ -227,50 +227,52 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
                 type="text"
                 className="address_detail-input inter16-400"
                 value={details.apartment}
-                onChange={(e) => handleDetailChange('apartment', e.target.value)}
-                onBlur={() => handleDetailBlur('apartment')}
+                onChange={(e) =>
+                  handleDetailChange("apartment", e.target.value)
+                }
+                onBlur={() => handleDetailBlur("apartment")}
                 placeholder="Номер квартиры"
               />
             </div>
-            
+
             <div className="address_detail-field">
               <label className="inter14-400">Подъезд</label>
               <input
                 type="text"
                 className="address_detail-input inter16-400"
                 value={details.entrance}
-                onChange={(e) => handleDetailChange('entrance', e.target.value)}
-                onBlur={() => handleDetailBlur('entrance')}
+                onChange={(e) => handleDetailChange("entrance", e.target.value)}
+                onBlur={() => handleDetailBlur("entrance")}
                 placeholder="Номер подъезда"
               />
             </div>
-            
+
             <div className="address_detail-field">
               <label className="inter14-400">Этаж</label>
               <input
                 type="text"
                 className="address_detail-input inter16-400"
                 value={details.floor}
-                onChange={(e) => handleDetailChange('floor', e.target.value)}
-                onBlur={() => handleDetailBlur('floor')}
+                onChange={(e) => handleDetailChange("floor", e.target.value)}
+                onBlur={() => handleDetailBlur("floor")}
                 placeholder="Этаж"
               />
             </div>
-            
+
             <div className="address_detail-field">
               <label className="inter14-400">Домофон</label>
               <input
                 type="text"
                 className="address_detail-input inter16-400"
                 value={details.intercom}
-                onChange={(e) => handleDetailChange('intercom', e.target.value)}
-                onBlur={() => handleDetailBlur('intercom')}
+                onChange={(e) => handleDetailChange("intercom", e.target.value)}
+                onBlur={() => handleDetailBlur("intercom")}
                 placeholder="Код домофона"
               />
             </div>
           </div>
 
-          <button 
+          <button
             className="address-modal_save accent-btn inter14-600"
             onClick={onSave}
           >
@@ -278,9 +280,9 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
           </button>
         </div>
 
-        <div 
-          ref={mapRef} 
-          className={`address-picker_map ${!isMapReady ? 'address-picker_map--loading' : ''}`}
+        <div
+          ref={mapRef}
+          className={`address-picker_map ${!isMapReady ? "address-picker_map--loading" : ""}`}
         >
           {!isMapReady && <div className="map-loading">Загрузка карты...</div>}
         </div>

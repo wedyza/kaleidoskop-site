@@ -226,6 +226,7 @@ const MakeOrderPage = () => {
                 onClick={() => handleEditClick(fieldName)}
                 type="button"
                 disabled={userLoading}
+                aria-label="Редактировать"
               >
                 <svg
                   width="16"

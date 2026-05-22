@@ -117,6 +117,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
             className={`basket-card_count-btn ${item.amount <= 1 ? "basket-card_count-btn__inactive" : ""}`}
             onClick={handleDecrease}
             disabled={item.amount <= 1}
+            aria-label="Уменьшить количество"
           >
             <svg width="6" height="2" viewBox="0 0 6 2" fill="none">
               <path d="M6 0V1.5H0V0H6Z" fill="white" />
@@ -128,6 +129,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
           <button
             className={`basket-card_count-btn ${item.item.remains && item.amount === item.item.remains ? "basket-card_count-btn__inactive" : ""}`}
             onClick={handleIncrease}
+            aria-label="Увеличить количество"
           >
             <svg width="6" height="6" viewBox="0 0 6 6" fill="none">
               <path d="M2.4 6V0H3.6V6H2.4ZM0 3.6V2.4H6V3.6H0Z" fill="white" />
@@ -139,6 +141,7 @@ const BasketCard: React.FC<BasketCardProps> = ({ item }) => {
         <button
           onClick={handleRemoveFromBasket}
           className="basket-card_btn basket-card_remove"
+          aria-label="Удалить из корзины"
         >
           <svg
             width="17"

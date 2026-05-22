@@ -76,7 +76,7 @@ const AdminCompilations = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="admin-cat_search-icon">
+          <button className="admin-cat_search-icon" aria-label="Поиск">
             <svg
               width="14"
               height="14"

@@ -153,6 +153,7 @@ const ProfilePage = () => {
                 onClick={() => handleEditClick(fieldName)}
                 type="button"
                 disabled={loading}
+                aria-label="Редактировать"
               >
                 <svg
                   width="16"
@@ -193,6 +194,7 @@ const ProfilePage = () => {
             onClick={handleEmailEdit}
             type="button"
             disabled={loading}
+            aria-label="Редактировать"
           >
             <svg
               width="16"

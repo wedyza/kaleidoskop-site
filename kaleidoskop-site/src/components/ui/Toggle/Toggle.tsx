@@ -1,4 +1,4 @@
-import './Toggle.scss';
+import "./Toggle.scss";
 
 interface ToggleProps {
   isActive: boolean;
@@ -8,19 +8,20 @@ interface ToggleProps {
   disabled?: boolean;
 }
 
-const Toggle = ({ 
-  isActive, 
-  onToggle, 
-  activeText, 
+const Toggle = ({
+  isActive,
+  onToggle,
+  activeText,
   inactiveText,
-  disabled = false 
+  disabled = false,
 }: ToggleProps) => {
   return (
-    <button 
-      className={`toggle inter12-600 ${isActive ? 'toggle__active' : 'toggle__inactive'}`}
+    <button
+      className={`toggle inter12-600 ${isActive ? "toggle__active" : "toggle__inactive"}`}
       onClick={onToggle}
       disabled={disabled}
       type="button"
+      aria-label="Переключить"
     >
       <span className="toggle_text">
         {isActive ? activeText : inactiveText}

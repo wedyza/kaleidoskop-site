@@ -150,6 +150,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
             <button
               className="header-search_btn accent-btn"
               onClick={handleSearchClick}
+              aria-label="Поиск"
             >
               <svg
                 width="16"
@@ -321,6 +322,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
           <button
             className="header-mobile_btn header-mobile_btn-nav"
             onClick={() => setShowMenu(true)}
+            aria-label="Открыть меню"
           >
             <svg
               width="11"
@@ -352,6 +354,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
           <button
             className="header-mobile_search-btn"
             onClick={handleSearchClick}
+            aria-label="Поиск"
           >
             <svg
               width="16"
@@ -609,6 +612,7 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
               <button
                 className="header-mobile_menu-head-close"
                 onClick={() => setShowMenu(false)}
+                aria-label="Закрыть меню"
               >
                 <svg
                   width="12"
