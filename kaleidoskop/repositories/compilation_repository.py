@@ -30,7 +30,7 @@ class CompilationRepository:
             status=Exists(compilation.nomenclatures.filter(id=OuterRef('pk')))
         ).order_by('-status', 'title')
 
-    @cache_queryset('items_of_compilation')
+    @cache_queryset(cache_key='items_of_compilation')
     def get_compilation_items(self, pk: UUID) -> Union[QuerySet, list[Item]]:
         nomenclatures = self.get_nomenclatures_queryset(pk)
         return Item.objects.filter(nomenclature_in=nomenclatures)

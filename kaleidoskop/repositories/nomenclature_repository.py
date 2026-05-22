@@ -51,6 +51,6 @@ class NomenclatureRepository:
     def get_nomenclature_by_id(self, pk: UUID) -> Nomenclature:
         return Nomenclature.objects.get(id=pk)
     
-    @cache_queryset('item_from_associative')
+    @cache_queryset(cache_key='item_from_associative')
     def get_items_from_associative_nomenclature(self, pk: UUID) -> Union[QuerySet, list[Item]]:
         return Item.objects.filter(nomenclature_id=pk)

@@ -5,7 +5,7 @@ from exceptions.exceptions import NotFoundException, OTPTimedOutException, Wrong
 from api.decorators import cache_queryset
 
 class UserRepository:
-    # @cache_queryset(cache_key="user")
+    @cache_queryset(cache_key="user", model=CustomAbstractUser)
     def get_by_id(self, pk: UUID) -> CustomAbstractUser:
         return CustomAbstractUser.objects.get(pk=pk)
     
