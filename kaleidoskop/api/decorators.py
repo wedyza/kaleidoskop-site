@@ -34,7 +34,7 @@ def cache_queryset(cache_key: str, cache_key_type: CacheKeyType = CacheKeyType.I
                 qs = cache.get(local_key)
                 if not qs:
                     qs = func(*args, **kwargs)
-                    cache.set(local_key, qs, timeout=TTL)
+                    cache.set(local_key, qs, timeout=TTL) # Добавить вымещение кэша, если объект был изменен (для корзины и пользователей)
                 return qs
             return func(*args, **kwargs)
         return wrapper

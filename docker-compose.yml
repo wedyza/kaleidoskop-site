@@ -125,6 +125,8 @@ services:
     image: wedyzza/kaleidoskop_frontend:latest
     command: cp -r /app/dist/. /frontend_static/
     container_name: frontend_client
+    env_file:
+      - ./.env
     volumes:
       - frontend_static:/frontend_static/
   
