@@ -1,25 +1,19 @@
-from .models import Nomenclature, Item
+from io import BytesIO
+from PIL import Image
+from django.core.files import File
+from api.models import Item, ItemImage
+from django.core.files.base import ContentFile
+import httpx
 
-def get_nomenclatures(level_of_nesting:int):
-    nomenclatures = Nomenclature.objects.filter(parent=None).all()
-    while level_of_nesting != 0:
-        nomenclatures = Nomenclature.objects.filter(parent__in=nomenclatures).all()
-        level_of_nesting -= 1
-    return nomenclatures
-
-def get_daughter_nomenclatures(nomenclatures):
-    returning = nomenclatures
-    while True:
-        past = returning.count()
-        returning |= Nomenclature.objects.filter(parent__in=returning).exclude(id__in=returning.values_list('id', flat=True)).all()
-        now = returning.count() 
-        if past - now == 0:
-            return returning
-        
-def get_items_queryset_of_category(category):
-    daughter_categories = category.daughter.all()
-    base_nomenclatures = category.nomenclatures.all()
-    for daughter in daughter_categories:
-        base_nomenclatures |= daughter.nomenclatures.all()
-    nomenclatures = get_daughter_nomenclatures(base_nomenclatures)
-    return Item.objects.filter(nomenclature__in=nomenclatures)
+def compress_image(image):
+    im = Image.open(image)
+    width, height = im.size[0], int(im.size[0] * 1.5)
+    x, y = 0, int((im.size[1] - height) // 2)
+    area = (x, y, x+width, y+height)
+    im = im.crop((area))
+    im_bytes = BytesIO()
+    im.save(fp=im_bytes, format="WEBP", quality=85, method=4)
+    image_content_file = ContentFile(content=im_bytes.getvalue())
+    name = image.name.split('.')[0] + '.WEBP'
+    new_image = File(image_content_file, name=name)
+    return new_image

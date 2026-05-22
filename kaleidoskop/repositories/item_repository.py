@@ -3,7 +3,7 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models.functions import Lower
 from django.db.models import QuerySet, Value, F, Case, When, Sum
 from django.db import models
-from api.models import Category, Item, Nomenclature, NomenclatureCategory
+from api.models import Category, Item, Nomenclature, NomenclatureCategory, Remains
 from api.decorators import cache_queryset
 from uuid import UUID
 from exceptions.exceptions import NotFoundException
@@ -69,21 +69,21 @@ class ItemRepository:
         )).order_by('-priority_score', '-trigram_similarity')
         return qs
 
-
-    def get_recommended_items_by_item_title(self, item: Item) -> Union[QuerySet, list[Item]]:
+    @cache_queryset(cache_key="recommendations_by_title")
+    def get_recommended_items_by_item_title(self, pk: UUID) -> Union[QuerySet, list[Item]]:
         """
         Рекомендации на основе триграмм
         """
-        
+        item = self.get_item_by_id(pk)
         qs = Item.objects.extra(
             where=['lower(%s) %% lower(title)'],
             params=[item.title]
         ).annotate(
             similarity=TrigramSimilarity(Value(item.title.lower()), Lower('title'))
-        ).exclude(pk=item.pk).order_by('-similarity')[:50] # Может потом еще поменять
+        ).exclude(pk=item.pk).order_by('-similarity')[:15]
         return qs
 
-    @cache_queryset('item_remains')
+    @cache_queryset(cache_key='item_remains', model=Remains)
     def get_item_remains(self, pk: UUID) -> int:
         s = Item.objects.get(pk=pk).remains.aggregate(Sum('count'))['count__sum']
         if s:

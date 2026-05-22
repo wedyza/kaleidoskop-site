@@ -5,8 +5,10 @@ from services.rabbitmq import RabbitMQ
 import json
 from api.utils import slugify
 from django.db import transaction
-import httpx
-from django.conf import settings
+from api.functions import compress_image
+from api.models import Item, ItemImage
+from django.core.files.base import ContentFile
+
 
 class AsyncService:
     _rq = RabbitMQ()
@@ -40,3 +42,22 @@ class AsyncService:
             item.slug = slug
             done.add(slug)
             item.save()
+
+    @staticmethod
+    @multitasker
+    @shared_task
+    @transaction.atomic
+    def compress_images_for_items():
+        iimages = ItemImage.objects.all()
+        for image in iimages:
+            if not image.source:
+                continue
+
+            with image.source.open('rb') as f: 
+                original_bytes = f.read()
+            content_file = ContentFile(original_bytes, name=image.source.name.removeprefix('media/'))
+            compressed_image = compress_image(content_file)
+            
+            image.source.delete()
+            image.source.save(compressed_image.name, compressed_image, save=False)
+            image.save()

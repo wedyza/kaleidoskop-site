@@ -7,6 +7,7 @@ from uuid import uuid4
 from django.db.models import Q
 import pandas as pd
 from django.db import transaction
+from api.functions import compress_image
 from pathlib import Path
 
 class Command(BaseCommand):
@@ -29,7 +30,8 @@ class Command(BaseCommand):
                 print(url, image_name, item)
                 return
             content_file = ContentFile(bytes, name=image_name)
-            image = ItemImage.objects.create(source=content_file, item=item) # Если надо куда-то дальше картинку
+            compressed_image = compress_image(content_file)
+            image = ItemImage.objects.create(source=compressed_image, item=item)
             
         except Exception as e:
             print(e)

@@ -125,6 +125,8 @@ services:
     image: wedyzza/kaleidoskop_frontend:latest
     command: cp -r /app/dist/. /frontend_static/
     container_name: frontend_client
+    environment:
+      - VITE_API_URL=https://kaleydoskop-test.ru/api/
     volumes:
       - frontend_static:/frontend_static/
   
