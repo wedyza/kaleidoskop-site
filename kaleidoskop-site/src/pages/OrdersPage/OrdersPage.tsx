@@ -1,23 +1,27 @@
-import { useEffect } from 'react';
-import './OrdersPage.scss'
-import OrderCard from '../../components/OrderCard/OrderCard';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getOrders } from '../../features/orders/ordersSlice';
+import { useEffect } from "react";
+import "./OrdersPage.scss";
+import OrderCard from "../../components/OrderCard/OrderCard";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { getOrders } from "../../features/orders/ordersSlice";
+import { Helmet } from "react-helmet-async";
 
 //type OrderType = 'all' | 'legal' | 'individual';
 
-function OrdersPage () {
+function OrdersPage() {
   //const [activeTab, setActiveTab] = useState<OrderType>('all');
   const dispatch = useAppDispatch();
-  const orders = useAppSelector(state => state.orders.orders);
+  const orders = useAppSelector((state) => state.orders.orders);
 
   useEffect(() => {
-    dispatch(getOrders())
-  }, [dispatch])
+    dispatch(getOrders());
+  }, [dispatch]);
 
-  return(
-    <div className='page-orders'>
-      <h1 className='inter28-600'>Мои заказы</h1>
+  return (
+    <div className="page-orders">
+      <Helmet>
+        <title>Калейдоскоп — Мои заказы</title>
+      </Helmet>
+      <h1 className="inter28-600">Мои заказы</h1>
       {/* <div className='orders-set'>
         <div className='orders-tab inter14-600'>
           <button 
@@ -49,13 +53,13 @@ function OrdersPage () {
         </div>
       </div> */}
 
-      <div className='orders-list'>
+      <div className="orders-list">
         {orders.map((order) => (
           <OrderCard order={order} />
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default OrdersPage;

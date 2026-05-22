@@ -7,7 +7,7 @@ import WishlistPage from "./pages/WishlistPage/WishlistPage";
 import { SectionLayout } from "./layouts/SectionLayout";
 import BasketPage from "./pages/BasketPage/BasketPage";
 import OrdersPage from "./pages/OrdersPage/OrdersPage";
-import ComparisonPage from "./pages/ComparisonPage/ComparisonPage";
+// import ComparisonPage from "./pages/ComparisonPage/ComparisonPage";
 import ProductPage from "./pages/ProductPage/ProductPage";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
@@ -50,6 +50,7 @@ import AdminCompilations from "./pages/AdminCompilations/AdminCompilations";
 import AdminCompilationsCreate from "./pages/AdminCompilationsCreate/AdminCompilationsCreate";
 import { addNotification } from "./features/notifications/notificationsSlice";
 import { logout } from "./features/auth/authSlice";
+import { Helmet } from "react-helmet-async";
 
 function App() {
   const isLoading = useAppSelector(selectGlobalLoading);
@@ -87,6 +88,18 @@ function App() {
 
   return (
     <>
+      <Helmet>
+        <title>Калейдоскоп</title>
+        <meta
+          name="description"
+          content="Калейдоскоп — интернет-магазин стройматериалов в Лесном и Нижней Туре"
+        />
+        <meta
+          name="keywords"
+          content="стройматериалы, строительные товары, магазин стройматериалов, купить стройматериалы, доставка стройматериалов, Лесной, Нижняя Тура"
+        />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
       {isLoading && <Loader />}
       <Routes>
         {isAdmin ? (
@@ -147,7 +160,7 @@ function App() {
                 <Route path="/wishlist" element={<WishlistPage />} />
                 <Route path="/basket" element={<BasketPage />} />
                 <Route path="/orders" element={<OrdersPage />} />
-                <Route path="/comparison" element={<ComparisonPage />} />
+                {/* <Route path="/comparison" element={<ComparisonPage />} /> */}
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/returns" element={<ReturnsPage />} />
               </Route>

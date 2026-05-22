@@ -97,16 +97,7 @@ function ProductPage() {
   return (
     <div className="page-product">
       <Helmet>
-        <title>Калейдоскоп — Товар {selectedItem.title}</title>
-        <meta
-          name="description"
-          content="Калейдоскоп — интернет-магазин стройматериалов в Лесном и Нижней Туре"
-        />
-        <meta
-          name="keywords"
-          content="стройматериалы, строительные товары, магазин стройматериалов, купить стройматериалы, доставка стройматериалов, Лесной, Нижняя Тура"
-        />
-        <meta name="robots" content="index, follow" />
+        <title>Калейдоскоп — Товар {selectedItem?.title || ""}</title>
       </Helmet>
       <div className="page-path inter16-400">
         <Link to={"/"} className="main-link">

@@ -1,4 +1,4 @@
-@use '../../styles/common.scss';
+@use "../../styles/common.scss";
 
 .footer {
   display: flex;
@@ -8,7 +8,7 @@
 }
 
 .footer-img {
-  background-image: url('../../assets/temp.jpg');
+  background-image: url("../../assets/footer.webp");
   width: 43%;
   max-width: 618px;
   background-size: cover;
@@ -63,9 +63,9 @@
   height: 100%;
   margin-bottom: 37px;
   display: grid;
-  grid-template-areas: 
-    'nav about contacts'
-    'net about contacts';
+  grid-template-areas:
+    "nav about contacts"
+    "net about contacts";
   row-gap: 10px;
   column-gap: 68px;
   grid-template-columns: auto auto 1fr;
@@ -82,7 +82,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  justify-content:  space-between;
+  justify-content: space-between;
   height: 100%;
 }
 
@@ -157,9 +157,9 @@
 
 @media (max-width: common.$breakpoint-laptop) {
   .footer_main-info {
-    grid-template-areas: 
-      'about nav'
-      'contacts net';
+    grid-template-areas:
+      "about nav"
+      "contacts net";
     grid-template-columns: 1fr 1fr;
     row-gap: 32px;
   }
@@ -179,7 +179,7 @@
     padding-top: 20px;
     padding-bottom: 15px;
   }
-  
+
   .footer-info {
     padding: 30px var(--padding);
   }

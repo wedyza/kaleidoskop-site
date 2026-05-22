@@ -7,15 +7,6 @@ const ContactsPage = () => {
     <div className="contacts-page">
       <Helmet>
         <title>Калейдоскоп — Контакты</title>
-        <meta
-          name="description"
-          content="Калейдоскоп — интернет-магазин стройматериалов в Лесном и Нижней Туре"
-        />
-        <meta
-          name="keywords"
-          content="стройматериалы, строительные товары, магазин стройматериалов, купить стройматериалы, доставка стройматериалов, Лесной, Нижняя Тура"
-        />
-        <meta name="robots" content="index, follow" />
       </Helmet>
       <h1 className="inter28-600">Контакты</h1>
 

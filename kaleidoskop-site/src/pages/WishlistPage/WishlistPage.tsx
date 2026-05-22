@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import ItemCardBig from '../../components/ItemCardBig/ItemCardBig';
-import './WishlistPage.scss'
-import { fetchWishlist } from '../../features/wishlist/wishlistSlice';
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import ItemCardBig from "../../components/ItemCardBig/ItemCardBig";
+import "./WishlistPage.scss";
+import { fetchWishlist } from "../../features/wishlist/wishlistSlice";
+import { Helmet } from "react-helmet-async";
 
-function WishlistPage () {
+function WishlistPage() {
   const items = useAppSelector((state) => state.wishlist.items);
   console.log(items[0]);
 
@@ -12,12 +13,15 @@ function WishlistPage () {
 
   useEffect(() => {
     dispatch(fetchWishlist());
-  }, [])
+  }, []);
 
   return (
     <div className="wishlist-section">
+      <Helmet>
+        <title>Калейдоскоп — Избранные товары</title>
+      </Helmet>
       <div className="wishlist-header">
-        <h1 className='inter28-600'>Избранные товары</h1>
+        <h1 className="inter28-600">Избранные товары</h1>
         {/* <button className='wishlist-clear inter13-400'>
           <div className="wishlist-clear_img">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,7 +37,7 @@ function WishlistPage () {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default WishlistPage;

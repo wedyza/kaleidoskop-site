@@ -7,6 +7,7 @@ import {
   searchProducts,
   loadMoreSearchProducts,
 } from "../../features/search/searchSlice";
+import { Helmet } from "react-helmet-async";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -52,6 +53,9 @@ const SearchPage = () => {
 
   return (
     <div className="page-search">
+      <Helmet>
+        <title>Калейдоскоп — Поиск "{query || ""}"</title>
+      </Helmet>
       <p className="inter16-400 search-title">
         По запросу
         <span className="inter16-600"> {currentQuery} </span>

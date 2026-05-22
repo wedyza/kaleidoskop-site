@@ -1,11 +1,12 @@
-import './BasketPage.scss'
-import BasketCard from '../../components/BasketCard/BasketCard';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import React, { useEffect } from 'react';
-import { fetchBasket } from '../../features/basket/basketSlice';
-import OrderSummary from '../../components/OrderSummary/OrderSummary';
+import "./BasketPage.scss";
+import BasketCard from "../../components/BasketCard/BasketCard";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import React, { useEffect } from "react";
+import { fetchBasket } from "../../features/basket/basketSlice";
+import OrderSummary from "../../components/OrderSummary/OrderSummary";
+import { Helmet } from "react-helmet-async";
 
-function BasketPage () {
+function BasketPage() {
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.basket);
 
@@ -13,15 +14,20 @@ function BasketPage () {
     dispatch(fetchBasket());
   }, [dispatch]);
 
-  const markedItems = items ? items.filter(item => item.marked_for_order) : [];
+  const markedItems = items
+    ? items.filter((item) => item.marked_for_order)
+    : [];
 
   return (
     <div className="page-basket">
+      <Helmet>
+        <title>Калейдоскоп — Корзина</title>
+      </Helmet>
       {items && items.length > 0 ? (
         <React.Fragment>
-          <div className='basket-content'>
+          <div className="basket-content">
             <div className="wishlist-header">
-              <h1 className='inter28-600'>Корзина</h1>
+              <h1 className="inter28-600">Корзина</h1>
               {/* <button className='wishlist-clear inter13-400'>
                 <div className="wishlist-clear_img">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,7 +37,7 @@ function BasketPage () {
                 <span className='wishlist-clear_label'>Очистить корзину</span>
               </button> */}
             </div>
-            <div className='basket-list'>
+            <div className="basket-list">
               {items.map((item) => (
                 <BasketCard item={item} key={item.id} />
               ))}
@@ -40,12 +46,12 @@ function BasketPage () {
           <OrderSummary selectedItems={markedItems} />
         </React.Fragment>
       ) : (
-        <h2 className='inter28-600 basket__empty-title'>
+        <h2 className="inter28-600 basket__empty-title">
           В корзине пока пусто
         </h2>
       )}
     </div>
-  )
+  );
 }
 
 export default BasketPage;
