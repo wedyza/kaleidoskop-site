@@ -17,7 +17,6 @@ import MainParameters from "../../components/MainParameters/MainParameters";
 import { fetchContentBasedRecommendations } from "../../features/recommendations/recommendationsSlice";
 import ItemsBlock from "../../components/ItemsBlock/ItemsBlock";
 import { fetchCategoryBySlug } from "../../features/categories/categoriesSlice";
-import { Helmet } from "react-helmet-async";
 
 function ProductPage() {
   const { slug, categorySlug } = useParams<{
@@ -92,13 +91,16 @@ function ProductPage() {
     }
   };
 
+  useEffect(() => {
+    if (selectedItem?.title) {
+      document.title = `Калейдоскоп — ${selectedItem.title}`;
+    }
+  }, [selectedItem]);
+
   if (!selectedItem) return;
 
   return (
     <div className="page-product">
-      <Helmet>
-        <title>Калейдоскоп — Товар {selectedItem?.title || ""}</title>
-      </Helmet>
       <div className="page-path inter16-400">
         <Link to={"/"} className="main-link">
           Главная

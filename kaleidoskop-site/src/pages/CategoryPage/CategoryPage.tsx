@@ -8,7 +8,6 @@ import {
   fetchCategoryProducts,
   loadMoreCategoryProducts,
 } from "../../features/categories/categoriesSlice";
-import { Helmet } from "react-helmet-async";
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -50,10 +49,13 @@ const CategoryPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (category?.title) {
+      document.title = `Калейдоскоп —  ${category?.title}`;
+    }
+  }, [category]);
+
   if (!slug) {
-    <Helmet>
-      <title>Калейдоскоп — Категория {category?.title}</title>
-    </Helmet>;
     return (
       <div className="page-category">
         <div className="page-path inter16-400">
