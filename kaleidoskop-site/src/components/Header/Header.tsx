@@ -301,7 +301,10 @@ const Header: React.FC<HeaderProps> = ({ onCatalogClick }) => {
           <Link to={"/"} className="header-mobile_logo">
             <img src={logo} alt="КАЛЕЙДОСКОП" />
           </Link>
-          <button className="header-mobile_btn header-mobile_btn-phone">
+          <button
+            className="header-mobile_btn header-mobile_btn-phone"
+            aria-label="Позвонить"
+          >
             <svg
               width="11"
               height="11"
