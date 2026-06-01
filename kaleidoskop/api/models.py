@@ -155,7 +155,8 @@ class Item(UUIDModel):
         indexes = [
             GinIndex(name="title_trgm_gin_ops", fields=["title"], opclasses=['gin_trgm_ops']),
             GinIndex(fields=["search_vector"]),
-            BTreeIndex(fields=['slug'])
+            BTreeIndex(fields=['slug']),
+            BTreeIndex(fields=['article'])
         ]
     
     def __str__(self):

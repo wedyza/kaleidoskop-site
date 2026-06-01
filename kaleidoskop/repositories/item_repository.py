@@ -46,30 +46,29 @@ class ItemRepository:
     def find_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
         """
         Выполняет поиск по индексу при помощи триграммной схожести (тут префиксной из-за <%)
-        и search_vector (<- Имеет больший приоритет)
+        и search_vector (<- Имеет больший приоритет), а также по артиклю
         """
-        normalized_query = query.lower()
-        qs = Item.objects.extra(
-            where=['search_vector @@ plainto_tsquery(%s)::tsquery OR %s <%% lower(title)'],
-            params=[normalized_query, normalized_query]
-        ).annotate(
-        full_text_match=Case(
-            When(search_vector=query, then=Value(1)),
-            default=Value(0),
-            output_field=models.IntegerField()
-        ),
-        trigram_similarity=TrigramSimilarity(
-            Value(query.lower()),
-            Lower('title')
-        ),
-        priority_score=Case(
-            When(full_text_match=1, then=Value(2)),
-            default=F('trigram_similarity'),
-            output_field=models.FloatField()
-        )).order_by('-priority_score', '-trigram_similarity')
-        
+        qs = Item.objects.filter(article=query).all()
         if qs.count() == 0:
-            qs = Item.objects.filter(article=query).all()
+            normalized_query = query.lower()
+            qs = Item.objects.extra(
+                where=['search_vector @@ plainto_tsquery(%s)::tsquery OR %s <%% lower(title)'],
+                params=[normalized_query, normalized_query]
+            ).annotate(
+            full_text_match=Case(
+                When(search_vector=query, then=Value(1)),
+                default=Value(0),
+                output_field=models.IntegerField()
+            ),
+            trigram_similarity=TrigramSimilarity(
+                Value(query.lower()),
+                Lower('title')
+            ),
+            priority_score=Case(
+                When(full_text_match=1, then=Value(2)),
+                default=F('trigram_similarity'),
+                output_field=models.FloatField()
+            )).order_by('-priority_score', '-trigram_similarity')
         return qs
 
     @cache_queryset(cache_key="recommendations_by_title")

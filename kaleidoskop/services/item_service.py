@@ -44,8 +44,8 @@ class ItemService:
     def find_by_ids(self, ids: list[str]) -> Union[QuerySet, List[Item]]:
         return self._item_repository.find_by_ids(ids)
     
-    def find_by_query(self, query: str) -> Union[QuerySet, List[Item]]:
-        return self._item_repository.find_by_query(query)
+    def find_by_query(self, query: str, article: bool = False) -> Union[QuerySet, List[Item]]:
+        return self._item_repository.find_by_query(query, article)
 
     def get_recommended_items_queryset(self, item_pk: UUID) -> Union[QuerySet, List[Item]]: # 
         # item = self.get_item_by_id(item_pk)
