@@ -67,6 +67,9 @@ class ItemRepository:
             default=F('trigram_similarity'),
             output_field=models.FloatField()
         )).order_by('-priority_score', '-trigram_similarity')
+        
+        if qs.count() == 0:
+            qs = Item.objects.filter(article=query).all()
         return qs
 
     @cache_queryset(cache_key="recommendations_by_title")
