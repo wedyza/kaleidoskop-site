@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
-    # "django_elasticsearch_dsl",
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",

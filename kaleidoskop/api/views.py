@@ -333,8 +333,7 @@ class CommentViewSet(
 
 
 class UsersViewSet(
-    viewsets.GenericViewSet,
-    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
 ):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated, IsUserHimself)
