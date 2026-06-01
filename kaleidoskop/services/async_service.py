@@ -1,4 +1,4 @@
-from api.models import Item
+from api.models import Banner, Category, Item
 from api.decorators import multitasker
 from celery import shared_task
 from services.rabbitmq import RabbitMQ
@@ -54,6 +54,26 @@ class AsyncService:
                 continue
 
             with image.source.open('rb') as f: 
+                original_bytes = f.read()
+            content_file = ContentFile(original_bytes, name=image.source.name.removeprefix('media/'))
+            compressed_image = compress_image(content_file)
+            
+            image.source.delete()
+            image.source.save(compressed_image.name, compressed_image, save=False)
+            image.save()
+
+    
+    @staticmethod
+    @multitasker
+    @shared_task
+    @transaction.atomic
+    def compress_images_for_categories_and_banners():
+        iimages = Banner.objects.all()
+        for image in iimages:
+            if not image.source:
+                continue
+            
+            with image.source.open('rb') as f:
                 original_bytes = f.read()
             content_file = ContentFile(original_bytes, name=image.source.name.removeprefix('media/'))
             compressed_image = compress_image(content_file)

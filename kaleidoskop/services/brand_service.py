@@ -13,7 +13,6 @@ class BrandService:
     _category_service = CategoryService()
     _brand_repository = BrandRepository()
     _item_service = ItemService()
-    _r: StrictRedis = RedisService.initialize()
     
     def get_queryset(self, category_pk: UUID) -> Union[QuerySet, list[Brand]]:
         items = self._category_service.get_items_of_category(category_pk)

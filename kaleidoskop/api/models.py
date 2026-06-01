@@ -405,6 +405,3 @@ class Banner(UUIDModel):
     active = models.BooleanField("Активен", default=True, blank=False)
     group_type = models.TextField("Группа банера", choices=BannerGroupType.choices, null=False)
     queue = models.IntegerField("Порядок", validators=[MinValueValidator(1)], null=False, blank=False)
-
-    # class Meta:
-    #     unique_together = ('order', 'group_type')

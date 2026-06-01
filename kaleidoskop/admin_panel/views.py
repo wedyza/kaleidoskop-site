@@ -89,7 +89,7 @@ class BannerViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin, mixins.Des
     
 
 class AdminCategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all() # Не буду наверное менять
+    queryset = Category.objects.all()
     serializer_class = AdminCategorySerializer
     parser_classes = [MultiPartParser]
     filter_backends = [filters.SearchFilter, SubcategoryFilter]

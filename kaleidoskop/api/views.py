@@ -47,6 +47,9 @@ from services.redis_service import RedisService
 from .filters import ItemFilter, ItemImageFilter
 from django.utils import timezone
 
+
+# Так как это самая часто посещаемая страница, оставлю это тут - в следующий раз, когда будешь реализовывать сервисы, подумай насчет использования функций, а не классов, чтобы тысячу раз не пересоздавать всего, пример можешь увидеть в своем репозитории с fastapi-async
+
 User = get_user_model()
 class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin): #Retrieve - deprecated
     queryset = Category.objects.filter(active=True).all()

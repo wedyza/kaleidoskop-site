@@ -5,6 +5,7 @@ from django.db.models import Q
 from services.nomenclature_service import NomenclatureService
 from django.utils import timezone
 from services.compilation_service import CompilationService
+from api.functions import compress_image
 
 compilation_service = CompilationService()
 
@@ -32,7 +33,7 @@ class BannerSerializer(serializers.ModelSerializer):
             return 'Неактивно'
         higher = Banner.objects.filter(active=True).filter(group_type=obj.group_type).filter(queue__lt=obj.queue).count()
         return higher + 1
-
+        
 class BannerQueueSerializer(serializers.Serializer):
     queue = serializers.IntegerField()
     id = serializers.PrimaryKeyRelatedField(queryset=Banner.objects.all())

@@ -6,15 +6,12 @@ from services.remains_service import RemainsService
 from services.order_service import OrderService
 
 class ReceiverService:
-    """
-    Тут скорее всего на некоторые навесить scheduler, а некоторые так дергать
-    """
     _integration_service = IntegrationService()
     _nomenclature_service = NomenclatureService()
     _item_service = ItemService()
     _remains_service = RemainsService()
     _order_service = OrderService()
-    # Позже переделаю на инициализацию в BaseCommand, поэтому не меняю
+
     @multitasker
     @shared_task
     def sync_nomenclatures_with_1C(self): # Надо будет сделать при помощи LIMIT|OFFSET и async зарпосы посылать сразу несколько и получать их, далее уже формировать на этой основе товары
