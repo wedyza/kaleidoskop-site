@@ -132,7 +132,9 @@ function ProductPage() {
 
       <div className="product-info">
         <div className="product-info_sub">
-          <span className="product-info_id inter14-400">код: 18803520</span>
+          <span className="product-info_id inter14-400">
+            код: {selectedItem.article}
+          </span>
           <div className="product-info_gallery">
             <ProductGallery key={galleryKey} images={selectedItem?.images} />
           </div>
