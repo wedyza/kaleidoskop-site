@@ -1,6 +1,6 @@
 # Kaleidoskop — Интернет магазин с интеграцией с 1С
 
-![Django](https://img.shields.io/badge/Django-4.2-blue)
+![Django](https://img.shields.io/badge/Django-blue)
 ![DRF](https://img.shields.io/badge/REST%20API-Yes-green)
 ![Python](https://img.shields.io/badge/Python-3.12+-blue)
 ![Docker](https://img.shields.io/badge/Docker-Compose-lightgrey)
