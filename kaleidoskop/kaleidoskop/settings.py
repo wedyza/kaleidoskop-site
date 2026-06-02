@@ -175,10 +175,13 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_S3_ADDRESSING_STYLE = "path"
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq//"  
-BROKER_URL = os.getenv("BROKER_URL", "pyamqp://guest@localhost:5672//") if not CONTAINER_LAUNCHER else "pyamqp://guest@rabbitmq:5672//" 
+REDIS_USER = os.getenv("REDIS_USER", "guest")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "")
 
-API_KEY_1C = "XDXDRJAKARJKA1234SIE5$"
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", f"pyamqp://{REDIS_USER}@localhost//") if not CONTAINER_LAUNCHER else f"pyamqp://{REDIS_USER}@rabbitmq//"  
+BROKER_URL = os.getenv("BROKER_URL", f"pyamqp://{REDIS_USER}@localhost:5672//") if not CONTAINER_LAUNCHER else f"pyamqp://{REDIS_USER}@rabbitmq:5672//" 
+
+API_KEY_1C = os.getenv("API_KEY_1C")
 USER_1C = os.getenv("USER_1C")
 PASSWORD_1C = os.getenv("PASSWORD_1C")
 SERVER_1C = "http://localhost/demohttp/hs/apiv1" if not CONTAINER_LAUNCHER else f"http://{os.getenv('REMOTE_1C')}/demohttp/hs/apiv1"
@@ -214,7 +217,6 @@ REDIS_HOST = "localhost" if not CONTAINER_LAUNCHER else "redis"
 
 RABBIT_MQ_USER = os.getenv("RABBIT_MQ_USER")
 RABBIT_MQ_PASSWORD = os.getenv("RABBIT_MQ_PASSWORD")
-RABBIT_MQ_HOST = "localhost" if not CONTAINER_LAUNCHER else "rabbitmq"
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r"^/.*$"
