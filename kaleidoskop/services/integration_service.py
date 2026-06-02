@@ -12,10 +12,10 @@ class IntegrationService:
     _LINK_1C = settings.SERVER_1C
     _API_KEY = settings.API_KEY_1C
     
-    # @staticmethod
+    @staticmethod
     @multitasker
     @shared_task
-    def sync_user_with_1C(self, user_pk: UUID):
+    def sync_user_with_1C(user_pk: UUID):
         """
         Асинхронно обновляет пользователя в 1С системе по его текущим, вызывать при UPDATE users/me/
         """

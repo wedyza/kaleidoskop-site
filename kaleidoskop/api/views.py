@@ -338,7 +338,7 @@ class UsersViewSet(
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated, IsUserHimself)
     queryset = User.objects.all()
-    integration_service = IntegrationService()
+    # integration_service = IntegrationService()
     user_service = UserService()
 
     @action(
@@ -356,7 +356,7 @@ class UsersViewSet(
         )
         if serializer.is_valid():
             serializer.save()
-            self.integration_service.sync_user_with_1C(self.request.user.id)
+            IntegrationService.sync_user_with_1C(self.request.user.id)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors)
 
