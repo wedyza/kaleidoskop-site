@@ -215,6 +215,7 @@ STATIC_ROOT = "/static/"
 
 REDIS_HOST = "localhost" if not CONTAINER_LAUNCHER else "redis"
 
+RABBIT_MQ_HOST = ""
 RABBIT_MQ_USER = os.getenv("RABBIT_MQ_USER")
 RABBIT_MQ_PASSWORD = os.getenv("RABBIT_MQ_PASSWORD")
 
@@ -281,3 +282,4 @@ SHELL_PLUS_PRE_IMPORTS = {
 }
 
 USE_CACHE=True
+RABBIT_MQ_HOST = "localhost" if not CONTAINER_LAUNCHER else "rabbitmq"
